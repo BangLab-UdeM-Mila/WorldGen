@@ -73,9 +73,6 @@ the full 3×3 inertia tensor in the URDF.
 | E2 Incline | Measured acceleration | 0.904 m/s² |
 | E3 Rotation | Angular momentum drift over 2 s | < 5% (numerical damping) |
 
-![E1](logs/e1_freefall.png)
-![E2](logs/e2_incline.png)
-![E3](logs/e3_rotation.png)
 
 ---
 
