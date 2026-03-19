@@ -1,0 +1,17 @@
+{
+  "sphere": {
+    "urdf": ".\\urdfs\\sphere.urdf",
+    "mass_kg": 0.5736513812404873,
+    "material": "rubber"
+  },
+  "bevel_box": {
+    "urdf": ".\\urdfs\\bevel_box.urdf",
+    "mass_kg": 0.034828676164441595,
+    "material": "wood"
+  },
+  "l_bracket": {
+    "urdf": ".\\urdfs\\l_bracket.urdf",
+    "mass_kg": 0.0648,
+    "material": "aluminum"
+  }
+}
