@@ -1,0 +1,50 @@
+[
+  {
+    "name": "sphere",
+    "label": "UV-Sphere (Rubber, \u03c1=1100 kg/m\u00b3)",
+    "faces_visual": 3968,
+    "faces_collision": 80,
+    "face_reduction": 49.6,
+    "hausdorff_mm": 3.4317,
+    "hd_ab_mm": 3.3485,
+    "hd_ba_mm": 3.4317,
+    "msd_mm": 2.1744,
+    "hd95_mm": 3.0043,
+    "volume_iou": NaN,
+    "surface_area_visual_mm2": 31352.92,
+    "surface_area_collision_mm2": 29164.84,
+    "surface_area_rel_error": 0.0698
+  },
+  {
+    "name": "bevel_box",
+    "label": "Beveled Box (Wood, \u03c1=700 kg/m\u00b3)",
+    "faces_visual": 260,
+    "faces_collision": 12,
+    "face_reduction": 21.7,
+    "hausdorff_mm": 10.9915,
+    "hd_ab_mm": 6.3023,
+    "hd_ba_mm": 10.9915,
+    "msd_mm": 2.6816,
+    "hd95_mm": 6.5143,
+    "volume_iou": NaN,
+    "surface_area_visual_mm2": 7076.42,
+    "surface_area_collision_mm2": 10800.0,
+    "surface_area_rel_error": 0.5262
+  },
+  {
+    "name": "l_bracket",
+    "label": "L-Bracket (Aluminum, \u03c1=2700 kg/m\u00b3)",
+    "faces_visual": 20,
+    "faces_collision": 20,
+    "face_reduction": 1.0,
+    "hausdorff_mm": 0.7395,
+    "hd_ab_mm": 0.7395,
+    "hd_ba_mm": 0.7311,
+    "msd_mm": 0.1864,
+    "hd95_mm": 0.3638,
+    "volume_iou": NaN,
+    "surface_area_visual_mm2": 6971.36,
+    "surface_area_collision_mm2": 6971.36,
+    "surface_area_rel_error": 0.0
+  }
+]
