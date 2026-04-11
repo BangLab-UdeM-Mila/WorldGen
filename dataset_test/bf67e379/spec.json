@@ -1,0 +1,203 @@
+{
+  "scene_id": "bf67e379",
+  "seed": 11,
+  "description": "",
+  "adversarial": false,
+  "room": {
+    "type": "dining",
+    "display_name": "Dining Room",
+    "width": 5.0,
+    "depth": 4.5,
+    "height": 2.8,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.9312132905372673,
+      0.9008476397588782,
+      0.8502382217948962
+    ],
+    "ceiling_color_rgb": [
+      0.9474233398780599,
+      0.9375543467543301,
+      0.9178163605068707
+    ],
+    "floor_color_rgb": [
+      0.72,
+      0.55,
+      0.33
+    ],
+    "floor_roughness": 0.55,
+    "window_wall": "north",
+    "window_pos_x": 0.0,
+    "window_pos_z": 1.45,
+    "window_width": 1.2,
+    "window_height": 1.0,
+    "window_emissive": [
+      6.0,
+      5.8,
+      5.2
+    ]
+  },
+  "table": {
+    "width": 1.2,
+    "depth": 0.8,
+    "height": 0.77,
+    "thickness": 0.04,
+    "leg_size": 0.06,
+    "pos_x": -0.0,
+    "pos_y": 0.02,
+    "color_rgb": [
+      0.3005123458790541,
+      0.18889347455254835,
+      0.08586067025115834
+    ],
+    "roughness": 0.55,
+    "friction": 0.6
+  },
+  "object": {
+    "name": "red_apple",
+    "display_name": "Red Apple",
+    "category": "safe",
+    "morph": "sphere",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.042,
+      0.042,
+      0.042
+    ],
+    "density": 850.0,
+    "friction": 0.45,
+    "restitution": 0.3,
+    "color_rgb": [
+      0.82,
+      0.12,
+      0.08
+    ],
+    "roughness": 0.35,
+    "ior": 1.0,
+    "catch_safe": true,
+    "safety_label": "safe",
+    "mass_hint": "light",
+    "description": "A ripe red apple, soft and completely safe to catch"
+  },
+  "drop": {
+    "start_x": 0.5817,
+    "start_y": -0.0689,
+    "euler_z": 26.9,
+    "vel_x": 0.389,
+    "vel_y": 0.0,
+    "vel_z": 0.0
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -0.598,
+        -1.731,
+        1.455
+      ],
+      "lookat": [
+        0.291,
+        0.066,
+        0.567
+      ],
+      "fov": 54.09905850786528
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        1.282,
+        -1.068,
+        1.177
+      ],
+      "lookat": [
+        0.534,
+        0.029,
+        0.498
+      ],
+      "fov": 48.53274855060448
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        0.541,
+        0.167,
+        2.098
+      ],
+      "lookat": [
+        0.604,
+        0.083,
+        0.769
+      ],
+      "fov": 52.77144892533704
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.30217288126202063,
+      0.2697972154125184,
+      0.23742154956301617
+    ],
+    "background_color": [
+      0.15,
+      0.14,
+      0.13
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          0.1,
+          0.0,
+          2.6
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.88,
+          0.72
+        ],
+        "intensity": 8.75
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          -0.2,
+          -1.0,
+          -0.4
+        ],
+        "color": [
+          0.8,
+          0.88,
+          1.0
+        ],
+        "intensity": 3.06
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.1,
+          0.3,
+          1.0
+        ],
+        "color": [
+          0.9,
+          0.82,
+          0.7
+        ],
+        "intensity": 0.87
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "EXECUTE_CATCH",
+  "safety_label": "safe",
+  "interception_point_2d": null,
+  "interception_point_3d": null,
+  "time_to_floor_s": null
+}

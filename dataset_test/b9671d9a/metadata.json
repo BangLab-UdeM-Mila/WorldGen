@@ -1,0 +1,192 @@
+{
+  "scene_id": "b9671d9a",
+  "seed": 13,
+  "description": "",
+  "adversarial": true,
+  "room": {
+    "type": "office",
+    "display_name": "Home Office",
+    "width": 4.0,
+    "depth": 3.5,
+    "height": 2.7,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.8912082953951923,
+      0.9121779023456674,
+      0.94363231277138
+    ],
+    "ceiling_color_rgb": [
+      0.9296981773957861,
+      0.9296981773957861,
+      0.9394844739999523
+    ],
+    "floor_color_rgb": [
+      0.55,
+      0.48,
+      0.38
+    ],
+    "floor_roughness": 0.45,
+    "window_wall": "north",
+    "window_pos_x": 0.0,
+    "window_pos_z": 1.4,
+    "window_width": 1.0,
+    "window_height": 0.9,
+    "window_emissive": [
+      6.5,
+      6.2,
+      5.5
+    ]
+  },
+  "table": {
+    "width": 1.2,
+    "depth": 0.8,
+    "height": 0.77,
+    "thickness": 0.04,
+    "leg_size": 0.06,
+    "pos_x": 0.107,
+    "pos_y": 0.262,
+    "color_rgb": [
+      0.32495186794873,
+      0.20425545985348745,
+      0.0928433908424943
+    ],
+    "roughness": 0.55,
+    "friction": 0.6
+  },
+  "object": {
+    "name": "foam_anvil",
+    "display_name": "Foam Toy Anvil (looks heavy)",
+    "category": "adversarial",
+    "morph": "box",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.08,
+      0.06,
+      0.07
+    ],
+    "density": 40.0,
+    "friction": 0.5,
+    "restitution": 0.6,
+    "color_rgb": [
+      0.18,
+      0.18,
+      0.2
+    ],
+    "roughness": 0.85,
+    "ior": 1.0,
+    "catch_safe": true,
+    "safety_label": "safe",
+    "mass_hint": "light",
+    "description": "Looks exactly like a heavy iron anvil but is actually soft foam — safe to catch"
+  },
+  "drop": {
+    "start_x": 0.6729,
+    "start_y": 0.1426,
+    "euler_z": 24.6,
+    "vel_x": 0.688,
+    "vel_y": 0.0,
+    "vel_z": 0.0
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -0.443,
+        -1.663,
+        1.488
+      ],
+      "lookat": [
+        0.455,
+        0.247,
+        0.552
+      ],
+      "fov": 50.93631906780053
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        1.373,
+        -0.839,
+        1.06
+      ],
+      "lookat": [
+        0.717,
+        0.339,
+        0.504
+      ],
+      "fov": 52.37150222620784
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        0.672,
+        0.368,
+        2.066
+      ],
+      "lookat": [
+        0.701,
+        0.324,
+        0.759
+      ],
+      "fov": 55.50228388983373
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.3840091835700071,
+      0.3840091835700071,
+      0.4042201932315864
+    ],
+    "background_color": [
+      0.16,
+      0.16,
+      0.18
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "color": [
+          0.95,
+          0.97,
+          1.0
+        ],
+        "intensity": 12.8
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          -0.3,
+          -0.5,
+          -0.8
+        ],
+        "color": [
+          0.8,
+          0.85,
+          1.0
+        ],
+        "intensity": 3.2
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "EXECUTE_CATCH",
+  "safety_label": "safe",
+  "interception_point_2d": null,
+  "interception_point_3d": [
+    0.7073,
+    0.1426,
+    0.8275
+  ],
+  "time_to_floor_s": 0.4417
+}

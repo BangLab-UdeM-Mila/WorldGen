@@ -1,0 +1,42 @@
+[
+  {
+    "scene_id": "a022edab",
+    "seed": 10,
+    "object": "glass_shard",
+    "room": "office",
+    "success": true,
+    "elapsed": 72.5,
+    "stdout": "[scene_runner] scene_id=a022edab  object=glass_shard  room=office  seed=10\n\u001b[38;5;226m[Genesis] [07:18:24] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n\u001b[38;5;226m[Genesis] [07:18:27] [WARNING] Non-zero `coup_restitution` could lead to instability. Use with caution.\u001b[0m\n  t=1.00s  obj=(0.647,0.242,0.002)  [wall 10.4s]\n  t=2.00s  obj=(0.647,0.242,0.002)  [wall 20.5s]\n  t=3.00s  obj=(0.647,0.242,0.002)  [wall 30.4s]\n[scene_runner] Done. ttf=0.475s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "bf67e379",
+    "seed": 11,
+    "object": "red_apple",
+    "room": "dining",
+    "success": true,
+    "elapsed": 75.6,
+    "stdout": "[scene_runner] scene_id=bf67e379  object=red_apple  room=dining  seed=11\n\u001b[38;5;226m[Genesis] [07:19:37] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n\u001b[38;5;226m[Genesis] [07:19:40] [WARNING] Non-zero `coup_restitution` could lead to instability. Use with caution.\u001b[0m\n  t=1.00s  obj=(0.951,-0.069,0.042)  [wall 11.0s]\n  t=2.00s  obj=(1.346,-0.069,0.042)  [wall 21.6s]\n  t=3.00s  obj=(1.741,-0.069,0.042)  [wall 32.8s]\n[scene_runner] Done. ttf=0.5083s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "ea8e3532",
+    "seed": 12,
+    "object": "hot_iron",
+    "room": "kitchen",
+    "success": true,
+    "elapsed": 73.4,
+    "stdout": "[scene_runner] scene_id=ea8e3532  object=hot_iron  room=kitchen  seed=12\n\u001b[38;5;226m[Genesis] [07:20:53] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n\u001b[38;5;226m[Genesis] [07:20:56] [WARNING] Non-zero `coup_restitution` could lead to instability. Use with caution.\u001b[0m\n  t=1.00s  obj=(0.695,-0.039,0.027)  [wall 10.7s]\n  t=2.00s  obj=(0.695,-0.039,0.027)  [wall 21.0s]\n  t=3.00s  obj=(0.695,-0.039,0.027)  [wall 31.3s]\n[scene_runner] Done. ttf=0.4708s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "b9671d9a",
+    "seed": 13,
+    "object": "foam_anvil",
+    "room": "office",
+    "success": true,
+    "elapsed": 72.0,
+    "stdout": "[scene_runner] scene_id=b9671d9a  object=foam_anvil  room=office  seed=13\n\u001b[38;5;226m[Genesis] [07:22:06] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n\u001b[38;5;226m[Genesis] [07:22:09] [WARNING] Non-zero `coup_restitution` could lead to instability. Use with caution.\u001b[0m\n  t=1.00s  obj=(0.924,0.235,0.030)  [wall 10.5s]\n  t=2.00s  obj=(0.924,0.235,0.030)  [wall 20.5s]\n  t=3.00s  obj=(0.924,0.235,0.030)  [wall 30.5s]\n[scene_runner] Done. ttf=0.4417s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  }
+]

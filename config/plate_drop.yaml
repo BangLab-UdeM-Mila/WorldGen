@@ -1,0 +1,118 @@
+# ============================================================
+# Plate-Drop Scene — Indoor Home Environment
+# ReactHuman Benchmark — Scene Generation Module
+# ============================================================
+
+simulation:
+  dt: 0.004167          # 1/240 s  (240 Hz physics)
+  substeps: 4
+  gravity: [0.0, 0.0, -9.81]
+  duration_s: 3.0
+
+# ── Room geometry ─────────────────────────────────────────────
+room:
+  width:   5.0          # x: −2.5 … +2.5 m
+  depth:   4.5          # y: −2.25 … +2.25 m
+  height:  2.80         # ceiling z
+  wall_thickness: 0.12  # thickness of each wall slab
+
+  # Solid colours used on surfaces that lack UV (Box primitives)
+  wall_color_rgb:     [0.92, 0.89, 0.84]   # warm off-white plaster
+  ceiling_color_rgb:  [0.96, 0.95, 0.93]   # slightly lighter ceiling
+  floor_color_rgb:    [0.72, 0.55, 0.33]   # parquet warm oak fallback
+
+  # Window cut-out (visual only, emissive panel on wall):
+  window:
+    wall: "north"           # which wall (north = +y side)
+    pos_x:  0.0             # centre of window on the wall (x or y coord)
+    pos_z:  1.45            # centre height
+    width:  1.20            # window width
+    height: 1.00            # window height
+    emissive: [6.0, 5.8, 5.2]   # daylight colour × intensity
+
+# ── Table ─────────────────────────────────────────────────────
+table:
+  width:      1.20
+  depth:      0.80
+  thickness:  0.04
+  height:     0.77      # z of top surface
+  leg_size:   0.06
+  color_rgb:  [0.35, 0.22, 0.10]   # dark walnut
+  roughness:  0.55
+  friction:   0.6
+
+# ── Floor ─────────────────────────────────────────────────────
+floor:
+  color_rgb:  [0.72, 0.55, 0.33]
+  roughness:  0.55
+  friction:   0.5
+
+# ── Plate ─────────────────────────────────────────────────────
+plate:
+  mesh_path:  "../assets/meshes/plate.obj"
+  density_kg_m3: 2300
+  friction:   0.30
+  restitution: 0.15
+  color_rgb:  [0.97, 0.95, 0.92]   # off-white porcelain
+  roughness:  0.06
+  ior:        1.52
+
+  # Plate starts with CoM past the table edge → gravity tips it off
+  start_x:    0.63
+  start_y:    0.10      # slight y offset for a more natural spill angle
+  init_vel_x: 0.0
+  init_vel_y: 0.0
+
+# ── Cameras ───────────────────────────────────────────────────
+cameras:
+  resolution: [1280, 720]
+  fov_deg:    55
+
+  # Primary: standing observer view — shows full table + room context
+  observer:
+    pos:    [-0.60, -1.80, 1.50]
+    lookat: [ 0.55,  0.00, 0.65]
+
+  # Close-up: beside the table, watch the plate fall
+  closeup:
+    pos:    [ 1.30, -1.10, 1.15]
+    lookat: [ 0.62,  0.00, 0.50]
+
+  # Overhead: top-down to show table edge + fall shadow
+  overhead:
+    pos:    [ 0.55,  0.20, 2.10]
+    lookat: [ 0.60,  0.10, 0.77]
+
+# ── Renderer (Rasterizer, always available) ───────────────────
+renderer:
+  type: Rasterizer
+
+  # Warm indoor ambience
+  ambient_light:    [0.28, 0.25, 0.22]
+  background_color: [0.15, 0.14, 0.13]
+  shadow: true
+
+  lights:
+    # Ceiling pendant lamp above the table (warm tungsten)
+    - type: point
+      pos:   [0.10, 0.00, 2.60]
+      color: [1.00, 0.88, 0.72]
+      intensity: 10.0
+
+    # Soft fill from the window side (cool daylight)
+    - type: directional
+      dir:   [-0.20, -1.00, -0.40]
+      color: [0.80, 0.88, 1.00]
+      intensity: 3.5
+
+    # Subtle bounce from the floor
+    - type: directional
+      dir:   [0.10, 0.30, 1.00]
+      color: [0.90, 0.82, 0.70]
+      intensity: 1.0
+
+# ── Output ────────────────────────────────────────────────────
+output:
+  dir: "outputs"
+  prefix: "indoor_plate_drop"
+  fps: 60

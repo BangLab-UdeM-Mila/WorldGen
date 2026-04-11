@@ -1,0 +1,188 @@
+{
+  "scene_id": "a022edab",
+  "seed": 10,
+  "description": "",
+  "adversarial": false,
+  "room": {
+    "type": "office",
+    "display_name": "Home Office",
+    "width": 4.0,
+    "depth": 3.5,
+    "height": 2.7,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.843668264779423,
+      0.863519282774233,
+      0.893295809766448
+    ],
+    "ceiling_color_rgb": [
+      0.9934079703280697,
+      0.9934079703280697,
+      1.0
+    ],
+    "floor_color_rgb": [
+      0.55,
+      0.48,
+      0.38
+    ],
+    "floor_roughness": 0.45,
+    "window_wall": "north",
+    "window_pos_x": 0.0,
+    "window_pos_z": 1.4,
+    "window_width": 1.0,
+    "window_height": 0.9,
+    "window_emissive": [
+      6.5,
+      6.2,
+      5.5
+    ]
+  },
+  "table": {
+    "width": 1.2,
+    "depth": 0.8,
+    "height": 0.77,
+    "thickness": 0.04,
+    "leg_size": 0.06,
+    "pos_x": -0.088,
+    "pos_y": 0.266,
+    "color_rgb": [
+      0.3131746229236121,
+      0.19685262012341334,
+      0.08947846369246061
+    ],
+    "roughness": 0.55,
+    "friction": 0.6
+  },
+  "object": {
+    "name": "glass_shard",
+    "display_name": "Broken Glass Piece",
+    "category": "dangerous",
+    "morph": "box",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.06,
+      0.04,
+      0.004
+    ],
+    "density": 2500.0,
+    "friction": 0.15,
+    "restitution": 0.2,
+    "color_rgb": [
+      0.85,
+      0.95,
+      0.98
+    ],
+    "roughness": 0.02,
+    "ior": 1.52,
+    "catch_safe": false,
+    "safety_label": "dangerous",
+    "mass_hint": "light",
+    "description": "A sharp glass shard, thin and transparent, extremely dangerous"
+  },
+  "drop": {
+    "start_x": 0.5169,
+    "start_y": 0.3114,
+    "euler_z": 20.5,
+    "vel_x": 0.0,
+    "vel_y": 0.0,
+    "vel_z": 0.0
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -0.636,
+        -1.583,
+        1.515
+      ],
+      "lookat": [
+        0.351,
+        0.318,
+        0.593
+      ],
+      "fov": 51.15995755948982
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        1.206,
+        -0.921,
+        1.165
+      ],
+      "lookat": [
+        0.473,
+        0.323,
+        0.481
+      ],
+      "fov": 54.69830368206322
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        0.469,
+        0.43,
+        2.015
+      ],
+      "lookat": [
+        0.523,
+        0.349,
+        0.777
+      ],
+      "fov": 51.54425070460894
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.4081119627002644,
+      0.4081119627002644,
+      0.4295915396844889
+    ],
+    "background_color": [
+      0.16,
+      0.16,
+      0.18
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "color": [
+          0.95,
+          0.97,
+          1.0
+        ],
+        "intensity": 11.1
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          -0.3,
+          -0.5,
+          -0.8
+        ],
+        "color": [
+          0.8,
+          0.85,
+          1.0
+        ],
+        "intensity": 2.77
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "TRIGGER_DODGE",
+  "safety_label": "dangerous",
+  "interception_point_2d": null,
+  "interception_point_3d": null,
+  "time_to_floor_s": null
+}

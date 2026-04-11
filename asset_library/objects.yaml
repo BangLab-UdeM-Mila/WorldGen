@@ -1,0 +1,196 @@
+# ============================================================
+# Object Asset Library
+# ReactHuman Benchmark
+#
+# Fields
+# ------
+# name            : unique identifier
+# display_name    : human-readable label
+# category        : safe | dangerous | adversarial
+# morph           : mesh | sphere | box | cylinder
+# mesh_path       : relative to repo assets/meshes/ (morph=mesh only)
+# size            : [x,y,z] half-extents in metres (primitives) or
+#                   uniform scale factor (mesh)
+# bottom_z_offset : local-Z of lowest point (mesh only, signed)
+# density         : kg/m³
+# friction        : 0.0–5.0
+# restitution     : 0.0–1.0
+# color_rgb       : [R,G,B] in 0–1
+# roughness       : 0.0–1.0
+# ior             : index of refraction (1.0 = matte)
+# catch_safe      : true → EXECUTE_CATCH, false → TRIGGER_DODGE
+# safety_label    : safe | caution | dangerous
+# mass_hint       : light | medium | heavy  (for Track-1 reasoning)
+# description     : one-line plain-English description
+# ============================================================
+
+# ── Safe objects (EXECUTE_CATCH) ────────────────────────────
+
+- name: ceramic_plate
+  display_name: Ceramic Dinner Plate
+  category: safe
+  morph: mesh
+  mesh_path: plate.obj
+  bottom_z_offset: -0.007    # local Z of bottom rim
+  density: 2300
+  friction: 0.30
+  restitution: 0.15
+  color_rgb: [0.97, 0.95, 0.92]
+  roughness: 0.06
+  ior: 1.52
+  catch_safe: true
+  safety_label: safe
+  mass_hint: light
+  description: "A standard white ceramic dinner plate, fragile but harmless"
+
+- name: red_apple
+  display_name: Red Apple
+  category: safe
+  morph: sphere
+  size: [0.042, 0.042, 0.042]   # radius ~4.2 cm
+  density: 850
+  friction: 0.45
+  restitution: 0.30
+  color_rgb: [0.82, 0.12, 0.08]
+  roughness: 0.35
+  ior: 1.0
+  catch_safe: true
+  safety_label: safe
+  mass_hint: light
+  description: "A ripe red apple, soft and completely safe to catch"
+
+- name: coffee_mug
+  display_name: Ceramic Coffee Mug
+  category: safe
+  morph: cylinder
+  size: [0.040, 0.040, 0.055]   # radius 4cm, half-height 5.5cm
+  density: 1900
+  friction: 0.35
+  restitution: 0.12
+  color_rgb: [0.96, 0.96, 0.96]
+  roughness: 0.08
+  ior: 1.52
+  catch_safe: true
+  safety_label: safe
+  mass_hint: light
+  description: "A white ceramic coffee mug, breakable but safe to handle"
+
+- name: paperback_book
+  display_name: Paperback Book
+  category: safe
+  morph: box
+  size: [0.075, 0.110, 0.015]   # half-extents: ~15×22×3 cm
+  density: 700
+  friction: 0.55
+  restitution: 0.05
+  color_rgb: [0.20, 0.45, 0.72]
+  roughness: 0.80
+  ior: 1.0
+  catch_safe: true
+  safety_label: safe
+  mass_hint: light
+  description: "A lightweight paperback book, perfectly safe to catch"
+
+- name: plastic_bottle
+  display_name: Plastic Water Bottle
+  category: safe
+  morph: cylinder
+  size: [0.035, 0.035, 0.110]   # radius 3.5cm, half-height 11cm
+  density: 250                   # mostly empty
+  friction: 0.30
+  restitution: 0.40
+  color_rgb: [0.70, 0.90, 0.95]
+  roughness: 0.15
+  ior: 1.49
+  catch_safe: true
+  safety_label: safe
+  mass_hint: light
+  description: "A half-empty plastic water bottle, very light and harmless"
+
+# ── Dangerous objects (TRIGGER_DODGE) ───────────────────────
+
+- name: chef_knife
+  display_name: Chef's Knife
+  category: dangerous
+  morph: mesh
+  mesh_path: knife.obj
+  bottom_z_offset: -0.021    # local Z of blade spine
+  density: 7800              # stainless steel
+  friction: 0.20
+  restitution: 0.08
+  color_rgb: [0.82, 0.83, 0.85]
+  roughness: 0.12
+  ior: 1.0
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: medium
+  description: "A sharp chef's knife — blade-first drop, must be dodged"
+
+- name: hot_iron
+  display_name: Clothes Iron
+  category: dangerous
+  morph: box
+  size: [0.065, 0.120, 0.055]  # ~13×24×11 cm
+  density: 1400
+  friction: 0.25
+  restitution: 0.06
+  color_rgb: [0.30, 0.32, 0.38]
+  roughness: 0.20
+  ior: 1.0
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "A heavy clothes iron, hot surface, must not be caught"
+
+- name: glass_shard
+  display_name: Broken Glass Piece
+  category: dangerous
+  morph: box
+  size: [0.060, 0.040, 0.004]  # thin flat shard
+  density: 2500
+  friction: 0.15
+  restitution: 0.20
+  color_rgb: [0.85, 0.95, 0.98]
+  roughness: 0.02
+  ior: 1.52
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: light
+  description: "A sharp glass shard, thin and transparent, extremely dangerous"
+
+# ── Adversarial objects ──────────────────────────────────────
+# Visual appearance contradicts physical properties.
+# Tests whether models rely on visual priors or infer mass
+# from acceleration in the first frames.
+
+- name: foam_anvil
+  display_name: Foam Toy Anvil (looks heavy)
+  category: adversarial
+  morph: box
+  size: [0.080, 0.060, 0.070]
+  density: 40                  # foam: visually looks like cast iron but negligible mass
+  friction: 0.50
+  restitution: 0.60            # bouncy (foam)
+  color_rgb: [0.18, 0.18, 0.20]   # dark iron-grey colour
+  roughness: 0.85
+  ior: 1.0
+  catch_safe: true             # ground truth: safe to catch (it's foam)
+  safety_label: safe
+  mass_hint: light             # despite looking heavy
+  description: "Looks exactly like a heavy iron anvil but is actually soft foam — safe to catch"
+
+- name: steel_apple
+  display_name: Steel Prop Apple (looks edible)
+  category: adversarial
+  morph: sphere
+  size: [0.042, 0.042, 0.042]
+  density: 7800               # steel core disguised as apple
+  friction: 0.20
+  restitution: 0.08
+  color_rgb: [0.82, 0.12, 0.08]   # identical red to real apple
+  roughness: 0.10
+  ior: 1.0
+  catch_safe: false            # ground truth: dangerous (crushes fingers)
+  safety_label: dangerous
+  mass_hint: heavy             # despite looking like a normal apple
+  description: "Painted steel ball the same colour and size as an apple — acceleration betrays the mass"
