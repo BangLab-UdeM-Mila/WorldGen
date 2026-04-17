@@ -1,0 +1,189 @@
+{
+  "scene_id": "bc51dcdc",
+  "seed": 1,
+  "description": "",
+  "adversarial": false,
+  "task_type": "furniture_tip",
+  "room": {
+    "type": "living",
+    "display_name": "Living Room",
+    "width": 6.0,
+    "depth": 5.0,
+    "height": 2.8,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.908837828256199,
+      0.888182423068558,
+      0.8468716126932763
+    ],
+    "ceiling_color_rgb": [
+      0.9413739179550703,
+      0.9314647188187011,
+      0.9116463205459628
+    ],
+    "floor_color_rgb": [
+      0.6,
+      0.48,
+      0.3
+    ],
+    "floor_roughness": 0.5,
+    "window_wall": "north",
+    "window_pos_x": -0.5,
+    "window_pos_z": 1.5,
+    "window_width": 1.6,
+    "window_height": 1.2,
+    "window_emissive": [
+      5.5,
+      5.2,
+      4.8
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "decorative_vase",
+    "display_name": "Tall Decorative Floor Vase",
+    "category": "dangerous",
+    "morph": "cylinder",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.12,
+      0.12,
+      0.38
+    ],
+    "density": 1600.0,
+    "friction": 0.3,
+    "restitution": 0.06,
+    "color_rgb": [
+      0.28,
+      0.44,
+      0.58
+    ],
+    "roughness": 0.1,
+    "ior": 1.5,
+    "catch_safe": false,
+    "safety_label": "dangerous",
+    "mass_hint": "medium",
+    "description": "Tall glazed ceramic floor vase, heavy and shatters on impact"
+  },
+  "drop": null,
+  "tip": {
+    "start_x": 0.27,
+    "start_y": 0.601,
+    "tilt_angle_deg": 29.01,
+    "angular_vel": 0.325,
+    "euler_z": -2.3
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        0.157,
+        -1.598,
+        1.458
+      ],
+      "lookat": [
+        0.25,
+        0.636,
+        0.349
+      ],
+      "fov": 56.534978894806514
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        1.76,
+        -0.022,
+        0.435
+      ],
+      "lookat": [
+        0.241,
+        0.337,
+        0.193
+      ],
+      "fov": 52.85190974431635
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        0.328,
+        0.465,
+        0.872
+      ],
+      "lookat": [
+        0.273,
+        0.194,
+        0.0
+      ],
+      "fov": 56.60652008775127
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.30096411513287274,
+      0.2708677036195855,
+      0.2407712921062982
+    ],
+    "background_color": [
+      0.12,
+      0.11,
+      0.1
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          -0.8,
+          1.2,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.9,
+          0.78
+        ],
+        "intensity": 7.99
+      },
+      {
+        "type": "point",
+        "pos": [
+          1.2,
+          -1.0,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          0.95,
+          0.85,
+          0.72
+        ],
+        "intensity": 6.85
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.3,
+          0.6,
+          -1.0
+        ],
+        "color": [
+          0.75,
+          0.82,
+          1.0
+        ],
+        "intensity": 2.85
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "TRIGGER_DODGE",
+  "safety_label": "dangerous",
+  "interception_point_2d": null,
+  "interception_point_3d": null,
+  "time_to_floor_s": null
+}

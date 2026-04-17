@@ -1,0 +1,12 @@
+[
+  {
+    "scene_id": "d0f3baf4",
+    "seed": 0,
+    "object": "foam_anvil",
+    "room": "living",
+    "success": true,
+    "elapsed": 88.0,
+    "stdout": "[scene_runner] scene_id=d0f3baf4  object=foam_anvil  room=living  seed=0\n\u001b[38;5;226m[Genesis] [00:05:14] [WARNING] Non-zero `coup_restitution` could lead to instability. Use with caution.\u001b[0m\n  t=1.00s  obj=(-0.526,-0.128,0.037)  [wall 16.0s]\n  t=2.00s  obj=(-0.518,-0.125,0.014)  [wall 31.7s]\n  t=3.00s  obj=(-0.518,-0.125,0.014)  [wall 47.7s]\n[scene_runner] Done. ttf=0.9833s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  }
+]

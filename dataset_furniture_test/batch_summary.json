@@ -1,0 +1,22 @@
+[
+  {
+    "scene_id": "ec91e8c0",
+    "seed": 0,
+    "object": "foam_bookshelf",
+    "room": "living",
+    "success": true,
+    "elapsed": 71.4,
+    "stdout": "[scene_runner] scene_id=ec91e8c0  object=foam_bookshelf  room=living  seed=0\n\u001b[38;5;226m[Genesis] [10:27:37] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n\u001b[38;5;226m[Genesis] [10:27:40] [WARNING] Non-zero `coup_restitution` could lead to instability. Use with caution.\u001b[0m\n  t=1.00s  obj=(-0.059,0.173,0.075)  [wall 10.5s]\n  t=2.00s  obj=(-0.059,0.173,0.075)  [wall 20.6s]\n  t=3.00s  obj=(-0.059,0.173,0.075)  [wall 30.6s]\n[scene_runner] Done. ttf=0.6125s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "bc51dcdc",
+    "seed": 1,
+    "object": "decorative_vase",
+    "room": "living",
+    "success": true,
+    "elapsed": 76.2,
+    "stdout": "[scene_runner] scene_id=bc51dcdc  object=decorative_vase  room=living  seed=1\n\u001b[38;5;226m[Genesis] [10:28:48] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n\u001b[38;5;226m[Genesis] [10:28:51] [WARNING] Non-zero `coup_restitution` could lead to instability. Use with caution.\u001b[0m\n  t=1.00s  obj=(0.261,0.290,0.120)  [wall 11.8s]\n  t=2.00s  obj=(0.270,0.290,0.119)  [wall 23.0s]\n  t=3.00s  obj=(0.269,0.290,0.119)  [wall 34.3s]\n[scene_runner] Done. ttf=0.5417s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  }
+]

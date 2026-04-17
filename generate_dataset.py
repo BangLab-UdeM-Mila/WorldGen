@@ -50,6 +50,9 @@ def parse_args() -> argparse.Namespace:
     )
     p.add_argument("--mode", choices=["procedural", "llm"], default="procedural",
                    help="Generation mode.")
+    p.add_argument("--task-type", choices=["object_drop", "furniture_tip", "hanging_fall", "stack_collapse", "sliding_object"],
+                   default="object_drop",
+                   help="Physics task type to generate.")
 
     # Procedural mode
     p.add_argument("--n",           type=int,   default=10,
@@ -76,6 +79,9 @@ def parse_args() -> argparse.Namespace:
                    help="Parallel worker processes.")
     p.add_argument("--dry-run",  action="store_true",
                    help="Print SceneSpecs without running simulation.")
+    p.add_argument("--validate-only", action="store_true",
+                   help="Run geometry validation on all specs and exit. "
+                        "No simulation is started. Use after adding a new task type or object.")
 
     return p.parse_args()
 
@@ -97,6 +103,7 @@ def build_specs_procedural(args: argparse.Namespace) -> list[SceneSpec]:
         categories = None
 
     rand = Randomizer(
+        task_type=args.task_type,
         object_categories=categories,
         room_types=room_filter,
         adversarial_prob=args.adversarial_prob,
@@ -159,6 +166,7 @@ def main() -> None:
     print("  ReactHuman — Dataset Generator")
     print("=" * 62)
     print(f"  Mode       : {args.mode}")
+    print(f"  Task type  : {args.task_type}")
     print(f"  Output     : {args.output}")
     print(f"  Workers    : {args.workers}")
     print()
@@ -170,6 +178,24 @@ def main() -> None:
         specs = build_specs_llm(args)
 
     print(f"[generate] {len(specs)} SceneSpecs ready.")
+
+    # ── Validate-only: geometry checks, no simulation ─────────
+    if args.validate_only:
+        print("\n[validate] Running geometry checks …\n")
+        n_warn = 0
+        for s in specs:
+            warnings = s.validate_geometry()
+            if warnings:
+                n_warn += 1
+                print(f"  WARN  seed={s.seed:<6}  obj={s.object.name:<20}")
+                for w in warnings:
+                    print(f"          {w}")
+        if n_warn:
+            print(f"\n[validate] {n_warn}/{len(specs)} specs have geometry issues.")
+            sys.exit(1)
+        else:
+            print(f"[validate] All {len(specs)} specs passed geometry checks.")
+        return
 
     # ── Dry-run: just print summaries ─────────────────────────
     if args.dry_run:

@@ -1,0 +1,179 @@
+{
+  "scene_id": "600da004",
+  "seed": 0,
+  "description": "",
+  "adversarial": false,
+  "task_type": "hanging_fall",
+  "room": {
+    "type": "office",
+    "display_name": "Home Office",
+    "width": 4.0,
+    "depth": 3.5,
+    "height": 2.7,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.8590640409402104,
+      0.8792773124917448,
+      0.9095972198190463
+    ],
+    "ceiling_color_rgb": [
+      0.9718021732934798,
+      0.9718021732934798,
+      0.9820316698544639
+    ],
+    "floor_color_rgb": [
+      0.55,
+      0.48,
+      0.38
+    ],
+    "floor_roughness": 0.45,
+    "window_wall": "north",
+    "window_pos_x": 0.0,
+    "window_pos_z": 1.4,
+    "window_width": 1.0,
+    "window_height": 0.9,
+    "window_emissive": [
+      6.5,
+      6.2,
+      5.5
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "picture_frame",
+    "display_name": "Framed Picture",
+    "category": "safe",
+    "morph": "box",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.3,
+      0.015,
+      0.22
+    ],
+    "phys_half_x": 0.0,
+    "phys_half_z": 0.0,
+    "density": 800.0,
+    "friction": 0.4,
+    "restitution": 0.1,
+    "color_rgb": [
+      0.55,
+      0.42,
+      0.28
+    ],
+    "roughness": 0.6,
+    "ior": 1.0,
+    "catch_safe": true,
+    "safety_label": "safe",
+    "mass_hint": "light",
+    "description": "A framed picture hanging on the wall — light and safe to catch"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": {
+    "attachment": "wall_north",
+    "pos_x": -0.46,
+    "pos_y": 0.0,
+    "attach_z": 1.425,
+    "tilt_deg": 3.08,
+    "angular_vel": 0.444,
+    "euler_z": 16.5
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -0.356,
+        -1.025,
+        1.051
+      ],
+      "lookat": [
+        -0.389,
+        0.869,
+        0.82
+      ],
+      "fov": 56.75655620602559
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        0.549,
+        -0.028,
+        1.1
+      ],
+      "lookat": [
+        -0.475,
+        0.868,
+        0.51
+      ],
+      "fov": 51.7062441469363
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        -0.442,
+        0.548,
+        2.357
+      ],
+      "lookat": [
+        -0.361,
+        0.971,
+        0.0
+      ],
+      "fov": 61.855419844806946
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.39432195152339145,
+      0.39432195152339145,
+      0.41507573844567525
+    ],
+    "background_color": [
+      0.16,
+      0.16,
+      0.18
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "color": [
+          0.95,
+          0.97,
+          1.0
+        ],
+        "intensity": 12.54
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          -0.3,
+          -0.5,
+          -0.8
+        ],
+        "color": [
+          0.8,
+          0.85,
+          1.0
+        ],
+        "intensity": 3.14
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "EXECUTE_CATCH",
+  "safety_label": "safe",
+  "interception_point_2d": null,
+  "interception_point_3d": null,
+  "time_to_floor_s": null
+}

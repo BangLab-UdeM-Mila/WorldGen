@@ -1,0 +1,193 @@
+{
+  "scene_id": "8d551e5d",
+  "seed": 0,
+  "description": "",
+  "adversarial": true,
+  "task_type": "sliding_object",
+  "room": {
+    "type": "living",
+    "display_name": "Living Room",
+    "width": 6.0,
+    "depth": 5.0,
+    "height": 2.8,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.900195697366592,
+      0.8797367042446239,
+      0.8388187180006879
+    ],
+    "ceiling_color_rgb": [
+      0.9541443741892152,
+      0.9441007491977497,
+      0.9240134992148189
+    ],
+    "floor_color_rgb": [
+      0.6,
+      0.48,
+      0.3
+    ],
+    "floor_roughness": 0.5,
+    "window_wall": "north",
+    "window_pos_x": -0.5,
+    "window_pos_z": 1.5,
+    "window_width": 1.6,
+    "window_height": 1.2,
+    "window_emissive": [
+      5.5,
+      5.2,
+      4.8
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "foam_anvil",
+    "display_name": "Foam Prop Hammer (looks heavy)",
+    "category": "adversarial",
+    "morph": "mesh",
+    "mesh_path": "foam_anvil.obj",
+    "bottom_z_offset": 0.0,
+    "size": [
+      1.0
+    ],
+    "phys_half_x": 0.08,
+    "phys_half_z": 0.034,
+    "density": 40.0,
+    "friction": 0.5,
+    "restitution": 0.6,
+    "color_rgb": [
+      0.18,
+      0.18,
+      0.2
+    ],
+    "roughness": 0.85,
+    "ior": 1.0,
+    "catch_safe": true,
+    "safety_label": "safe",
+    "mass_hint": "light",
+    "description": "Looks like a heavy steel hammer but is actually soft foam — safe to catch"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": {
+    "pos_x": -0.553,
+    "pos_y": -0.18,
+    "length": 0.707,
+    "width": 0.394,
+    "angle_deg": 33.69,
+    "euler_z": 2.6
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -0.722,
+        -1.685,
+        0.981
+      ],
+      "lookat": [
+        -0.496,
+        -0.019,
+        0.209
+      ],
+      "fov": 53.75655620602559
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        0.534,
+        -0.535,
+        0.268
+      ],
+      "lookat": [
+        -0.565,
+        -0.001,
+        0.136
+      ],
+      "fov": 52.7062441469363
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        -0.538,
+        0.178,
+        1.74
+      ],
+      "lookat": [
+        -0.523,
+        0.103,
+        0.161
+      ],
+      "fov": 61.504592762678165
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.2933352854387462,
+      0.26400175689487165,
+      0.234668228350997
+    ],
+    "background_color": [
+      0.12,
+      0.11,
+      0.1
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          -0.8,
+          1.2,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.9,
+          0.78
+        ],
+        "intensity": 7.4
+      },
+      {
+        "type": "point",
+        "pos": [
+          1.2,
+          -1.0,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          0.95,
+          0.85,
+          0.72
+        ],
+        "intensity": 6.34
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.3,
+          0.6,
+          -1.0
+        ],
+        "color": [
+          0.75,
+          0.82,
+          1.0
+        ],
+        "intensity": 2.64
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "EXECUTE_CATCH",
+  "safety_label": "safe",
+  "interception_point_2d": null,
+  "interception_point_3d": null,
+  "time_to_floor_s": null
+}

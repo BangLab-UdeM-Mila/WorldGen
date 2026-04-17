@@ -42,9 +42,22 @@ def _run_one(
     Worker function: write spec → invoke scene_runner.py → return result.
     Runs in a subprocess to isolate Genesis GPU state.
     """
+    from .scene_spec import SceneSpec
+
     spec_p = Path(spec_path)
     spec_p.parent.mkdir(parents=True, exist_ok=True)
     spec_p.write_text(spec_json)
+
+    # Fast geometry check before spending 2+ minutes on simulation
+    spec_obj = SceneSpec.from_json(spec_json)
+    geo_warnings = spec_obj.validate_geometry()
+    if geo_warnings:
+        return {
+            "success": False,
+            "elapsed": 0.0,
+            "stdout": "",
+            "stderr": "GEOMETRY: " + "; ".join(geo_warnings),
+        }
 
     env = {
         **os.environ,

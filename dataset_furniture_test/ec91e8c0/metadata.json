@@ -1,0 +1,193 @@
+{
+  "scene_id": "ec91e8c0",
+  "seed": 0,
+  "description": "",
+  "adversarial": true,
+  "task_type": "furniture_tip",
+  "room": {
+    "type": "living",
+    "display_name": "Living Room",
+    "width": 6.0,
+    "depth": 5.0,
+    "height": 2.8,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.8893839482675119,
+      0.8691706767159776,
+      0.8287441336129088
+    ],
+    "ceiling_color_rgb": [
+      0.9718021732934798,
+      0.9615726767324959,
+      0.9411136836105279
+    ],
+    "floor_color_rgb": [
+      0.6,
+      0.48,
+      0.3
+    ],
+    "floor_roughness": 0.5,
+    "window_wall": "north",
+    "window_pos_x": -0.5,
+    "window_pos_z": 1.5,
+    "window_width": 1.6,
+    "window_height": 1.2,
+    "window_emissive": [
+      5.5,
+      5.2,
+      4.8
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "foam_bookshelf",
+    "display_name": "Foam Prop Bookshelf (looks heavy)",
+    "category": "adversarial",
+    "morph": "box",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.2,
+      0.15,
+      0.9
+    ],
+    "density": 35.0,
+    "friction": 0.6,
+    "restitution": 0.55,
+    "color_rgb": [
+      0.45,
+      0.3,
+      0.15
+    ],
+    "roughness": 0.75,
+    "ior": 1.0,
+    "catch_safe": false,
+    "safety_label": "safe",
+    "mass_hint": "light",
+    "description": "Stage-prop bookshelf made of foam — falls slowly, safe to step aside"
+  },
+  "drop": null,
+  "tip": {
+    "start_x": -0.138,
+    "start_y": 0.529,
+    "tilt_angle_deg": 14.69,
+    "angular_vel": 0.525,
+    "euler_z": 12.4
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -0.034,
+        -1.648,
+        1.351
+      ],
+      "lookat": [
+        -0.095,
+        0.473,
+        0.937
+      ],
+      "fov": 53.75655620602559
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        1.571,
+        -0.061,
+        1.13
+      ],
+      "lookat": [
+        -0.147,
+        -0.266,
+        0.48
+      ],
+      "fov": 54.7062441469363
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        -0.12,
+        0.012,
+        1.961
+      ],
+      "lookat": [
+        -0.098,
+        -0.313,
+        0.0
+      ],
+      "fov": 61.855419844806946
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.3113068038342564,
+      0.2801761234508308,
+      0.24904544306740511
+    ],
+    "background_color": [
+      0.12,
+      0.11,
+      0.1
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          -0.8,
+          1.2,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.9,
+          0.78
+        ],
+        "intensity": 7.32
+      },
+      {
+        "type": "point",
+        "pos": [
+          1.2,
+          -1.0,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          0.95,
+          0.85,
+          0.72
+        ],
+        "intensity": 6.27
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.3,
+          0.6,
+          -1.0
+        ],
+        "color": [
+          0.75,
+          0.82,
+          1.0
+        ],
+        "intensity": 2.61
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "TRIGGER_DODGE",
+  "safety_label": "safe",
+  "interception_point_2d": null,
+  "interception_point_3d": [
+    -0.0794,
+    0.2628,
+    0.2464
+  ],
+  "time_to_floor_s": 0.6125
+}

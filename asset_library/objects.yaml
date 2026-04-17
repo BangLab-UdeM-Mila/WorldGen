@@ -31,7 +31,10 @@
   category: safe
   morph: mesh
   mesh_path: plate.obj
-  bottom_z_offset: -0.007    # local Z of bottom rim
+  size: [1.0]                    # uniform scale (mesh pre-normalised to ~26 cm diameter)
+  bottom_z_offset: -0.007        # local Z of bottom rim
+  phys_half_x: 0.130             # plate radius
+  phys_half_z: 0.035             # half of rim height (~7 cm total)
   density: 2300
   friction: 0.30
   restitution: 0.15
@@ -46,8 +49,12 @@
 - name: red_apple
   display_name: Red Apple
   category: safe
-  morph: sphere
-  size: [0.042, 0.042, 0.042]   # radius ~4.2 cm
+  morph: mesh
+  mesh_path: red_apple.obj
+  size: [1.0]                    # uniform scale (mesh pre-normalised to ~8.5 cm)
+  bottom_z_offset: 0.0           # mesh bottom is at local z=0
+  phys_half_x: 0.037             # actual physical half-extent X (metres)
+  phys_half_z: 0.037             # actual physical half-extent Z (metres)
   density: 850
   friction: 0.45
   restitution: 0.30
@@ -62,8 +69,12 @@
 - name: coffee_mug
   display_name: Ceramic Coffee Mug
   category: safe
-  morph: cylinder
-  size: [0.040, 0.040, 0.055]   # radius 4cm, half-height 5.5cm
+  morph: mesh
+  mesh_path: coffee_mug.obj
+  size: [1.0]                    # uniform scale (mesh pre-normalised to ~11 cm tall)
+  bottom_z_offset: 0.0           # mesh bottom is at local z=0
+  phys_half_x: 0.055
+  phys_half_z: 0.043
   density: 1900
   friction: 0.35
   restitution: 0.12
@@ -94,8 +105,12 @@
 - name: plastic_bottle
   display_name: Plastic Water Bottle
   category: safe
-  morph: cylinder
-  size: [0.035, 0.035, 0.110]   # radius 3.5cm, half-height 11cm
+  morph: mesh
+  mesh_path: plastic_bottle.obj
+  size: [1.0]                    # uniform scale (mesh pre-normalised to ~22 cm tall)
+  bottom_z_offset: 0.0           # mesh bottom is at local z=0
+  phys_half_x: 0.037
+  phys_half_z: 0.037
   density: 250                   # mostly empty
   friction: 0.30
   restitution: 0.40
@@ -114,7 +129,10 @@
   category: dangerous
   morph: mesh
   mesh_path: knife.obj
-  bottom_z_offset: -0.021    # local Z of blade spine
+  size: [1.0]                    # uniform scale (mesh pre-normalised to 32 cm)
+  bottom_z_offset: 0.0           # mesh bottom is at local z=0 (knife lies flat)
+  phys_half_x: 0.117             # half-length in x
+  phys_half_z: 0.119             # half-height when lying flat
   density: 7800              # stainless steel
   friction: 0.20
   restitution: 0.08
@@ -129,8 +147,12 @@
 - name: hot_iron
   display_name: Clothes Iron
   category: dangerous
-  morph: box
-  size: [0.065, 0.120, 0.055]  # ~13×24×11 cm
+  morph: mesh
+  mesh_path: hot_iron.obj
+  size: [1.0]                    # uniform scale (mesh pre-normalised to ~24 cm longest)
+  bottom_z_offset: 0.0           # mesh bottom is at local z=0
+  phys_half_x: 0.120
+  phys_half_z: 0.120
   density: 1400
   friction: 0.25
   restitution: 0.06
@@ -164,11 +186,15 @@
 # from acceleration in the first frames.
 
 - name: foam_anvil
-  display_name: Foam Toy Anvil (looks heavy)
+  display_name: Foam Prop Hammer (looks heavy)
   category: adversarial
-  morph: box
-  size: [0.080, 0.060, 0.070]
-  density: 40                  # foam: visually looks like cast iron but negligible mass
+  morph: mesh
+  mesh_path: foam_anvil.obj
+  size: [1.0]                    # uniform scale (mesh pre-normalised to ~16 cm longest)
+  bottom_z_offset: 0.0           # mesh bottom is at local z=0
+  phys_half_x: 0.080
+  phys_half_z: 0.034
+  density: 40                  # foam: visually looks like a heavy tool but negligible mass
   friction: 0.50
   restitution: 0.60            # bouncy (foam)
   color_rgb: [0.18, 0.18, 0.20]   # dark iron-grey colour
@@ -177,13 +203,17 @@
   catch_safe: true             # ground truth: safe to catch (it's foam)
   safety_label: safe
   mass_hint: light             # despite looking heavy
-  description: "Looks exactly like a heavy iron anvil but is actually soft foam — safe to catch"
+  description: "Looks like a heavy steel hammer but is actually soft foam — safe to catch"
 
 - name: steel_apple
   display_name: Steel Prop Apple (looks edible)
   category: adversarial
-  morph: sphere
-  size: [0.042, 0.042, 0.042]
+  morph: mesh
+  mesh_path: red_apple.obj     # identical mesh to red_apple — only mass betrays it
+  size: [1.0]
+  bottom_z_offset: 0.0
+  phys_half_x: 0.037
+  phys_half_z: 0.037
   density: 7800               # steel core disguised as apple
   friction: 0.20
   restitution: 0.08
@@ -193,4 +223,352 @@
   catch_safe: false            # ground truth: dangerous (crushes fingers)
   safety_label: dangerous
   mass_hint: heavy             # despite looking like a normal apple
-  description: "Painted steel ball the same colour and size as an apple — acceleration betrays the mass"
+  description: "Painted steel prop the same shape and colour as a real apple — acceleration betrays the mass"
+
+# ============================================================
+# Stack objects  (task_type: stack_collapse)
+# The same object is repeated n_items times to form the stack.
+# size = [x, y, z] half-extents in metres.
+# ============================================================
+
+# ── Safe stacks (TRIGGER_DODGE — items scatter, no catching reflex) ──
+
+- name: hardcover_book
+  display_name: Hardcover Book
+  category: safe
+  task_type: stack_collapse
+  morph: box
+  size: [0.095, 0.125, 0.018]   # half-extents: 19 × 25 × 3.6 cm
+  density: 750
+  friction: 0.55
+  restitution: 0.05
+  color_rgb: [0.72, 0.24, 0.10]
+  roughness: 0.85
+  ior: 1.0
+  catch_safe: true
+  safety_label: safe
+  mass_hint: light
+  description: "A stiff hardcover book — light, safe, but a stacked tower tips easily"
+
+- name: tin_can
+  display_name: Tin Food Can
+  category: safe
+  task_type: stack_collapse
+  morph: cylinder
+  size: [0.040, 0.040, 0.055]   # radius 4 cm, half-height 5.5 cm → 11 cm tall
+  density: 900
+  friction: 0.40
+  restitution: 0.20
+  color_rgb: [0.80, 0.82, 0.84]
+  roughness: 0.35
+  ior: 1.0
+  catch_safe: true
+  safety_label: safe
+  mass_hint: light
+  description: "A metal food can — light, cylindrical, bounces and scatters when the stack falls"
+
+- name: wooden_crate
+  display_name: Small Wooden Crate
+  category: safe
+  task_type: stack_collapse
+  morph: box
+  size: [0.120, 0.100, 0.100]   # half-extents: 24 × 20 × 20 cm
+  density: 450
+  friction: 0.65
+  restitution: 0.10
+  color_rgb: [0.62, 0.47, 0.27]
+  roughness: 0.88
+  ior: 1.0
+  catch_safe: false
+  safety_label: caution
+  mass_hint: medium
+  description: "A small wooden crate — bulky enough to bruise, dodge to the side"
+
+# ── Adversarial stack ─────────────────────────────────────────
+
+- name: steel_can
+  display_name: Steel Weight Can (looks light)
+  category: adversarial
+  task_type: stack_collapse
+  morph: cylinder
+  size: [0.040, 0.040, 0.055]   # identical shape to tin_can
+  density: 7800                  # solid steel — visually identical to tin_can but 8× heavier
+  friction: 0.40
+  restitution: 0.08
+  color_rgb: [0.80, 0.82, 0.84]  # same colour as tin_can
+  roughness: 0.35
+  ior: 1.0
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "Solid steel cylinders painted to look like tin cans — the fast fall betrays the mass"
+
+# ============================================================
+# Hanging objects  (task_type: hanging_fall)
+# size = half-extents in metres [x, y, z]
+# attachment: wall_north | ceiling
+#   wall_north  → object hangs on the north wall, falls toward observer (-Y)
+#   ceiling     → object hangs from ceiling hook, falls straight down
+# ============================================================
+
+# ── Wall-mounted objects ─────────────────────────────────────
+
+- name: picture_frame
+  display_name: Framed Picture
+  category: safe
+  task_type: hanging_fall
+  attachment: wall_north
+  morph: box
+  size: [0.30, 0.015, 0.22]   # half-extents: 60×3×44 cm (wide, thin, tall)
+  density: 800
+  friction: 0.40
+  restitution: 0.10
+  color_rgb: [0.55, 0.42, 0.28]
+  roughness: 0.60
+  ior: 1.0
+  catch_safe: true
+  safety_label: safe
+  mass_hint: light
+  description: "A framed picture hanging on the wall — light and safe to catch"
+
+- name: wall_clock
+  display_name: Wall Clock
+  category: safe
+  task_type: hanging_fall
+  attachment: wall_north
+  morph: box
+  size: [0.18, 0.015, 0.18]   # half-extents: ~36×3×36 cm (approx disc shape)
+  density: 900
+  friction: 0.30
+  restitution: 0.15
+  color_rgb: [0.20, 0.20, 0.22]
+  roughness: 0.45
+  ior: 1.0
+  catch_safe: true
+  safety_label: safe
+  mass_hint: light
+  description: "A round wall clock — light but fragile if dropped"
+
+- name: wall_mirror
+  display_name: Wall Mirror
+  category: dangerous
+  task_type: hanging_fall
+  attachment: wall_north
+  morph: box
+  size: [0.25, 0.02, 0.40]    # half-extents: 50×4×80 cm — heavy glass slab
+  density: 2500
+  friction: 0.15
+  restitution: 0.05
+  color_rgb: [0.85, 0.92, 0.95]
+  roughness: 0.02
+  ior: 1.52
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "Heavy wall mirror — glass shards on impact, must be dodged"
+
+# ── Ceiling-mounted objects ───────────────────────────────────
+
+- name: hanging_plant
+  display_name: Hanging Plant Pot
+  category: safe
+  task_type: hanging_fall
+  attachment: ceiling
+  morph: sphere
+  size: [0.12, 0.12, 0.12]    # radius 12 cm (pot + soil + plant)
+  density: 1200
+  friction: 0.50
+  restitution: 0.05
+  color_rgb: [0.38, 0.62, 0.25]
+  roughness: 0.80
+  ior: 1.0
+  catch_safe: true
+  safety_label: caution
+  mass_hint: medium
+  description: "A hanging plant pot — ceramic + soil, falls from ceiling hook"
+
+- name: pendant_lamp
+  display_name: Pendant Lamp
+  category: dangerous
+  task_type: hanging_fall
+  attachment: ceiling
+  morph: cylinder
+  size: [0.15, 0.15, 0.12]    # radius 15 cm, half-height 12 cm
+  density: 1600
+  friction: 0.20
+  restitution: 0.08
+  color_rgb: [0.90, 0.85, 0.75]
+  roughness: 0.12
+  ior: 1.50
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: medium
+  description: "A glass pendant lamp — shatters on impact, hot bulb"
+
+- name: chandelier
+  display_name: Crystal Chandelier
+  category: dangerous
+  task_type: hanging_fall
+  attachment: ceiling
+  morph: box
+  size: [0.30, 0.30, 0.20]    # half-extents: 60×60×40 cm crystal + metal frame
+  density: 1800
+  friction: 0.25
+  restitution: 0.05
+  color_rgb: [0.92, 0.96, 0.98]
+  roughness: 0.05
+  ior: 1.55
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "Heavy crystal chandelier — falls from ceiling, devastating impact"
+
+# ── Adversarial hanging ───────────────────────────────────────
+
+- name: foam_mirror
+  display_name: Foam Prop Mirror (looks heavy)
+  category: adversarial
+  task_type: hanging_fall
+  attachment: wall_north
+  morph: box
+  size: [0.25, 0.02, 0.40]    # identical shape to wall_mirror
+  density: 35                  # foam stage prop
+  friction: 0.40
+  restitution: 0.55
+  color_rgb: [0.85, 0.92, 0.95]   # identical colour to wall_mirror
+  roughness: 0.02
+  ior: 1.0
+  catch_safe: true             # looks like glass but is foam — safe to catch
+  safety_label: safe
+  mass_hint: light
+  description: "Stage-prop mirror made of foam — falls slowly, safe to catch despite appearance"
+
+# ============================================================
+# Furniture objects  (task_type: furniture_tip)
+# size = half-extents in metres [x, y, z]
+# The furniture always tips in the -y direction (toward observer).
+# ============================================================
+
+# ── Regular furniture ────────────────────────────────────────
+
+- name: wooden_bookshelf
+  display_name: Wooden Bookshelf
+  category: dangerous
+  task_type: furniture_tip
+  morph: box
+  size: [0.20, 0.15, 0.90]   # half-extents → full 40×30×180 cm
+  density: 550                 # wood + books
+  friction: 0.60
+  restitution: 0.10
+  color_rgb: [0.45, 0.30, 0.15]
+  roughness: 0.75
+  ior: 1.0
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "Heavy wooden bookshelf packed with books — brace, no time to flee"
+
+- name: metal_filing_cabinet
+  display_name: Metal Filing Cabinet
+  category: dangerous
+  task_type: furniture_tip
+  morph: box
+  size: [0.20, 0.23, 0.60]   # half-extents → full 40×46×120 cm
+  density: 800
+  friction: 0.50
+  restitution: 0.08
+  color_rgb: [0.62, 0.63, 0.65]
+  roughness: 0.25
+  ior: 1.0
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "Heavy steel filing cabinet full of documents"
+
+- name: floor_lamp
+  display_name: Floor Lamp
+  category: dangerous
+  task_type: furniture_tip
+  morph: cylinder
+  size: [0.04, 0.04, 0.72]   # half-extents → radius 4 cm, full height 144 cm
+  density: 280
+  friction: 0.35
+  restitution: 0.15
+  color_rgb: [0.82, 0.80, 0.75]
+  roughness: 0.45
+  ior: 1.0
+  catch_safe: false
+  safety_label: caution
+  mass_hint: light
+  description: "Tall floor lamp — light enough to dodge sideways"
+
+- name: decorative_vase
+  display_name: Tall Decorative Floor Vase
+  category: dangerous
+  task_type: furniture_tip
+  morph: cylinder
+  size: [0.12, 0.12, 0.38]   # half-extents → radius 12 cm, full height 76 cm
+  density: 1600
+  friction: 0.30
+  restitution: 0.06
+  color_rgb: [0.28, 0.44, 0.58]
+  roughness: 0.10
+  ior: 1.50
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: medium
+  description: "Tall glazed ceramic floor vase, heavy and shatters on impact"
+
+- name: wooden_ladder
+  display_name: Wooden Step Ladder
+  category: dangerous
+  task_type: furniture_tip
+  morph: box
+  size: [0.18, 0.06, 0.85]   # half-extents → full 36×12×170 cm
+  density: 480
+  friction: 0.65
+  restitution: 0.12
+  color_rgb: [0.55, 0.42, 0.24]
+  roughness: 0.82
+  ior: 1.0
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: medium
+  description: "Wooden step ladder leaning and tipping — dodge to the side"
+
+# ── Adversarial furniture ─────────────────────────────────────
+# Visual appearance contradicts mass — acceleration in first frames reveals the truth.
+
+- name: foam_bookshelf
+  display_name: Foam Prop Bookshelf (looks heavy)
+  category: adversarial
+  task_type: furniture_tip
+  morph: box
+  size: [0.20, 0.15, 0.90]   # identical shape to wooden_bookshelf
+  density: 35                  # foam stage prop
+  friction: 0.60
+  restitution: 0.55
+  color_rgb: [0.45, 0.30, 0.15]   # identical colour to wooden_bookshelf
+  roughness: 0.75
+  ior: 1.0
+  catch_safe: false
+  safety_label: safe
+  mass_hint: light             # falls slowly — TRIGGER_DODGE not BRACE
+  description: "Stage-prop bookshelf made of foam — falls slowly, safe to step aside"
+
+- name: steel_lamp
+  display_name: Steel Art Lamp (looks light)
+  category: adversarial
+  task_type: furniture_tip
+  morph: cylinder
+  size: [0.04, 0.04, 0.72]   # identical shape to floor_lamp
+  density: 7800                # solid steel core
+  friction: 0.35
+  restitution: 0.08
+  color_rgb: [0.82, 0.80, 0.75]   # identical colour to floor_lamp
+  roughness: 0.15
+  ior: 1.0
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy             # falls fast and crushes — BRACE not TRIGGER_DODGE
+  description: "Decorative steel lamp, visually identical to floor lamp but 28× heavier"

@@ -1,0 +1,213 @@
+{
+  "scene_id": "28a1f79c",
+  "seed": 0,
+  "description": "",
+  "adversarial": true,
+  "task_type": "stack_collapse",
+  "room": {
+    "type": "living",
+    "display_name": "Living Room",
+    "width": 6.0,
+    "depth": 5.0,
+    "height": 2.8,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.9077951127626949,
+      0.8871634056544517,
+      0.8458999914379656
+    ],
+    "ceiling_color_rgb": [
+      0.902760157516164,
+      0.8932574190159939,
+      0.8742519420156537
+    ],
+    "floor_color_rgb": [
+      0.6,
+      0.48,
+      0.3
+    ],
+    "floor_roughness": 0.5,
+    "window_wall": "north",
+    "window_pos_x": -0.5,
+    "window_pos_z": 1.5,
+    "window_width": 1.6,
+    "window_height": 1.2,
+    "window_emissive": [
+      5.5,
+      5.2,
+      4.8
+    ]
+  },
+  "table": {
+    "width": 1.2,
+    "depth": 0.8,
+    "height": 0.77,
+    "thickness": 0.04,
+    "leg_size": 0.06,
+    "pos_x": 0.231,
+    "pos_y": -0.292,
+    "color_rgb": [
+      0.2992354017304955,
+      0.1880908239448829,
+      0.08549582906585587
+    ],
+    "roughness": 0.55,
+    "friction": 0.6
+  },
+  "object": {
+    "name": "steel_can",
+    "display_name": "Steel Weight Can (looks light)",
+    "category": "adversarial",
+    "morph": "cylinder",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.04,
+      0.04,
+      0.055
+    ],
+    "phys_half_x": 0.0,
+    "phys_half_z": 0.0,
+    "density": 7800.0,
+    "friction": 0.4,
+    "restitution": 0.08,
+    "color_rgb": [
+      0.8,
+      0.82,
+      0.84
+    ],
+    "roughness": 0.35,
+    "ior": 1.0,
+    "catch_safe": false,
+    "safety_label": "dangerous",
+    "mass_hint": "heavy",
+    "description": "Solid steel cylinders painted to look like tin cans — the fast fall betrays the mass"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": {
+    "n_items": 3,
+    "start_x": 0.419,
+    "start_y": -0.16,
+    "tilt_angle_deg": 21.46,
+    "angular_vel": 0.517,
+    "euler_z": 17.4
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        0.226,
+        -2.1,
+        1.255
+      ],
+      "lookat": [
+        0.367,
+        -0.102,
+        0.939
+      ],
+      "fov": 54.997118905373846
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        1.3,
+        -1.273,
+        0.865
+      ],
+      "lookat": [
+        0.446,
+        -0.136,
+        0.947
+      ],
+      "fov": 49.83677554261884
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        0.469,
+        0.036,
+        2.282
+      ],
+      "lookat": [
+        0.428,
+        -0.141,
+        0.766
+      ],
+      "fov": 56.35096505022411
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.3015212593485435,
+      0.27136913341368923,
+      0.24121700747883482
+    ],
+    "background_color": [
+      0.12,
+      0.11,
+      0.1
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          -0.8,
+          1.2,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.9,
+          0.78
+        ],
+        "intensity": 7.47
+      },
+      {
+        "type": "point",
+        "pos": [
+          1.2,
+          -1.0,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          0.95,
+          0.85,
+          0.72
+        ],
+        "intensity": 6.4
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.3,
+          0.6,
+          -1.0
+        ],
+        "color": [
+          0.75,
+          0.82,
+          1.0
+        ],
+        "intensity": 2.67
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "BRACE_FOR_IMPACT",
+  "safety_label": "dangerous",
+  "interception_point_2d": null,
+  "interception_point_3d": [
+    0.8316,
+    0.0224,
+    0.81
+  ],
+  "time_to_floor_s": 2.4667
+}
