@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import math
 import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -83,6 +84,8 @@ class SceneBuilder:
         # Ground-truth trajectory recording
         self._gt_positions: list[list[float]] = []   # [(x,y,z), …]
         self._floor_hit_step: int | None = None
+        self._bounce_risen: bool = False  # for bouncing_object: track upward phase
+        self._chain_trigger = None        # for chain_reaction: the trigger entity (A)
 
     # ── Public ────────────────────────────────────────────────
 
@@ -142,9 +145,67 @@ class SceneBuilder:
                 elif self.spec.task_type == "sliding_object":
                     if pos[2] < 0.05:
                         self._floor_hit_step = step
+                elif self.spec.task_type == "rolling_ball":
+                    # Ball hits floor when centre drops below radius + small margin
+                    radius = self.spec.object.size[0]
+                    if pos[2] < radius + 0.03:
+                        self._floor_hit_step = step
+                elif self.spec.task_type == "shelf_slide":
+                    o = self.spec.object
+                    half_h = o.phys_half_z if o.phys_half_z > 0 else (o.size[2] if len(o.size) >= 3 else o.size[0])
+                    if pos[2] < half_h + 0.04:
+                        self._floor_hit_step = step
+                elif self.spec.task_type == "door_swing":
+                    # Event: door nearly closed (angle < 20° = panel nearly flush with wall)
+                    q = self.obj.get_dofs_position()
+                    if hasattr(q, "cpu"):
+                        q = q.cpu()
+                    angle = float(np.asarray(q).flatten()[0])
+                    if angle < math.radians(20.0):
+                        self._floor_hit_step = step
+                elif self.spec.task_type == "thrown_object":
+                    # Event: object crosses y=0 (room midpoint, flying toward observer)
+                    if pos[1] < 0:
+                        self._floor_hit_step = step
+                elif self.spec.task_type == "pendulum_swing":
+                    # Event: joint angle crosses 0 (bob at vertical, max speed toward observer)
+                    q = self.obj.get_dofs_position()
+                    if hasattr(q, "cpu"):
+                        q = q.cpu()
+                    if float(np.asarray(q).flatten()[0]) < 0.0:
+                        self._floor_hit_step = step
+                elif self.spec.task_type == "bouncing_object":
+                    # Event: ball lands after its post-bounce arc (second floor contact).
+                    # Ball starts at z≈radius with vel_z>0. Use 1.5× radius as the
+                    # "risen" threshold to handle low-restitution balls (e.g. restitution=0.2)
+                    # which only reach ~2.7× radius at peak.
+                    radius = self.spec.object.size[0]
+                    if not self._bounce_risen and pos[2] > radius * 1.5:
+                        self._bounce_risen = True
+                    if self._bounce_risen and pos[2] < radius + 0.04:
+                        self._floor_hit_step = step
+                elif self.spec.task_type == "ladder_slip":
+                    # Event: ladder COM falls below its narrow half-extent (nearly horizontal)
+                    o = self.spec.object
+                    half_x = o.size[0]   # narrow/width dimension of the box
+                    if pos[2] < half_x + 0.12:
+                        self._floor_hit_step = step
+                elif self.spec.task_type == "chain_reaction":
+                    # Event: target object B falls below the table surface (off the table)
+                    o = self.spec.object
+                    half_h = o.phys_half_z if o.phys_half_z > 0 else (o.size[2] if len(o.size) >= 3 else o.size[0])
+                    if pos[2] < half_h + 0.05:
+                        self._floor_hit_step = step
                 else:
                     if pos[2] < 0.05:
                         self._floor_hit_step = step
+
+            # bouncing_object: stop 0.5 s after the ball lands to avoid simulating
+            # the expensive floor-rolling phase for high-density balls.
+            if (self.spec.task_type == "bouncing_object"
+                    and self._floor_hit_step is not None
+                    and step > self._floor_hit_step + int(0.5 / dt)):
+                break
 
             if (step + 1) % int(1.0 / dt) == 0:
                 t_sim = (step + 1) * dt
@@ -203,6 +264,25 @@ class SceneBuilder:
         elif s.task_type == "sliding_object":
             self._add_ramp()
             self._add_sliding_object()
+        elif s.task_type == "rolling_ball":
+            self._add_table()
+            self._add_rolling_ball()
+        elif s.task_type == "shelf_slide":
+            self._add_shelf()
+            self._add_shelf_object()
+        elif s.task_type == "door_swing":
+            self._add_door()
+        elif s.task_type == "thrown_object":
+            self._add_thrown_object()
+        elif s.task_type == "pendulum_swing":
+            self._add_pendulum()
+        elif s.task_type == "bouncing_object":
+            self._add_bouncing_object()
+        elif s.task_type == "ladder_slip":
+            self._add_ladder_leaning()
+        elif s.task_type == "chain_reaction":
+            self._add_table()
+            self._add_chain_reaction_objects()
         else:
             self._add_table()
             self._add_object()
@@ -260,19 +340,55 @@ class SceneBuilder:
         cs  = _solid(r.ceiling_color_rgb, roughness=0.90)
         mat = gs.materials.Rigid(friction=0.8)
 
-        walls = [
-            # (pos, size)
-            ((0,  -D/2 - TH/2, H/2), (W+2*TH, TH,       H      )),  # south
+        # North / East / West walls + ceiling (always solid)
+        other_walls = [
             ((0,   D/2 + TH/2, H/2), (W+2*TH, TH,       H      )),  # north
             ((-W/2 - TH/2, 0, H/2), (TH,     D,        H      )),  # west
             (( W/2 + TH/2, 0, H/2), (TH,     D,        H      )),  # east
             ((0,   0,  H + TH/2),   (W+2*TH, D+2*TH,  TH     )),  # ceiling
         ]
-        surfs = [ws, ws, ws, ws, cs]
-        for (p, sz), surf in zip(walls, surfs):
+        surfs = [ws, ws, ws, cs]
+        for (p, sz), surf in zip(other_walls, surfs):
             self.scene.add_entity(
                 gs.morphs.Box(pos=p, size=sz, fixed=True),
                 surface=surf, material=mat,
+            )
+
+        # South wall — split to leave a doorway opening for door_swing scenes
+        sy = -D/2 - TH/2   # wall centre Y
+        if self.spec.task_type == "door_swing" and self.spec.door is not None:
+            dw  = self.spec.door.width
+            dh  = self.spec.door.height
+            hx  = self.spec.door.hinge_x
+            x0  = -W/2 - TH   # west end of south wall
+            x1  = W/2  + TH   # east end of south wall
+
+            # Left segment: west end → hinge
+            lw = hx - x0
+            if lw > 0.01:
+                self.scene.add_entity(
+                    gs.morphs.Box(pos=(x0 + lw/2, sy, H/2), size=(lw, TH, H), fixed=True),
+                    surface=ws, material=mat,
+                )
+            # Right segment: hinge+door_width → east end
+            rw = x1 - (hx + dw)
+            if rw > 0.01:
+                self.scene.add_entity(
+                    gs.morphs.Box(pos=(hx + dw + rw/2, sy, H/2), size=(rw, TH, H), fixed=True),
+                    surface=ws, material=mat,
+                )
+            # Lintel: above the doorway up to ceiling
+            lintel_h = H - dh
+            if lintel_h > 0.01:
+                self.scene.add_entity(
+                    gs.morphs.Box(pos=(hx + dw/2, sy, dh + lintel_h/2),
+                                  size=(dw, TH, lintel_h), fixed=True),
+                    surface=ws, material=mat,
+                )
+        else:
+            self.scene.add_entity(
+                gs.morphs.Box(pos=(0, sy, H/2), size=(W+2*TH, TH, H), fixed=True),
+                surface=ws, material=mat,
             )
 
         # Window emissive panel
@@ -646,6 +762,22 @@ class SceneBuilder:
             self._apply_hanging_velocity()
         elif self.spec.task_type == "stack_collapse":
             self._apply_stack_velocity()
+        elif self.spec.task_type == "rolling_ball":
+            self._apply_roll_velocity()
+        elif self.spec.task_type == "shelf_slide":
+            self._apply_shelf_velocity()
+        elif self.spec.task_type == "door_swing":
+            self._apply_door_velocity()
+        elif self.spec.task_type == "thrown_object":
+            self._apply_thrown_velocity()
+        elif self.spec.task_type == "pendulum_swing":
+            self._apply_pendulum_velocity()
+        elif self.spec.task_type == "bouncing_object":
+            self._apply_bounce_velocity()
+        elif self.spec.task_type == "ladder_slip":
+            self._apply_ladder_velocity()
+        elif self.spec.task_type == "chain_reaction":
+            self._apply_chain_velocity()
         elif self.spec.task_type == "sliding_object":
             pass   # gravity on the ramp is sufficient; no extra velocity needed
         else:
@@ -707,10 +839,549 @@ class SceneBuilder:
         except Exception as e:
             print(f"[scene_builder] tip velocity not applied: {e}", file=sys.stderr)
 
+    # ── Rolling ball (rolling_ball task) ─────────────────────
+
+    def _add_rolling_ball(self) -> None:
+        """Place the ball on the table surface at its start position.
+
+        Velocity is applied after scene.build() via _apply_roll_velocity().
+        The ball has no initial euler rotation — spheres are orientation-agnostic.
+        """
+        o    = self.spec.object
+        t    = self.spec.table
+        roll = self.spec.roll
+        surf = _solid(o.color_rgb, roughness=o.roughness, ior=o.ior)
+        mat  = gs.materials.Rigid(
+            rho=o.density,
+            friction=o.friction,
+            coup_restitution=o.restitution,
+        )
+        radius = o.size[0]
+        pos    = (roll.start_x, roll.start_y, t.height + radius)
+        self.obj = self.scene.add_entity(
+            gs.morphs.Sphere(pos=pos, radius=radius),
+            surface=surf, material=mat,
+        )
+
+    def _apply_roll_velocity(self) -> None:
+        """Apply initial linear velocity and rolling angular velocity to the ball.
+
+        For rolling without slipping in the +X direction:
+          linear:  v_x = roll.vel_x
+          angular: w_y = roll.angular_vel_y  (positive wy → rolls in +X)
+        """
+        roll = self.spec.roll
+        if roll.vel_x == 0 and roll.vel_y == 0:
+            return
+        try:
+            import torch
+            n   = self.obj.n_dofs
+            vel = torch.zeros(1, n, dtype=torch.float32)
+            # DOF layout: [vx, vy, vz, wx, wy, wz]
+            vel[0, 0] = roll.vel_x
+            vel[0, 1] = roll.vel_y
+            vel[0, 4] = roll.angular_vel_y   # wy > 0 → rolls in +X
+            self.obj.set_dofs_velocity(vel)
+        except Exception as e:
+            print(f"[scene_builder] roll velocity not applied: {e}", file=sys.stderr)
+
+    # ── Shelf (shelf_slide task) ──────────────────────────────
+
+    def _add_shelf(self) -> None:
+        """Add a fixed wall-mounted shelf to the interior face of the north wall.
+
+        Shelf geometry:
+          - Main board: full (width × depth × thickness) box centered at
+            (pos_x, wall_y − depth/2, height − thickness/2).
+          - Two support brackets (thin boxes) underneath the board ends.
+        """
+        s     = self.spec.shelf
+        r     = self.spec.room
+        wall_y = r.depth / 2
+
+        surf = _solid([0.55, 0.42, 0.24], roughness=0.78)   # natural wood
+        mat  = gs.materials.Rigid(friction=0.50)
+
+        # Main shelf board
+        self.scene.add_entity(
+            gs.morphs.Box(
+                pos=(s.pos_x, wall_y - s.depth / 2, s.height - s.thickness / 2),
+                size=(s.width, s.depth, s.thickness),
+                fixed=True,
+            ),
+            surface=surf, material=mat,
+        )
+
+        # Support brackets — one near each end of the shelf
+        br_w = 0.025   # bracket width (full)
+        br_d = s.depth
+        br_h = 0.12    # bracket height (full)
+        for bx_offset in (s.width / 2 - br_w / 2, -(s.width / 2 - br_w / 2)):
+            self.scene.add_entity(
+                gs.morphs.Box(
+                    pos=(s.pos_x + bx_offset,
+                         wall_y - s.depth / 2,
+                         s.height - s.thickness - br_h / 2),
+                    size=(br_w, br_d, br_h),
+                    fixed=True,
+                ),
+                surface=surf, material=mat,
+            )
+
+    def _add_shelf_object(self) -> None:
+        """Place the object on the shelf near its front edge.
+
+        Object y = wall_y − depth × 0.70 (30% shelf depth from front edge).
+        Object z = shelf.height + physical half-height.
+        """
+        o     = self.spec.object
+        s     = self.spec.shelf
+        r     = self.spec.room
+        surf  = _solid(o.color_rgb, roughness=o.roughness, ior=o.ior)
+        mat   = gs.materials.Rigid(
+            rho=o.density,
+            friction=o.friction,
+            coup_restitution=o.restitution,
+        )
+
+        wall_y = r.depth / 2
+
+        if o.morph == "cylinder":
+            hz = o.size[2]
+        elif o.morph == "box":
+            hz = o.size[2]
+        elif o.morph == "sphere":
+            hz = o.size[0]
+        elif o.morph == "mesh":
+            hz = o.phys_half_z if o.phys_half_z > 0 else 0.05
+        else:
+            hz = 0.05
+
+        obj_y = wall_y - s.depth * 0.70
+        obj_z = s.height + hz
+        pos   = (s.pos_x, obj_y, obj_z)
+
+        if o.morph == "cylinder":
+            morph = gs.morphs.Cylinder(pos=pos, radius=o.size[0], height=o.size[2] * 2)
+        elif o.morph == "box":
+            morph = gs.morphs.Box(pos=pos, size=tuple(o.size))
+        elif o.morph == "sphere":
+            morph = gs.morphs.Sphere(pos=pos, radius=o.size[0])
+        elif o.morph == "mesh":
+            mesh_path  = (MESHES_DIR / o.mesh_path).resolve()
+            mesh_scale = o.size[0] if len(o.size) == 1 else 1.0
+            morph = gs.morphs.Mesh(file=str(mesh_path), pos=pos, scale=mesh_scale)
+        else:
+            raise ValueError(f"Unknown morph for shelf_slide: {o.morph}")
+
+        self.obj = self.scene.add_entity(morph, surface=surf, material=mat)
+
+    def _apply_shelf_velocity(self) -> None:
+        """Apply initial velocity toward the observer to trigger the shelf slide-off."""
+        shelf = self.spec.shelf
+        if shelf.vel_y == 0:
+            return
+        try:
+            import torch
+            n   = self.obj.n_dofs
+            vel = torch.zeros(1, n, dtype=torch.float32)
+            vel[0, 1] = shelf.vel_y   # vy < 0 → toward observer (-Y)
+            self.obj.set_dofs_velocity(vel)
+        except Exception as e:
+            print(f"[scene_builder] shelf velocity not applied: {e}", file=sys.stderr)
+
+    # ── Door swing (door_swing task) ──────────────────────────
+
+    def _make_door_mjcf(self) -> str:
+        """Generate a minimal MJCF XML for a door with revolute Z hinge.
+
+        hinge_base is a massless body fixed to the world at (hinge_x, door_y, 0.01).
+        door_panel is a box child with a hinge joint — 1 DOF total.
+        Genesis merges the massless base into the world, so the entity ends up
+        as a single-link revolute body at the hinge position.
+        """
+        s = self.spec.door
+        o = self.spec.object
+        hw = s.width     / 2   # half-width
+        ht = s.thickness / 2   # half-thickness
+        hh = s.height    / 2   # half-height
+        r, g, b = o.color_rgb
+        return (
+            f'<mujoco>\n'
+            f'  <worldbody>\n'
+            f'    <body name="hinge_base" pos="{s.hinge_x:.4f} {s.door_y:.4f} 0.01">\n'
+            f'      <body name="door_panel">\n'
+            f'        <joint name="door_hinge" type="hinge" axis="0 0 1"/>\n'
+            f'        <geom type="box"\n'
+            f'              size="{hw:.4f} {ht:.4f} {hh:.4f}"\n'
+            f'              pos="{hw:.4f} 0.0 {hh:.4f}"\n'
+            f'              density="{o.density:.1f}"\n'
+            f'              friction="{o.friction:.3f} 0.005 0.0001"\n'
+            f'              rgba="{r:.3f} {g:.3f} {b:.3f} 1.0"/>\n'
+            f'      </body>\n'
+            f'    </body>\n'
+            f'  </worldbody>\n'
+            f'</mujoco>'
+        )
+
+    def _add_door(self) -> None:
+        """Load a revolute-joint door via MJCF.
+
+        The MJCF is written to a temp file and loaded with gs.morphs.MJCF.
+        Initial joint angle and angular velocity are set in _apply_door_velocity()
+        after scene.build().
+        """
+        mjcf_xml  = self._make_door_mjcf()
+        tmp_dir   = Path(tempfile.mkdtemp(prefix="gs_door_"))
+        mjcf_path = tmp_dir / "door.xml"
+        mjcf_path.write_text(mjcf_xml, encoding="utf-8")
+        self._door_tmp_dir = tmp_dir   # keep alive until scene is built
+
+        self.obj = self.scene.add_entity(
+            gs.morphs.MJCF(file=str(mjcf_path)),
+        )
+
+    def _apply_door_velocity(self) -> None:
+        """Set initial revolute joint angle and angular velocity for the door."""
+        import torch
+        door = self.spec.door
+
+        # Clean up the temp MJCF file now that the scene is built
+        if hasattr(self, "_door_tmp_dir"):
+            import shutil
+            try:
+                shutil.rmtree(self._door_tmp_dir, ignore_errors=True)
+            except Exception:
+                pass
+
+        n = self.obj.n_dofs   # should be 1 (one revolute joint)
+        angle_rad = math.radians(door.initial_angle_deg)
+
+        pos_t = torch.tensor([angle_rad], dtype=torch.float32)
+        self.obj.set_dofs_position(pos_t)
+
+        if door.angular_vel != 0:
+            vel_t = torch.zeros(1, n, dtype=torch.float32)
+            vel_t[0, 0] = door.angular_vel
+            self.obj.set_dofs_velocity(vel_t)
+
+    # ── Thrown object (thrown_object task) ───────────────────────
+
+    def _add_thrown_object(self) -> None:
+        """Spawn the thrown object at its launch position (mid-air, no table)."""
+        o    = self.spec.object
+        t    = self.spec.thrown
+        surf = _solid(o.color_rgb, roughness=o.roughness, ior=o.ior)
+        mat  = gs.materials.Rigid(
+            rho=o.density,
+            friction=o.friction,
+            coup_restitution=o.restitution,
+        )
+        pos = (t.launch_x, t.launch_y, t.launch_z)
+        if o.morph == "sphere":
+            morph = gs.morphs.Sphere(pos=pos, radius=o.size[0])
+        elif o.morph == "box":
+            morph = gs.morphs.Box(pos=pos, size=tuple(o.size))
+        elif o.morph == "cylinder":
+            morph = gs.morphs.Cylinder(pos=pos, radius=o.size[0],
+                                       height=o.size[2] * 2)
+        elif o.morph == "mesh":
+            mesh_path  = (MESHES_DIR / o.mesh_path).resolve()
+            mesh_scale = o.size[0] if len(o.size) == 1 else 1.0
+            morph = gs.morphs.Mesh(file=str(mesh_path), pos=pos, scale=mesh_scale)
+        else:
+            raise ValueError(f"Unknown morph for thrown_object: {o.morph}")
+        self.obj = self.scene.add_entity(morph, surface=surf, material=mat)
+
+    def _apply_thrown_velocity(self) -> None:
+        """Apply initial linear velocity to the thrown object."""
+        import torch
+        t   = self.spec.thrown
+        n   = self.obj.n_dofs
+        vel = torch.zeros(1, n, dtype=torch.float32)
+        vel[0, 0] = t.vel_x
+        vel[0, 1] = t.vel_y
+        vel[0, 2] = t.vel_z
+        self.obj.set_dofs_velocity(vel)
+
+    # ── Ladder slip (ladder_slip task) ────────────────────────
+
+    def _add_ladder_leaning(self) -> None:
+        """Place a tall ladder (box) already mid-slip toward the observer.
+
+        Convention matches furniture_tip:
+          pos   = (base_x, start_y, hz)      hz = object.size[2]
+          euler = (+lean_deg, 0, euler_z)    positive euler_x tilts toward -Y
+        The ladder is placed in free space (not touching the north wall),
+        so angular_vel immediately tips it further toward -Y.
+        """
+        o      = self.spec.object
+        ladder = self.spec.ladder
+        surf   = _solid(o.color_rgb, roughness=o.roughness, ior=o.ior)
+        mat    = gs.materials.Rigid(
+            rho=o.density,
+            friction=o.friction,
+            coup_restitution=o.restitution,
+        )
+
+        hz    = o.size[2]   # half-height of the ladder box
+        pos   = (ladder.base_x, ladder.start_y, hz)
+        euler = (ladder.lean_deg, 0.0, ladder.euler_z)   # +euler_x → tilt toward -Y
+
+        if o.morph == "box":
+            morph = gs.morphs.Box(pos=pos, size=tuple(o.size), euler=euler)
+        elif o.morph == "cylinder":
+            morph = gs.morphs.Cylinder(pos=pos, radius=o.size[0],
+                                       height=o.size[2] * 2, euler=euler)
+        else:
+            raise ValueError(f"Unsupported morph for ladder_slip: {o.morph}")
+
+        self.obj = self.scene.add_entity(morph, surface=surf, material=mat)
+
+    def _apply_ladder_velocity(self) -> None:
+        """Apply initial angular velocity to tip the ladder toward the observer (-Y)."""
+        ladder = self.spec.ladder
+        if ladder.angular_vel == 0:
+            return
+        try:
+            import torch
+            n   = self.obj.n_dofs
+            vel = torch.zeros(1, n, dtype=torch.float32)
+            vel[0, 3] = ladder.angular_vel   # wx > 0 → tip toward -Y (observer)
+            self.obj.set_dofs_velocity(vel)
+        except Exception as e:
+            print(f"[scene_builder] ladder velocity not applied: {e}", file=sys.stderr)
+
+    # ── Chain reaction (chain_reaction task) ──────────────────
+
+    def _add_chain_reaction_objects(self) -> None:
+        """Add trigger A (book-like box) and target B (main object) to the table.
+
+        A is north of B, given initial velocity southward.
+        A hits B → B slides off the south table edge → B falls toward observer.
+        """
+        o      = self.spec.object
+        t      = self.spec.table
+        ch     = self.spec.chain
+        surf_b = _solid(o.color_rgb, roughness=o.roughness, ior=o.ior)
+        mat_b  = gs.materials.Rigid(
+            rho=o.density,
+            friction=o.friction,
+            coup_restitution=o.restitution,
+        )
+
+        # ── Target B (main tracked object) ───────────────────
+        if o.morph == "mesh":
+            obj_z = t.height - o.bottom_z_offset
+            hz    = o.phys_half_z if o.phys_half_z > 0 else 0.05
+        elif o.morph == "sphere":
+            obj_z = t.height + o.size[0]
+            hz    = o.size[0]
+        elif o.morph == "cylinder":
+            obj_z = t.height + o.size[2]
+            hz    = o.size[2]
+        else:  # box
+            obj_z = t.height + o.size[2]
+            hz    = o.size[2]
+        _ = hz  # unused locally, tracked by floor-hit detection
+
+        pos_b  = (ch.target_x, ch.target_y, obj_z)
+        euler_b = (0.0, 0.0, ch.euler_z) if ch.euler_z != 0 else None
+
+        if o.morph == "mesh":
+            mesh_path  = (MESHES_DIR / o.mesh_path).resolve()
+            mesh_scale = o.size[0] if len(o.size) == 1 else 1.0
+            morph_b = gs.morphs.Mesh(file=str(mesh_path), pos=pos_b,
+                                     euler=euler_b, scale=mesh_scale)
+        elif o.morph == "sphere":
+            morph_b = gs.morphs.Sphere(pos=pos_b, radius=o.size[0])
+        elif o.morph == "cylinder":
+            morph_b = gs.morphs.Cylinder(pos=pos_b, radius=o.size[0],
+                                         height=o.size[2] * 2, euler=euler_b)
+        else:
+            morph_b = gs.morphs.Box(pos=pos_b, size=tuple(o.size), euler=euler_b)
+
+        self.obj = self.scene.add_entity(morph_b, surface=surf_b, material=mat_b)
+
+        # ── Trigger A (book-like box) ─────────────────────────
+        trigger_hz = ch.trigger_size[2]
+        pos_a      = (ch.trigger_x, ch.trigger_y, t.height + trigger_hz)
+        surf_a     = _solid(ch.trigger_color, roughness=0.80)
+        mat_a      = gs.materials.Rigid(rho=ch.trigger_density, friction=0.50,
+                                        coup_restitution=0.05)
+        self._chain_trigger = self.scene.add_entity(
+            gs.morphs.Box(pos=pos_a, size=tuple(ch.trigger_size)),
+            surface=surf_a, material=mat_a,
+        )
+
+    def _apply_chain_velocity(self) -> None:
+        """Apply initial southward velocity to the trigger A."""
+        ch = self.spec.chain
+        if ch.trigger_vel_y == 0:
+            return
+        try:
+            import torch
+            n   = self._chain_trigger.n_dofs
+            vel = torch.zeros(1, n, dtype=torch.float32)
+            vel[0, 1] = ch.trigger_vel_y   # vy < 0 → toward observer (-Y)
+            self._chain_trigger.set_dofs_velocity(vel)
+        except Exception as e:
+            print(f"[scene_builder] chain trigger velocity not applied: {e}", file=sys.stderr)
+
+    # ── Bouncing object (bouncing_object task) ────────────────
+
+    def _add_bouncing_object(self) -> None:
+        """Spawn the ball at its start position with pre-calculated post-bounce velocity."""
+        o    = self.spec.object
+        b    = self.spec.bounce
+        surf = _solid(o.color_rgb, roughness=o.roughness, ior=o.ior)
+        # coup_restitution=0 — restitution is baked into vel_z by the randomizer;
+        # non-zero values cause expensive micro-contacts when ball rolls on floor
+        mat  = gs.materials.Rigid(
+            rho=o.density,
+            friction=o.friction,
+            coup_restitution=0.0,
+        )
+        pos = (b.start_x, b.start_y, b.start_z)
+        # bouncing_object always uses spheres
+        morph = gs.morphs.Sphere(pos=pos, radius=o.size[0])
+        self.obj = self.scene.add_entity(morph, surface=surf, material=mat)
+
+    def _apply_bounce_velocity(self) -> None:
+        """Apply initial horizontal velocity to the bouncing ball."""
+        import torch
+        b   = self.spec.bounce
+        if b.vel_x == 0 and b.vel_y == 0 and b.vel_z == 0:
+            return
+        try:
+            n   = self.obj.n_dofs
+            vel = torch.zeros(1, n, dtype=torch.float32)
+            vel[0, 0] = b.vel_x
+            vel[0, 1] = b.vel_y
+            vel[0, 2] = b.vel_z
+            self.obj.set_dofs_velocity(vel)
+        except Exception as e:
+            print(f"[scene_builder] bounce velocity not applied: {e}", file=sys.stderr)
+
+    # ── Pendulum swing (pendulum_swing task) ──────────────────
+
+    def _make_pendulum_mjcf(self) -> str:
+        p = self.spec.pendulum
+        o = self.spec.object
+        r, g, b = o.color_rgb
+
+        if o.morph == "sphere":
+            bob_geom = (
+                f'        <geom name="bob" type="sphere" size="{o.size[0]:.4f}"\n'
+                f'              pos="0 0 -{p.length:.4f}"\n'
+                f'              density="{o.density:.1f}"\n'
+                f'              friction="{o.friction:.3f} 0.005 0.0001"\n'
+                f'              rgba="{r:.3f} {g:.3f} {b:.3f} 1.0"/>\n'
+            )
+        elif o.morph == "box":
+            hx, hy, hz = o.size[0], o.size[1], o.size[2]
+            bob_geom = (
+                f'        <geom name="bob" type="box" size="{hx:.4f} {hy:.4f} {hz:.4f}"\n'
+                f'              pos="0 0 -{p.length:.4f}"\n'
+                f'              density="{o.density:.1f}"\n'
+                f'              friction="{o.friction:.3f} 0.005 0.0001"\n'
+                f'              rgba="{r:.3f} {g:.3f} {b:.3f} 1.0"/>\n'
+            )
+        else:
+            bob_geom = (
+                f'        <geom name="bob" type="sphere" size="0.15"\n'
+                f'              pos="0 0 -{p.length:.4f}"\n'
+                f'              density="{o.density:.1f}"\n'
+                f'              rgba="{r:.3f} {g:.3f} {b:.3f} 1.0"/>\n'
+            )
+
+        return (
+            f'<mujoco>\n'
+            f'  <worldbody>\n'
+            f'    <body name="pivot" pos="{p.pivot_x:.4f} {p.pivot_y:.4f} {p.pivot_z:.4f}">\n'
+            f'      <body name="pendulum">\n'
+            f'        <joint name="swing" type="hinge" axis="1 0 0"/>\n'
+            f'        <geom name="rod" type="capsule"\n'
+            f'              fromto="0 0 0 0 0 -{p.length:.4f}"\n'
+            f'              size="0.012" density="0.5"\n'
+            f'              rgba="0.50 0.42 0.32 1.0"/>\n'
+            f'{bob_geom}'
+            f'      </body>\n'
+            f'    </body>\n'
+            f'  </worldbody>\n'
+            f'</mujoco>'
+        )
+
+    def _add_pendulum(self) -> None:
+        """Add ceiling anchor hook + MJCF pendulum to the scene."""
+        import tempfile
+        p = self.spec.pendulum
+
+        # Visual anchor hook at ceiling
+        self.scene.add_entity(
+            gs.morphs.Cylinder(
+                pos=(p.pivot_x, p.pivot_y, p.pivot_z + 0.05),
+                radius=0.030, height=0.10, fixed=True,
+            ),
+            surface=_solid([0.35, 0.30, 0.28], roughness=0.55),
+            material=gs.materials.Rigid(friction=0.8),
+        )
+
+        mjcf_xml  = self._make_pendulum_mjcf()
+        tmp_dir   = tempfile.mkdtemp()
+        self._pendulum_tmp_dir = tmp_dir
+        mjcf_path = f"{tmp_dir}/pendulum.xml"
+        with open(mjcf_path, "w") as fh:
+            fh.write(mjcf_xml)
+
+        self.obj = self.scene.add_entity(gs.morphs.MJCF(file=mjcf_path))
+
+    def _apply_pendulum_velocity(self) -> None:
+        """Set initial joint angle and angular velocity for the pendulum."""
+        import torch
+        p = self.spec.pendulum
+
+        if hasattr(self, "_pendulum_tmp_dir"):
+            import shutil
+            shutil.rmtree(self._pendulum_tmp_dir, ignore_errors=True)
+
+        angle_rad = math.radians(p.initial_angle_deg)
+        pos_t = torch.tensor([angle_rad], dtype=torch.float32)
+        self.obj.set_dofs_position(pos_t)
+
+        if p.angular_vel != 0.0:
+            n     = self.obj.n_dofs
+            vel_t = torch.zeros(1, n, dtype=torch.float32)
+            vel_t[0, 0] = p.angular_vel
+            self.obj.set_dofs_velocity(vel_t)
+
     # ── Position query ────────────────────────────────────────
 
     def _obj_pos(self) -> np.ndarray:
+        # chain_reaction: self.obj is B (target), already set correctly in _add_chain_reaction_objects
         try:
+            if self.spec.task_type == "pendulum_swing":
+                q = self.obj.get_dofs_position()
+                if hasattr(q, "cpu"):
+                    q = q.cpu()
+                angle = float(np.asarray(q).flatten()[0])
+                p  = self.spec.pendulum
+                bx = p.pivot_x
+                by = p.pivot_y + p.length * math.sin(angle)
+                bz = p.pivot_z - p.length * math.cos(angle)
+                return np.array([bx, by, bz])
+            if self.spec.task_type == "door_swing":
+                # Compute door panel COM analytically from the revolute joint angle.
+                # This is robust regardless of how Genesis represents the MJCF links.
+                q = self.obj.get_dofs_position()
+                if hasattr(q, "cpu"):
+                    q = q.cpu().numpy()
+                angle = float(np.asarray(q).flatten()[0])
+                d  = self.spec.door
+                cx = d.hinge_x + (d.width / 2) * math.cos(angle)
+                cy = d.door_y  + (d.width / 2) * math.sin(angle)
+                cz = 0.01 + d.height / 2
+                return np.array([cx, cy, cz])
             p = self.obj.get_pos()
             if hasattr(p, "cpu"):
                 p = p.cpu().numpy()
@@ -724,17 +1395,68 @@ class SceneBuilder:
         ttf = (self._floor_hit_step * self.spec.dt
                if self._floor_hit_step is not None else None)
 
-        if self.spec.task_type in ("furniture_tip", "hanging_fall", "stack_collapse", "sliding_object"):
+        if self.spec.task_type in ("furniture_tip", "hanging_fall", "stack_collapse", "sliding_object",
+                                   "ladder_slip"):
             # interception = position when object reaches the floor
             ipt3d = self._gt_positions[self._floor_hit_step] if self._floor_hit_step is not None else None
-        else:
-            # object_drop: interception point = when object crosses the table edge in X
+        elif self.spec.task_type == "rolling_ball":
+            # interception = when ball crosses the table edge in X
             edge_x = self.spec.table.pos_x + self.spec.table.width / 2
             ipt3d  = None
             for pos in self._gt_positions:
                 if pos[0] >= edge_x:
                     ipt3d = pos
                     break
+        elif self.spec.task_type == "shelf_slide":
+            # interception = when object crosses the shelf front edge in Y (toward -Y)
+            front_edge_y = self.spec.room.depth / 2 - self.spec.shelf.depth
+            ipt3d = None
+            for pos in self._gt_positions:
+                if pos[1] <= front_edge_y:
+                    ipt3d = pos
+                    break
+        elif self.spec.task_type == "door_swing":
+            # interception = when door panel COM sweeps past room midpoint (y < 0)
+            ipt3d = self._gt_positions[self._floor_hit_step] if self._floor_hit_step is not None else None
+        elif self.spec.task_type == "thrown_object":
+            # interception = first position where object crosses y=0 toward observer
+            ipt3d = None
+            for pos in self._gt_positions:
+                if pos[1] < 0:
+                    ipt3d = pos
+                    break
+        elif self.spec.task_type == "pendulum_swing":
+            # interception = bob position when it crosses vertical (angle = 0)
+            ipt3d = self._gt_positions[self._floor_hit_step] if self._floor_hit_step is not None else None
+        elif self.spec.task_type == "bouncing_object":
+            # interception = first position where ball crosses y=0 after first bounce
+            ipt3d = None
+            bounced = False
+            radius  = self.spec.object.size[0]
+            for pos in self._gt_positions:
+                if not bounced and pos[2] <= radius + 0.05:
+                    bounced = True   # ball has touched the floor
+                if bounced and pos[1] < 0:
+                    ipt3d = pos
+                    break
+        elif self.spec.task_type == "chain_reaction":
+            # interception = when target B crosses y=0 (mid-room, heading toward observer)
+            ipt3d = None
+            for pos in self._gt_positions:
+                if pos[1] < 0:
+                    ipt3d = pos
+                    break
+        else:
+            # object_drop: interception point = when object crosses the table edge in X
+            if self.spec.table is not None:
+                edge_x = self.spec.table.pos_x + self.spec.table.width / 2
+                ipt3d  = None
+                for pos in self._gt_positions:
+                    if pos[0] >= edge_x:
+                        ipt3d = pos
+                        break
+            else:
+                ipt3d = None
 
         return {
             "scene_id":              self.spec.scene_id,

@@ -1,0 +1,188 @@
+{
+  "scene_id": "37fde9f8",
+  "seed": 4,
+  "description": "",
+  "adversarial": false,
+  "task_type": "door_swing",
+  "room": {
+    "type": "office",
+    "display_name": "Home Office",
+    "width": 4.0,
+    "depth": 3.5,
+    "height": 2.7,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.8756616025937937,
+      0.8962654050077653,
+      0.9271711086287228
+    ],
+    "ceiling_color_rgb": [
+      0.9190801425336826,
+      0.9190801425336826,
+      0.9287546703498267
+    ],
+    "floor_color_rgb": [
+      0.55,
+      0.48,
+      0.38
+    ],
+    "floor_roughness": 0.45,
+    "window_wall": "north",
+    "window_pos_x": 0.0,
+    "window_pos_z": 1.4,
+    "window_width": 1.0,
+    "window_height": 0.9,
+    "window_emissive": [
+      6.5,
+      6.2,
+      5.5
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "steel_door",
+    "display_name": "Steel Security Door",
+    "category": "dangerous",
+    "morph": "box",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.45,
+      0.03,
+      1.05
+    ],
+    "phys_half_x": 0.0,
+    "phys_half_z": 0.0,
+    "density": 7800.0,
+    "friction": 0.3,
+    "restitution": 0.22,
+    "color_rgb": [
+      0.55,
+      0.55,
+      0.6
+    ],
+    "roughness": 0.28,
+    "ior": 1.0,
+    "catch_safe": false,
+    "safety_label": "dangerous",
+    "mass_hint": "heavy",
+    "description": "Heavy steel security door — massive momentum, brace for impact"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": {
+    "width": 0.928,
+    "height": 2.193,
+    "thickness": 0.03,
+    "hinge_x": -0.689,
+    "door_y": -1.615,
+    "initial_angle_deg": 84.9,
+    "angular_vel": -1.624
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -0.678,
+        0.417,
+        1.195
+      ],
+      "lookat": [
+        -0.659,
+        -1.369,
+        0.667
+      ],
+      "fov": 56.43670951182914
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        0.073,
+        -0.712,
+        0.876
+      ],
+      "lookat": [
+        -0.635,
+        -1.219,
+        1.16
+      ],
+      "fov": 54.65657416965753
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        -0.469,
+        -1.151,
+        2.299
+      ],
+      "lookat": [
+        -0.648,
+        -1.36,
+        0.485
+      ],
+      "fov": 62.68525376133859
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.39072899022134217,
+      0.39072899022134217,
+      0.4112936739172023
+    ],
+    "background_color": [
+      0.16,
+      0.16,
+      0.18
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "color": [
+          0.95,
+          0.97,
+          1.0
+        ],
+        "intensity": 12.08
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          -0.3,
+          -0.5,
+          -0.8
+        ],
+        "color": [
+          0.8,
+          0.85,
+          1.0
+        ],
+        "intensity": 3.02
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "BRACE_FOR_IMPACT",
+  "safety_label": "dangerous",
+  "interception_point_2d": null,
+  "interception_point_3d": [
+    -0.2523,
+    -1.4581,
+    1.1065
+  ],
+  "time_to_floor_s": 0.6958
+}

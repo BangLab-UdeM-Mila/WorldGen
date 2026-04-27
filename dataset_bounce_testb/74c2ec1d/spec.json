@@ -1,0 +1,184 @@
+{
+  "scene_id": "74c2ec1d",
+  "seed": 9,
+  "description": "",
+  "adversarial": false,
+  "task_type": "bouncing_object",
+  "room": {
+    "type": "office",
+    "display_name": "Home Office",
+    "width": 4.0,
+    "depth": 3.5,
+    "height": 2.7,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.8318794627724422,
+      0.8514530971906172,
+      0.88081354881788
+    ],
+    "ceiling_color_rgb": [
+      0.9597990742548983,
+      0.9597990742548983,
+      0.9699022224049499
+    ],
+    "floor_color_rgb": [
+      0.55,
+      0.48,
+      0.38
+    ],
+    "floor_roughness": 0.45,
+    "window_wall": "north",
+    "window_pos_x": 0.0,
+    "window_pos_z": 1.4,
+    "window_width": 1.0,
+    "window_height": 0.9,
+    "window_emissive": [
+      6.5,
+      6.2,
+      5.5
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "bounce_billiard",
+    "display_name": "Billiard Ball",
+    "category": "dangerous",
+    "morph": "sphere",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.028
+    ],
+    "phys_half_x": 0.0,
+    "phys_half_z": 0.0,
+    "density": 1700.0,
+    "friction": 0.1,
+    "restitution": 0.88,
+    "color_rgb": [
+      0.15,
+      0.2,
+      0.82
+    ],
+    "roughness": 0.05,
+    "ior": 1.5,
+    "catch_safe": false,
+    "safety_label": "dangerous",
+    "mass_hint": "medium",
+    "description": "Hard phenolic billiard ball — bounces fast and hard, dodge sideways"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": null,
+  "thrown": null,
+  "pendulum": null,
+  "bounce": {
+    "start_x": 0.38,
+    "start_y": 1.0,
+    "start_z": 0.028,
+    "vel_x": 0.251,
+    "vel_y": -1.037,
+    "vel_z": 4.651
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        0.375,
+        -1.154,
+        0.743
+      ],
+      "lookat": [
+        0.433,
+        0.275,
+        0.542
+      ],
+      "fov": 57.15603489978273
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        1.929,
+        0.46,
+        0.792
+      ],
+      "lookat": [
+        0.354,
+        1.034,
+        0.087
+      ],
+      "fov": 61.86238549280239
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        0.457,
+        0.283,
+        2.45
+      ],
+      "lookat": [
+        0.387,
+        0.576,
+        0.051
+      ],
+      "fov": 66.44157854168009
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.3752308480098427,
+      0.3752308480098427,
+      0.39497984001036074
+    ],
+    "background_color": [
+      0.16,
+      0.16,
+      0.18
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "color": [
+          0.95,
+          0.97,
+          1.0
+        ],
+        "intensity": 10.3
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          -0.3,
+          -0.5,
+          -0.8
+        ],
+        "color": [
+          0.8,
+          0.85,
+          1.0
+        ],
+        "intensity": 2.57
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "TRIGGER_DODGE",
+  "safety_label": "dangerous",
+  "interception_point_2d": null,
+  "interception_point_3d": null,
+  "time_to_floor_s": null
+}

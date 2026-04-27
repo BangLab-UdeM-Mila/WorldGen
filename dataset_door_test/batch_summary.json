@@ -1,0 +1,32 @@
+[
+  {
+    "scene_id": "37fde9f8",
+    "seed": 4,
+    "object": "steel_door",
+    "room": "office",
+    "success": true,
+    "elapsed": 75.9,
+    "stdout": "[scene_runner] scene_id=37fde9f8  object=steel_door  room=office  seed=4\n\u001b[38;5;226m[Genesis] [07:03:11] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n  t=1.00s  obj=(-0.229,-1.677,1.107)  [wall 11.3s]\n  t=2.00s  obj=(-0.226,-1.582,1.107)  [wall 22.3s]\n  t=3.00s  obj=(-0.243,-1.488,1.107)  [wall 32.6s]\n[scene_runner] Done. ttf=0.6958s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "14f78f97",
+    "seed": 5,
+    "object": "steel_door",
+    "room": "office",
+    "success": true,
+    "elapsed": 76.9,
+    "stdout": "[scene_runner] scene_id=14f78f97  object=steel_door  room=office  seed=5\n\u001b[38;5;226m[Genesis] [07:04:27] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n  t=1.00s  obj=(0.178,-1.673,1.038)  [wall 11.2s]\n  t=2.00s  obj=(0.178,-1.564,1.038)  [wall 22.0s]\n  t=3.00s  obj=(0.156,-1.458,1.038)  [wall 33.7s]\n[scene_runner] Done. ttf=0.65s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "143b10cd",
+    "seed": 6,
+    "object": "glass_door",
+    "room": "living",
+    "success": true,
+    "elapsed": 81.4,
+    "stdout": "[scene_runner] scene_id=143b10cd  object=glass_door  room=living  seed=6\n\u001b[38;5;226m[Genesis] [07:05:44] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n  t=1.00s  obj=(-0.031,-2.303,1.016)  [wall 12.6s]\n  t=2.00s  obj=(-0.025,-2.382,1.016)  [wall 24.7s]\n  t=3.00s  obj=(-0.030,-2.309,1.016)  [wall 37.2s]\n[scene_runner] Done. ttf=0.8667s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  }
+]

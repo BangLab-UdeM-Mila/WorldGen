@@ -1,0 +1,199 @@
+{
+  "scene_id": "143b10cd",
+  "seed": 6,
+  "description": "",
+  "adversarial": false,
+  "task_type": "door_swing",
+  "room": {
+    "type": "living",
+    "display_name": "Living Room",
+    "width": 6.0,
+    "depth": 5.0,
+    "height": 2.8,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.8953405058843955,
+      0.8749918580233865,
+      0.8342945623013684
+    ],
+    "ceiling_color_rgb": [
+      0.9338465282616185,
+      0.9240165648062331,
+      0.9043566378954623
+    ],
+    "floor_color_rgb": [
+      0.6,
+      0.48,
+      0.3
+    ],
+    "floor_roughness": 0.5,
+    "window_wall": "north",
+    "window_pos_x": -0.5,
+    "window_pos_z": 1.5,
+    "window_width": 1.6,
+    "window_height": 1.2,
+    "window_emissive": [
+      5.5,
+      5.2,
+      4.8
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "glass_door",
+    "display_name": "Frameless Glass Door",
+    "category": "dangerous",
+    "morph": "box",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.45,
+      0.006,
+      1.05
+    ],
+    "phys_half_x": 0.0,
+    "phys_half_z": 0.0,
+    "density": 2500.0,
+    "friction": 0.18,
+    "restitution": 0.28,
+    "color_rgb": [
+      0.72,
+      0.9,
+      0.95
+    ],
+    "roughness": 0.04,
+    "ior": 1.52,
+    "catch_safe": false,
+    "safety_label": "dangerous",
+    "mass_hint": "medium",
+    "description": "Tempered glass panel door — shatter risk, dodge immediately"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": {
+    "width": 0.886,
+    "height": 2.011,
+    "thickness": 0.006,
+    "hinge_x": -0.468,
+    "door_y": -2.377,
+    "initial_angle_deg": 87.9,
+    "angular_vel": -1.367
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -0.558,
+        -0.645,
+        1.27
+      ],
+      "lookat": [
+        -0.53,
+        -2.1,
+        0.598
+      ],
+      "fov": 61.42253151191646
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        0.044,
+        -1.647,
+        0.933
+      ],
+      "lookat": [
+        -0.46,
+        -2.007,
+        0.97
+      ],
+      "fov": 49.863363186778294
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        -0.203,
+        -1.892,
+        2.308
+      ],
+      "lookat": [
+        -0.499,
+        -2.133,
+        0.464
+      ],
+      "fov": 65.27589309014748
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.2891489701437845,
+      0.2602340731294061,
+      0.2313191761150276
+    ],
+    "background_color": [
+      0.12,
+      0.11,
+      0.1
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          -0.8,
+          1.2,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.9,
+          0.78
+        ],
+        "intensity": 7.18
+      },
+      {
+        "type": "point",
+        "pos": [
+          1.2,
+          -1.0,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          0.95,
+          0.85,
+          0.72
+        ],
+        "intensity": 6.16
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.3,
+          0.6,
+          -1.0
+        ],
+        "color": [
+          0.75,
+          0.82,
+          1.0
+        ],
+        "intensity": 2.57
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "TRIGGER_DODGE",
+  "safety_label": "dangerous",
+  "interception_point_2d": null,
+  "interception_point_3d": null,
+  "time_to_floor_s": null
+}

@@ -1,6 +1,6 @@
 # ReactHuman — Pipeline 现状与下一步计划
 
-> 更新日期：2026-04-17
+> 更新日期：2026-04-22
 
 ---
 
@@ -50,8 +50,14 @@
 | `stack_collapse` | 叠放物体整体向观察者方向倒塌 | 4 | ✅ 完成并测试 |
 | `hanging_fall` | 墙面/天花板挂件脱落 | 7 | ✅ 完成并测试 |
 | `furniture_tip` | 高耸家具向观察者倾倒 | 7 | ✅ 完成并测试 |
+| `rolling_ball` | 球从桌面滚落，滚动而非滑动 | 6 | ✅ 完成，几何验证通过（200 specs） |
+| `shelf_slide` | 壁架上物体滑落（高位坠落） | 5 | ✅ 完成，几何验证通过（200 specs） |
+| `door_swing` | 门绕合页轴失控旋转 | 5 | ✅ 完成，有测试数据（dataset_door_test） |
+| `thrown_object` | 物体被人为抛出飞向观察者 | 6 | ✅ 完成，有测试数据（dataset_thrown_test） |
+| `pendulum_swing` | 重物做钟摆运动 | 5 | ✅ 完成，有测试数据（dataset_pendulum_test） |
+| `bouncing_object` | 球落地弹跳向观察者 | 6 | ✅ 完成，仿真测试通过（10 scenes，25s/场景） |
 
-**Asset library 合计：28 个物体**（含对抗样本 4 个）
+**Asset library 合计：57 个物体**（含对抗样本 14 个）
 
 ### 2.2 两种生成模式
 
@@ -126,69 +132,64 @@ LLM 已注册的任务类型（5 个 catalogue 均已对齐）：
 
 目标：完成 BENCHMARK_DESIGN.md 中 Phase 2 的 3 个任务类型。
 
-#### 3.1 `rolling_ball`（A3）
+#### 3.1 `rolling_ball`（A3）✅ 已完成
 
-- **物理机制**：球有初速度，在台面滚动后越过桌边抛体落下。  
-- **新增 spec**：`RollSpec`（初速度、初始位置、自旋角速度）  
-- **场景构建**：球必须使用 `gs.morphs.Sphere`，摩擦力驱动滚动而非滑动  
-- **新增物体**：橡皮球、网球、台球、铅芯网球（对抗）  
-- **关键难点**：滚动 vs. 静止摩擦系数需要精细调参，否则球会"滑"而不"滚"
+- **实现方式**：`RollSpec`（start_x/y, vel_x/y, angular_vel_y）  
+- **rolling-without-slipping**：ω_y = vel_x / radius 在 Randomizer 中预计算并存入 spec  
+- **新增物体**：rubber_ball, tennis_ball, billiard_ball, bowling_ball, foam_billiard, lead_tennis  
+- **几何验证**：200 specs 全部通过
 
-#### 3.2 `shelf_slide`（A5）
+#### 3.2 `shelf_slide`（A5）✅ 已完成
 
-- **物理机制**：壁架上的物体因微小振动越过架边滑落（类似 `object_drop` 但起点在高处壁架而非桌面）  
-- **新增 spec**：`ShelfSpec`（架子高度、壁挂位置、架深）  
-- **场景构建**：需要在墙面生成壁架几何体（盒形 + 两个支撑臂）  
-- **新增物体**：花盆、摆件、调料瓶、泡沫花瓶（对抗）  
-- **关键难点**：壁架几何体需要固定在墙壁上但不影响物体碰撞
+- **实现方式**：`ShelfSpec`（height, pos_x, depth, width, thickness, vel_y）  
+- **场景构建**：主板 + 两个支撑臂，全部 fixed=True；物体给初速度 vel_y < 0 触发滑落  
+- **新增物体**：small_plant, spice_bottle, ceramic_vase, heavy_toolbox, foam_vase  
+- **几何验证**：200 specs 全部通过（closeup 相机 lookat-z 已修复）
 
-#### 3.3 `door_swing`（C2）
+#### 3.3 `door_swing`（C2）✅ 已完成
 
-- **物理机制**：门绕合页轴旋转，用旋转关节约束实现  
-- **新增 spec**：`DoorSpec`（门宽/高/厚、初始角度、初始角速度、门材质）  
-- **场景构建**：Genesis 的 `gs.morphs.Box` + revolute joint  
-- **新增物体**：实木门、玻璃门、空心门（对抗）  
-- **关键难点**：Genesis 旋转关节 API，门落在 `wall_south` 或 `wall_east` 合适位置
-
-**Phase 2 预计工期**：每个任务类型约 1–2 天（spec → randomizer → scene_builder → 测试）
+- **实现方式**：`DoorSpec`（门宽/高/厚、初始角度、初始角速度）  
+- **场景构建**：Genesis revolute joint + 南墙开门洞  
+- **新增物体**：wooden_door, hollow_door, glass_door, steel_door, foam_door  
+- **几何验证**：通过（dataset_door_test 有测试数据）
 
 ---
 
-### Phase 3 — 约束体与复合动力学（难度：高）
+### Phase 3 — 约束体与复合动力学
 
-| 任务 | 新增技术需求 |
-|------|------------|
-| `thrown_object`（D1） | 抛体初速度（方向 + 大小）、飞行轨迹预测用于 L4 评估 |
-| `pendulum_swing`（E1） | 绳约束（Genesis `constraint` API）、摆动轨迹计算 |
-| `curtain_rod_fall`（B3） | 布料 + 刚体混合（窗帘布料 mesh + 杆刚体） |
+| 任务 | 新增技术需求 | 状态 |
+|------|------------|------|
+| `thrown_object`（D1） | 抛体初速度（方向 + 大小） | ✅ 完成（dataset_thrown_test） |
+| `pendulum_swing`（E1） | MJCF hinge joint 约束 | ✅ 完成（dataset_pendulum_test） |
+| `curtain_rod_fall`（B3） | 布料 + 刚体混合 | 🔲 待实现（需 Genesis cloth） |
 
 ---
 
-### Phase 4 — 评估基础设施
+### Phase 4 — Phase 4 任务类型（难度：中）
 
-与任务类型扩展并行推进，这些是 benchmark 可用的前提。
+| 任务 | 新增技术需求 | 状态 |
+|------|------------|------|
+| `bouncing_object`（D2） | 后弹跳弹道（post-bounce 参数化） | ✅ 完成，10 scenes 仿真测试通过，25s/场景 |
+| `ladder_slip`（C3） | 梯子在光滑地板上侧滑倒塌 | 🔲 待实现 |
+| `chain_reaction`（F1） | 触发器逻辑 + 多物体轨迹 | 🔲 待实现 |
 
-#### 4.1 Ground-truth 后处理（当前：字段存在但未填充）
+---
 
-`SceneSpec` 已有字段：
-```python
-interception_point_2d: Optional[list[float]]  # [px_x, px_y]
-interception_point_3d: Optional[list[float]]  # [x, y, z]
-time_to_floor_s:       Optional[float]
-```
+### Phase 5 — 评估基础设施
 
-需要在 `SceneBuilder._build_metadata()` 中实际计算：
-- `time_to_floor_s`：从仿真轨迹中找第一次 `obj.pos[2] < floor_threshold` 的时间戳  
+#### 5.1 Ground-truth 后处理 ✅ 基础实现完成
+
+`SceneBuilder._build_metadata()` 已计算：
+- `time_to_floor_s`：仿真中记录首次落地/事件帧  
 - `interception_point_3d`：对象到达 `z = hip_height`（~0.9 m）时的 world 坐标  
-- `interception_point_2d`：将 3D 点投影到每个相机的像素坐标  
+- `interception_point_2d`：投影到各相机像素（部分场景仍为 null）
 
-#### 4.2 数据集打包与统计
+#### 5.2 数据集打包与统计
 
-- 生成 `dataset/manifest.json`：所有 scene 的 id、task_type、gt_action、adversarial 汇总  
-- 生成 `dataset/stats.md`：各类别分布、对抗比例、平均 time_to_floor 等  
-- 验证脚本：检查每个 scene 目录结构完整（video + metadata + spec）
+- `validate_scene.py` ✅：场景质量验证（--json 输出汇总）  
+- manifest.json + stats.md：🔲 待实现（独立脚本）
 
-#### 4.3 评估脚本（Track 1）
+#### 5.3 评估脚本（Track 1）🔲 待实现
 
 针对模型输出 `EXECUTE_CATCH / TRIGGER_DODGE / BRACE_FOR_IMPACT` 的分类准确率：
 - 整体 Accuracy  
@@ -198,24 +199,29 @@ time_to_floor_s:       Optional[float]
 
 ---
 
-### Phase 5 — 长期（Genesis 流体 / 布料）
+### Phase 6 — 长期（Genesis 流体 / 布料）
 
 | 任务 | 依赖 |
 |------|------|
 | `liquid_spill` | Genesis MPM 流体仿真稳定性 |
 | `ceiling_tile_fall`（B4） | 多刚体碎裂（fractured mesh） |
-| `chain_reaction`（F1） | 触发器逻辑 + 多物体轨迹追踪 |
+| `curtain_rod_fall`（B3） | Genesis cloth + 刚体混合 |
 
 ---
 
 ## 四、下一步行动（优先级排序）
 
-| 优先级 | 任务 | 预计工时 |
-|--------|------|---------|
-| 🔴 P0 | `interception_point_3d/2d` 和 `time_to_floor_s` 后处理实现 | 0.5 天 |
-| 🔴 P0 | `rolling_ball` 任务类型实现 | 1.5 天 |
-| 🟠 P1 | `shelf_slide` 任务类型实现 | 1 天 |
-| 🟠 P1 | 数据集 manifest + stats 打包脚本 | 0.5 天 |
-| 🟡 P2 | `door_swing` 任务类型（旋转关节） | 2 天 |
-| 🟡 P2 | Track 1 评估脚本 | 1 天 |
-| 🟢 P3 | Phase 3 任务类型（thrown / pendulum / curtain） | 各 2–3 天 |
+| 优先级 | 任务 | 预计工时 | 状态 |
+|--------|------|---------|------|
+| 🔴 P0 | `interception_point_3d/2d` 和 `time_to_floor_s` 后处理实现 | 0.5 天 | ✅ 完成 |
+| 🔴 P0 | `rolling_ball` 任务类型实现 | 1.5 天 | ✅ 完成 |
+| 🟠 P1 | `shelf_slide` 任务类型实现 | 1 天 | ✅ 完成 |
+| 🟠 P1 | `door_swing` 任务类型（旋转关节） | 2 天 | ✅ 完成 |
+| 🟠 P1 | `thrown_object` 任务类型 | 1.5 天 | ✅ 完成 |
+| 🟠 P1 | `pendulum_swing` 任务类型（MJCF hinge） | 1.5 天 | ✅ 完成 |
+| 🟠 P1 | `bouncing_object` 任务类型 | 1 天 | ✅ 完成，仿真通过（10 scenes 全 OK，25s/场景）|
+| 🟡 P2 | 数据集 manifest + stats 打包脚本 | 0.5 天 | ✅ 完成（generate_manifest.py） |
+| 🟡 P2 | Track 1 评估脚本 | 1 天 | ✅ 完成（evaluate_track1.py） |
+| 🟡 P2 | `ladder_slip` 任务类型 | 1.5 天 | ✅ 完成（几何验证通过 50 specs） |
+| 🟢 P3 | `chain_reaction` 任务类型 | 2–3 天 | ✅ 完成（几何验证通过 50 specs） |
+| 🟢 P3 | `curtain_rod_fall` 任务类型（布料物理） | 3–4 天 | 待实现（需 Genesis cloth） |

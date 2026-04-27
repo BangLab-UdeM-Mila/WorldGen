@@ -1,0 +1,102 @@
+[
+  {
+    "scene_id": "07fa96ed",
+    "seed": 0,
+    "object": "lead_bounce_tennis",
+    "room": "living",
+    "success": true,
+    "elapsed": 27.6,
+    "stdout": "[scene_runner] scene_id=07fa96ed  object=lead_bounce_tennis  room=living  seed=0\n\u001b[38;5;226m[Genesis] [09:54:33] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n[scene_runner] Done. ttf=0.0042s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "0cc649cd",
+    "seed": 1,
+    "object": "bounce_billiard",
+    "room": "living",
+    "success": true,
+    "elapsed": 24.1,
+    "stdout": "[scene_runner] scene_id=0cc649cd  object=bounce_billiard  room=living  seed=1\n\u001b[38;5;226m[Genesis] [09:54:59] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n[scene_runner] Done. ttf=Nones  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "9334c2cd",
+    "seed": 2,
+    "object": "lead_bounce_tennis",
+    "room": "kitchen",
+    "success": true,
+    "elapsed": 26.7,
+    "stdout": "[scene_runner] scene_id=9334c2cd  object=lead_bounce_tennis  room=kitchen  seed=2\n\u001b[38;5;226m[Genesis] [09:55:23] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n[scene_runner] Done. ttf=0.0042s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "8a8f34fa",
+    "seed": 3,
+    "object": "foam_bounce_billiard",
+    "room": "dining",
+    "success": true,
+    "elapsed": 25.6,
+    "stdout": "[scene_runner] scene_id=8a8f34fa  object=foam_bounce_billiard  room=dining  seed=3\n\u001b[38;5;226m[Genesis] [09:55:50] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n[scene_runner] Done. ttf=Nones  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "8fe1bf75",
+    "seed": 4,
+    "object": "foam_bounce_billiard",
+    "room": "office",
+    "success": true,
+    "elapsed": 23.9,
+    "stdout": "[scene_runner] scene_id=8fe1bf75  object=foam_bounce_billiard  room=office  seed=4\n\u001b[38;5;226m[Genesis] [09:56:15] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n[scene_runner] Done. ttf=Nones  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "4a07e23b",
+    "seed": 5,
+    "object": "foam_bounce_billiard",
+    "room": "office",
+    "success": true,
+    "elapsed": 24.1,
+    "stdout": "[scene_runner] scene_id=4a07e23b  object=foam_bounce_billiard  room=office  seed=5\n\u001b[38;5;226m[Genesis] [09:56:39] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n[scene_runner] Done. ttf=Nones  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "66e90b5a",
+    "seed": 6,
+    "object": "bounce_billiard",
+    "room": "living",
+    "success": true,
+    "elapsed": 25.1,
+    "stdout": "[scene_runner] scene_id=66e90b5a  object=bounce_billiard  room=living  seed=6\n\u001b[38;5;226m[Genesis] [09:57:04] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n[scene_runner] Done. ttf=Nones  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "dcb40e45",
+    "seed": 7,
+    "object": "lead_bounce_tennis",
+    "room": "living",
+    "success": true,
+    "elapsed": 24.3,
+    "stdout": "[scene_runner] scene_id=dcb40e45  object=lead_bounce_tennis  room=living  seed=7\n\u001b[38;5;226m[Genesis] [09:57:28] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n[scene_runner] Done. ttf=0.0042s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "7d8f1545",
+    "seed": 8,
+    "object": "foam_bounce_billiard",
+    "room": "kitchen",
+    "success": true,
+    "elapsed": 23.8,
+    "stdout": "[scene_runner] scene_id=7d8f1545  object=foam_bounce_billiard  room=kitchen  seed=8\n\u001b[38;5;226m[Genesis] [09:57:52] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n[scene_runner] Done. ttf=Nones  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "74c2ec1d",
+    "seed": 9,
+    "object": "bounce_billiard",
+    "room": "office",
+    "success": true,
+    "elapsed": 24.5,
+    "stdout": "[scene_runner] scene_id=74c2ec1d  object=bounce_billiard  room=office  seed=9\n\u001b[38;5;226m[Genesis] [09:58:17] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n[scene_runner] Done. ttf=Nones  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  }
+]

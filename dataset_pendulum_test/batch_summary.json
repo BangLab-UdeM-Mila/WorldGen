@@ -1,0 +1,32 @@
+[
+  {
+    "scene_id": "8df07ed0",
+    "seed": 0,
+    "object": "lead_sandbag",
+    "room": "living",
+    "success": true,
+    "elapsed": 81.4,
+    "stdout": "[scene_runner] scene_id=8df07ed0  object=lead_sandbag  room=living  seed=0\n\u001b[38;5;226m[Genesis] [08:17:01] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n  t=1.00s  obj=(-1.160,-0.404,1.443)  [wall 12.5s]\n  t=2.00s  obj=(-1.160,0.539,1.216)  [wall 24.9s]\n  t=3.00s  obj=(-1.160,0.974,1.319)  [wall 36.9s]\n[scene_runner] Done. ttf=0.6542s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "d59a99ac",
+    "seed": 1,
+    "object": "chandelier",
+    "room": "living",
+    "success": true,
+    "elapsed": 78.9,
+    "stdout": "[scene_runner] scene_id=d59a99ac  object=chandelier  room=living  seed=1\n\u001b[38;5;226m[Genesis] [08:18:22] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n  t=1.00s  obj=(1.077,-0.606,1.893)  [wall 12.3s]\n  t=2.00s  obj=(1.077,0.696,1.737)  [wall 24.3s]\n  t=3.00s  obj=(1.077,-0.101,1.630)  [wall 35.9s]\n[scene_runner] Done. ttf=0.5875s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "d8dd81ba",
+    "seed": 2,
+    "object": "lead_sandbag",
+    "room": "kitchen",
+    "success": true,
+    "elapsed": 82.1,
+    "stdout": "[scene_runner] scene_id=d8dd81ba  object=lead_sandbag  room=kitchen  seed=2\n\u001b[38;5;226m[Genesis] [08:19:41] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n  t=1.00s  obj=(-0.653,-0.338,1.313)  [wall 11.9s]\n  t=2.00s  obj=(-0.653,0.614,1.193)  [wall 23.6s]\n  t=3.00s  obj=(-0.653,0.377,1.159)  [wall 34.9s]\n[scene_runner] Done. ttf=0.6167s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  }
+]

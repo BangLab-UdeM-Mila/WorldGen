@@ -50,7 +50,12 @@ def parse_args() -> argparse.Namespace:
     )
     p.add_argument("--mode", choices=["procedural", "llm"], default="procedural",
                    help="Generation mode.")
-    p.add_argument("--task-type", choices=["object_drop", "furniture_tip", "hanging_fall", "stack_collapse", "sliding_object"],
+    p.add_argument("--task-type",
+                   choices=["object_drop", "furniture_tip", "hanging_fall",
+                            "stack_collapse", "sliding_object",
+                            "rolling_ball", "shelf_slide", "door_swing",
+                            "thrown_object", "pendulum_swing",
+                            "bouncing_object", "ladder_slip", "chain_reaction"],
                    default="object_drop",
                    help="Physics task type to generate.")
 

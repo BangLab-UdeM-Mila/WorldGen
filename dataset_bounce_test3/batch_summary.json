@@ -1,0 +1,32 @@
+[
+  {
+    "scene_id": "f105bc7f",
+    "seed": 0,
+    "object": "lead_bounce_tennis",
+    "room": "living",
+    "success": false,
+    "elapsed": 300,
+    "stdout": "",
+    "stderr": "TIMEOUT"
+  },
+  {
+    "scene_id": "2c5af789",
+    "seed": 1,
+    "object": "bounce_billiard",
+    "room": "living",
+    "success": true,
+    "elapsed": 77.1,
+    "stdout": "[scene_runner] scene_id=2c5af789  object=bounce_billiard  room=living  seed=1\n\u001b[38;5;226m[Genesis] [08:18:06] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n\u001b[38;5;226m[Genesis] [08:18:09] [WARNING] Non-zero `coup_restitution` could lead to instability. Use with caution.\u001b[0m\n  t=1.00s  obj=(-0.547,0.138,0.028)  [wall 11.3s]\n  t=2.00s  obj=(-0.584,-0.606,0.028)  [wall 22.2s]\n  t=3.00s  obj=(-0.621,-1.350,0.028)  [wall 33.1s]\n[scene_runner] Done. ttf=0.775s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "07617bef",
+    "seed": 2,
+    "object": "lead_bounce_tennis",
+    "room": "kitchen",
+    "success": true,
+    "elapsed": 82.2,
+    "stdout": "[scene_runner] scene_id=07617bef  object=lead_bounce_tennis  room=kitchen  seed=2\n\u001b[38;5;226m[Genesis] [08:19:23] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n\u001b[38;5;226m[Genesis] [08:19:26] [WARNING] Non-zero `coup_restitution` could lead to instability. Use with caution.\u001b[0m\n  t=1.00s  obj=(-0.029,-1.291,0.033)  [wall 13.2s]\n  t=2.00s  obj=(-0.187,-1.668,0.033)  [wall 26.0s]\n  t=3.00s  obj=(-0.334,-1.612,0.033)  [wall 38.7s]\n[scene_runner] Done. ttf=Nones  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  }
+]

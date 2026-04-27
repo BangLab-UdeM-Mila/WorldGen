@@ -572,3 +572,693 @@
   safety_label: dangerous
   mass_hint: heavy             # falls fast and crushes — BRACE not TRIGGER_DODGE
   description: "Decorative steel lamp, visually identical to floor lamp but 28× heavier"
+
+# ============================================================
+# Rolling ball objects  (task_type: rolling_ball)
+# The ball starts on a table and rolls off the edge toward the observer.
+# size = [radius] in metres for all sphere morphs.
+# ============================================================
+
+# ── Safe balls (EXECUTE_CATCH) ────────────────────────────────
+
+- name: rubber_ball
+  display_name: Rubber Play Ball
+  category: safe
+  task_type: rolling_ball
+  morph: sphere
+  size: [0.035]              # radius 3.5 cm
+  density: 400
+  friction: 0.65
+  restitution: 0.75
+  color_rgb: [0.90, 0.25, 0.15]
+  roughness: 0.60
+  ior: 1.0
+  catch_safe: true
+  safety_label: safe
+  mass_hint: light
+  description: "A lightweight rubber play ball — bouncy, soft, and safe to catch"
+
+- name: tennis_ball
+  display_name: Tennis Ball
+  category: safe
+  task_type: rolling_ball
+  morph: sphere
+  size: [0.033]              # radius 3.3 cm (regulation ~6.7 cm diameter)
+  density: 350
+  friction: 0.60
+  restitution: 0.70
+  color_rgb: [0.78, 0.90, 0.12]
+  roughness: 0.85
+  ior: 1.0
+  catch_safe: true
+  safety_label: safe
+  mass_hint: light
+  description: "A standard tennis ball — light and fuzzy, safe to catch"
+
+# ── Dangerous balls (TRIGGER_DODGE / BRACE_FOR_IMPACT) ───────
+
+- name: billiard_ball
+  display_name: Billiard Ball
+  category: dangerous
+  task_type: rolling_ball
+  morph: sphere
+  size: [0.028]              # radius 2.8 cm (regulation 57.2 mm diameter)
+  density: 1700              # solid phenolic resin
+  friction: 0.10
+  restitution: 0.85
+  color_rgb: [0.15, 0.20, 0.82]
+  roughness: 0.05
+  ior: 1.5
+  catch_safe: false
+  safety_label: caution
+  mass_hint: medium
+  description: "A solid phenolic billiard ball — high speed impact, hard, dodge sideways"
+
+- name: bowling_ball
+  display_name: Bowling Ball
+  category: dangerous
+  task_type: rolling_ball
+  morph: sphere
+  size: [0.108]              # radius 10.8 cm (regulation 21.6 cm diameter)
+  density: 1100              # polyester/polyurethane
+  friction: 0.25
+  restitution: 0.30
+  color_rgb: [0.10, 0.10, 0.12]
+  roughness: 0.15
+  ior: 1.0
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "A heavy bowling ball — crushes anything beneath it, brace for impact"
+
+# ── Adversarial balls ─────────────────────────────────────────
+
+- name: foam_billiard
+  display_name: Foam Prop Billiard Ball (looks heavy)
+  category: adversarial
+  task_type: rolling_ball
+  morph: sphere
+  size: [0.028]              # identical size to billiard_ball
+  density: 40                # foam core — looks like solid resin
+  friction: 0.50
+  restitution: 0.80
+  color_rgb: [0.15, 0.20, 0.82]  # identical colour to billiard_ball
+  roughness: 0.05
+  ior: 1.0
+  catch_safe: true           # looks dangerous but foam — safe to catch
+  safety_label: safe
+  mass_hint: light
+  description: "Foam prop painted to look like a billiard ball — slow acceleration betrays the foam"
+
+- name: lead_tennis
+  display_name: Lead-Core Tennis Ball (looks light)
+  category: adversarial
+  task_type: rolling_ball
+  morph: sphere
+  size: [0.033]              # identical size to tennis_ball
+  density: 8000              # lead core with thin rubber shell
+  friction: 0.60
+  restitution: 0.10
+  color_rgb: [0.78, 0.90, 0.12]  # identical colour to tennis_ball
+  roughness: 0.85
+  ior: 1.0
+  catch_safe: false          # looks light but lead core — dangerous
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "A lead-filled tennis ball — fast acceleration reveals the mass, dangerous to catch"
+
+# ============================================================
+# Shelf-slide objects  (task_type: shelf_slide)
+# Objects start on a wall-mounted shelf and slide off toward the observer.
+# size = [x, y, z] half-extents for box; [r, r, half_h] for cylinder.
+# ============================================================
+
+# ── Safe shelf objects (EXECUTE_CATCH) ────────────────────────
+
+- name: small_plant
+  display_name: Small Potted Plant
+  category: safe
+  task_type: shelf_slide
+  morph: cylinder
+  size: [0.060, 0.060, 0.065]   # radius 6 cm, half-height 6.5 cm → 13 cm tall
+  density: 900
+  friction: 0.55
+  restitution: 0.08
+  color_rgb: [0.38, 0.60, 0.28]
+  roughness: 0.75
+  ior: 1.0
+  catch_safe: true
+  safety_label: safe
+  mass_hint: light
+  description: "A small potted plant in a terracotta pot — light and safe to catch"
+
+- name: spice_bottle
+  display_name: Glass Spice Bottle
+  category: safe
+  task_type: shelf_slide
+  morph: cylinder
+  size: [0.030, 0.030, 0.058]   # radius 3 cm, half-height 5.8 cm → 11.6 cm tall
+  density: 600                   # glass + partial contents
+  friction: 0.20
+  restitution: 0.15
+  color_rgb: [0.85, 0.92, 0.80]
+  roughness: 0.08
+  ior: 1.49
+  catch_safe: true
+  safety_label: caution
+  mass_hint: light
+  description: "A glass spice bottle — light but fragile if it hits the floor"
+
+# ── Dangerous shelf objects (TRIGGER_DODGE / BRACE_FOR_IMPACT) ─
+
+- name: ceramic_vase
+  display_name: Ceramic Vase
+  category: dangerous
+  task_type: shelf_slide
+  morph: cylinder
+  size: [0.080, 0.080, 0.150]   # radius 8 cm, half-height 15 cm → 30 cm tall
+  density: 1600                  # glazed ceramic
+  friction: 0.30
+  restitution: 0.06
+  color_rgb: [0.75, 0.45, 0.28]
+  roughness: 0.12
+  ior: 1.52
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: medium
+  description: "A heavy ceramic vase — shatters into dangerous shards on impact, must be dodged"
+
+- name: heavy_toolbox
+  display_name: Metal Tool Box
+  category: dangerous
+  task_type: shelf_slide
+  morph: box
+  size: [0.150, 0.100, 0.080]   # half-extents: full 30×20×16 cm
+  density: 900
+  friction: 0.45
+  restitution: 0.08
+  color_rgb: [0.62, 0.12, 0.12]
+  roughness: 0.30
+  ior: 1.0
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "A heavy metal tool box — too heavy to catch, brace for impact"
+
+# ── Adversarial shelf object ───────────────────────────────────
+
+- name: foam_vase
+  display_name: Foam Prop Vase (looks heavy)
+  category: adversarial
+  task_type: shelf_slide
+  morph: cylinder
+  size: [0.080, 0.080, 0.150]   # identical shape to ceramic_vase
+  density: 35                    # foam stage prop
+  friction: 0.45
+  restitution: 0.55
+  color_rgb: [0.75, 0.45, 0.28]  # identical colour to ceramic_vase
+  roughness: 0.12
+  ior: 1.0
+  catch_safe: true               # looks like ceramic vase but foam — safe to catch
+  safety_label: safe
+  mass_hint: light
+  description: "Stage-prop foam vase — slow fall reveals foam despite ceramic appearance"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Door objects (task_type: door_swing)
+# size: [half_width, half_thickness, half_height]  (box half-extents)
+# Actual door geometry comes from DoorSpec; size here drives density/colour only.
+# catch_safe is always false — a swinging door cannot be caught.
+# ─────────────────────────────────────────────────────────────────────────────
+
+- name: wooden_door
+  display_name: Solid Wood Door
+  category: dangerous
+  task_type: door_swing
+  morph: box
+  size: [0.450, 0.0225, 1.050]   # nominal half-extents (0.9 × 0.045 × 2.1 m)
+  density: 650                    # kg/m³ solid pine/oak
+  friction: 0.40
+  restitution: 0.18
+  color_rgb: [0.55, 0.38, 0.20]
+  roughness: 0.68
+  ior: 1.0
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "Heavy solid-wood interior door — brace for the impact"
+
+- name: hollow_door
+  display_name: Hollow-Core Door
+  category: safe
+  task_type: door_swing
+  morph: box
+  size: [0.450, 0.019, 1.050]    # thinner hollow-core
+  density: 120                    # kg/m³ hollow construction
+  friction: 0.35
+  restitution: 0.20
+  color_rgb: [0.92, 0.88, 0.82]
+  roughness: 0.50
+  ior: 1.0
+  catch_safe: false
+  safety_label: caution
+  mass_hint: light
+  description: "Light hollow-core door — dodge to the side"
+
+- name: glass_door
+  display_name: Frameless Glass Door
+  category: dangerous
+  task_type: door_swing
+  morph: box
+  size: [0.450, 0.006, 1.050]    # 12 mm glass panel
+  density: 2500                   # kg/m³ tempered glass
+  friction: 0.18
+  restitution: 0.28
+  color_rgb: [0.72, 0.90, 0.95]
+  roughness: 0.04
+  ior: 1.52
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: medium
+  description: "Tempered glass panel door — shatter risk, dodge immediately"
+
+- name: steel_door
+  display_name: Steel Security Door
+  category: dangerous
+  task_type: door_swing
+  morph: box
+  size: [0.450, 0.030, 1.050]    # 60 mm steel panel
+  density: 7800                   # kg/m³ steel
+  friction: 0.30
+  restitution: 0.22
+  color_rgb: [0.55, 0.55, 0.60]
+  roughness: 0.28
+  ior: 1.0
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "Heavy steel security door — massive momentum, brace for impact"
+
+# ── Adversarial door object ────────────────────────────────────
+
+- name: foam_door
+  display_name: Foam Prop Door (looks like wood)
+  category: adversarial
+  task_type: door_swing
+  morph: box
+  size: [0.450, 0.0225, 1.050]   # identical shape to wooden_door
+  density: 30                     # kg/m³ stage foam
+  friction: 0.35
+  restitution: 0.12
+  color_rgb: [0.55, 0.38, 0.20]  # identical colour to wooden_door
+  roughness: 0.68
+  ior: 1.0
+  catch_safe: false
+  safety_label: safe
+  mass_hint: light
+  description: "Foam stage-prop door painted as wood — actually weightless, dodge it"
+
+# ── thrown_object objects ──────────────────────────────────────
+
+- name: softball
+  display_name: Softball
+  category: safe
+  task_type: thrown_object
+  morph: sphere
+  size: [0.048]
+  density: 195
+  friction: 0.60
+  restitution: 0.40
+  color_rgb: [0.95, 0.92, 0.85]
+  roughness: 0.70
+  ior: 1.0
+  catch_safe: true
+  safety_label: safe
+  mass_hint: light
+  description: "Standard softball — safe to catch"
+
+- name: baseball
+  display_name: Baseball
+  category: safe
+  task_type: thrown_object
+  morph: sphere
+  size: [0.037]
+  density: 730
+  friction: 0.60
+  restitution: 0.35
+  color_rgb: [0.97, 0.97, 0.95]
+  roughness: 0.80
+  ior: 1.0
+  catch_safe: true
+  safety_label: safe
+  mass_hint: light
+  description: "Standard baseball — safe to catch"
+
+- name: cricket_ball
+  display_name: Cricket Ball
+  category: dangerous
+  task_type: thrown_object
+  morph: sphere
+  size: [0.036]
+  density: 1120
+  friction: 0.65
+  restitution: 0.30
+  color_rgb: [0.60, 0.07, 0.05]
+  roughness: 0.75
+  ior: 1.0
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "Dense leather cricket ball — high momentum, dodge it"
+
+- name: throwing_knife
+  display_name: Throwing Knife
+  category: dangerous
+  task_type: thrown_object
+  morph: box
+  size: [0.012, 0.004, 0.150]
+  density: 7800
+  friction: 0.25
+  restitution: 0.08
+  color_rgb: [0.72, 0.72, 0.78]
+  roughness: 0.18
+  ior: 2.5
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "Steel throwing knife — extremely dangerous, dodge immediately"
+
+- name: foam_baseball
+  display_name: Foam Baseball (Adversarial)
+  category: adversarial
+  task_type: thrown_object
+  morph: sphere
+  size: [0.037]
+  density: 28
+  friction: 0.50
+  restitution: 0.65
+  color_rgb: [0.97, 0.97, 0.95]
+  roughness: 0.80
+  ior: 1.0
+  catch_safe: true
+  safety_label: safe
+  mass_hint: light
+  description: "Foam prop baseball — looks identical to real baseball but weightless; safe to catch"
+
+- name: lead_tennis
+  display_name: Lead-core Tennis Ball (Adversarial)
+  category: adversarial
+  task_type: thrown_object
+  morph: sphere
+  size: [0.033]
+  density: 3600
+  friction: 0.60
+  restitution: 0.18
+  color_rgb: [0.78, 0.88, 0.20]
+  roughness: 0.80
+  ior: 1.0
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "Lead-core ball disguised as tennis ball — looks safe but extremely heavy, dodge it"
+
+# ── pendulum_swing objects ─────────────────────────────────────
+
+- name: sandbag
+  display_name: Sandbag
+  category: safe
+  task_type: pendulum_swing
+  morph: box
+  size: [0.18, 0.12, 0.25]
+  density: 400
+  friction: 0.70
+  restitution: 0.05
+  color_rgb: [0.62, 0.54, 0.38]
+  roughness: 0.85
+  ior: 1.0
+  catch_safe: false
+  safety_label: safe
+  mass_hint: light
+  description: "Canvas sandbag — light, sidestep it"
+
+- name: iron_bob
+  display_name: Iron Pendulum Bob
+  category: dangerous
+  task_type: pendulum_swing
+  morph: sphere
+  size: [0.120]
+  density: 7800
+  friction: 0.30
+  restitution: 0.15
+  color_rgb: [0.28, 0.28, 0.30]
+  roughness: 0.35
+  ior: 1.0
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "Solid iron pendulum bob — massive momentum, brace for impact"
+
+- name: chandelier
+  display_name: Crystal Chandelier
+  category: dangerous
+  task_type: pendulum_swing
+  morph: box
+  size: [0.30, 0.30, 0.35]
+  density: 2600
+  friction: 0.25
+  restitution: 0.20
+  color_rgb: [0.85, 0.90, 0.96]
+  roughness: 0.08
+  ior: 1.5
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "Heavy crystal chandelier — glass and metal, brace for impact"
+
+- name: foam_iron_bob
+  display_name: Foam Prop Wrecking Ball (Adversarial)
+  category: adversarial
+  task_type: pendulum_swing
+  morph: sphere
+  size: [0.120]
+  density: 25
+  friction: 0.30
+  restitution: 0.45
+  color_rgb: [0.28, 0.28, 0.30]
+  roughness: 0.35
+  ior: 1.0
+  catch_safe: false
+  safety_label: safe
+  mass_hint: light
+  description: "Foam prop wrecking ball — identical appearance to iron bob but nearly weightless; dodge it"
+
+- name: lead_sandbag
+  display_name: Lead-filled Sandbag (Adversarial)
+  category: adversarial
+  task_type: pendulum_swing
+  morph: box
+  size: [0.18, 0.12, 0.25]
+  density: 6800
+  friction: 0.70
+  restitution: 0.05
+  color_rgb: [0.62, 0.54, 0.38]
+  roughness: 0.85
+  ior: 1.0
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "Lead-filled sandbag disguised as regular sandbag — extreme mass, brace for impact"
+
+# ============================================================
+# Ladder objects  (task_type: ladder_slip)
+# The ladder leans against the north wall at lean_deg from vertical.
+# size = [half_width, half_depth, half_height] in metres (box morph).
+# ============================================================
+
+# ── Light ladders (TRIGGER_DODGE — sharp edges but low mass) ──
+
+- name: aluminum_ladder
+  display_name: Aluminum Step Ladder
+  category: dangerous
+  task_type: ladder_slip
+  morph: box
+  size: [0.22, 0.05, 0.95]   # half-extents → full 44×10×190 cm
+  density: 360                # lightweight aluminum
+  friction: 0.22              # smooth floor contact
+  restitution: 0.14
+  color_rgb: [0.72, 0.74, 0.78]
+  roughness: 0.42
+  ior: 1.0
+  catch_safe: false
+  safety_label: caution
+  mass_hint: light
+  description: "Aluminum step ladder — slides fast on smooth floor, sharp edges, dodge sideways"
+
+# ── Heavy ladders (BRACE_FOR_IMPACT — high mass, crushing impact) ─
+
+- name: heavy_timber_ladder
+  display_name: Heavy Timber Ladder
+  category: dangerous
+  task_type: ladder_slip
+  morph: box
+  size: [0.20, 0.06, 1.05]   # half-extents → full 40×12×210 cm
+  density: 620                # dense hardwood
+  friction: 0.28
+  restitution: 0.10
+  color_rgb: [0.52, 0.38, 0.22]
+  roughness: 0.80
+  ior: 1.0
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "Heavy solid-timber ladder — massive impact on fall, brace for impact"
+
+- name: steel_industrial_ladder
+  display_name: Steel Industrial Ladder
+  category: dangerous
+  task_type: ladder_slip
+  morph: box
+  size: [0.25, 0.06, 1.10]   # half-extents → full 50×12×220 cm
+  density: 1100               # steel frame with rungs
+  friction: 0.20
+  restitution: 0.08
+  color_rgb: [0.50, 0.52, 0.55]
+  roughness: 0.30
+  ior: 1.0
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "Heavy steel industrial ladder — extreme momentum, brace for impact"
+
+# ── Adversarial ladder ────────────────────────────────────────
+
+- name: hollow_plastic_ladder
+  display_name: Hollow Plastic Prop Ladder (looks like aluminum)
+  category: adversarial
+  task_type: ladder_slip
+  morph: box
+  size: [0.22, 0.05, 0.95]   # identical shape to aluminum_ladder
+  density: 30                 # hollow plastic — looks metallic but nearly weightless
+  friction: 0.22
+  restitution: 0.28
+  color_rgb: [0.72, 0.74, 0.78]  # identical colour to aluminum_ladder
+  roughness: 0.42
+  ior: 1.0
+  catch_safe: false
+  safety_label: safe
+  mass_hint: light
+  description: "Hollow plastic prop painted as aluminum — slow fall betrays low mass, step aside easily"
+
+# ============================================================
+# Bouncing objects  (task_type: bouncing_object)
+# A ball is dropped from height and bounces off the floor toward the observer.
+# All morphs are sphere; size = [radius] in metres.
+# ============================================================
+
+# ── Safe (EXECUTE_CATCH) ──────────────────────────────────────
+
+- name: bounce_rubber_ball
+  display_name: Rubber Bounce Ball
+  category: safe
+  task_type: bouncing_object
+  morph: sphere
+  size: [0.040]               # radius 4 cm
+  density: 350
+  friction: 0.65
+  restitution: 0.82           # high restitution → tall bounce
+  color_rgb: [0.88, 0.20, 0.12]
+  roughness: 0.65
+  ior: 1.0
+  catch_safe: true
+  safety_label: safe
+  mass_hint: light
+  description: "A light rubber ball with a very high bounce — safe and easy to catch"
+
+- name: bounce_tennis_ball
+  display_name: Tennis Ball
+  category: safe
+  task_type: bouncing_object
+  morph: sphere
+  size: [0.033]               # radius 3.3 cm (regulation ~6.7 cm diameter)
+  density: 350
+  friction: 0.60
+  restitution: 0.72
+  color_rgb: [0.78, 0.90, 0.12]
+  roughness: 0.85
+  ior: 1.0
+  catch_safe: true
+  safety_label: safe
+  mass_hint: light
+  description: "A standard tennis ball — bounces well, safe to catch"
+
+# ── Dangerous (TRIGGER_DODGE) ─────────────────────────────────
+
+- name: bounce_billiard
+  display_name: Billiard Ball
+  category: dangerous
+  task_type: bouncing_object
+  morph: sphere
+  size: [0.028]               # radius 2.8 cm (regulation 57.2 mm diameter)
+  density: 1700               # solid phenolic resin
+  friction: 0.10
+  restitution: 0.88           # very elastic — bounces high and fast
+  color_rgb: [0.15, 0.20, 0.82]
+  roughness: 0.05
+  ior: 1.5
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: medium
+  description: "Hard phenolic billiard ball — bounces fast and hard, dodge sideways"
+
+- name: bounce_steel_ball
+  display_name: Steel Ball Bearing
+  category: dangerous
+  task_type: bouncing_object
+  morph: sphere
+  size: [0.025]               # radius 2.5 cm
+  density: 3000               # hollow steel shell — denser than billiard but stable in sim
+  friction: 0.12
+  restitution: 0.70
+  color_rgb: [0.72, 0.74, 0.78]
+  roughness: 0.08
+  ior: 1.0
+  catch_safe: false
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "A heavy steel ball bearing — high momentum on bounce, brace or dodge"
+
+# ── Adversarial ───────────────────────────────────────────────
+
+- name: foam_bounce_billiard
+  display_name: Foam Prop Billiard Ball (looks heavy)
+  category: adversarial
+  task_type: bouncing_object
+  morph: sphere
+  size: [0.028]               # identical size to bounce_billiard
+  density: 40                 # foam core — visually identical to billiard ball
+  friction: 0.50
+  restitution: 0.80
+  color_rgb: [0.15, 0.20, 0.82]   # identical colour to bounce_billiard
+  roughness: 0.05
+  ior: 1.0
+  catch_safe: true            # looks dangerous but foam — safe to catch
+  safety_label: safe
+  mass_hint: light
+  description: "Foam prop painted as a billiard ball — slow fall acceleration reveals the foam"
+
+- name: lead_bounce_tennis
+  display_name: Lead-Core Tennis Ball (looks safe)
+  category: adversarial
+  task_type: bouncing_object
+  morph: sphere
+  size: [0.033]               # identical size to bounce_tennis_ball
+  density: 2500               # lead-weighted core — still 6× heavier than normal tennis ball
+  friction: 0.60
+  restitution: 0.20           # lead dampens bounce heavily — low but fast trajectory
+  color_rgb: [0.78, 0.90, 0.12]   # identical colour to bounce_tennis_ball
+  roughness: 0.85
+  ior: 1.0
+  catch_safe: false           # looks light but lead core — crushing weight
+  safety_label: dangerous
+  mass_hint: heavy
+  description: "Lead-filled tennis ball — fast, low bounce reveals the mass, dangerous to catch"

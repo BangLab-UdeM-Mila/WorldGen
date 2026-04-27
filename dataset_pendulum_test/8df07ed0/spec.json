@@ -1,0 +1,201 @@
+{
+  "scene_id": "8df07ed0",
+  "seed": 0,
+  "description": "",
+  "adversarial": true,
+  "task_type": "pendulum_swing",
+  "room": {
+    "type": "living",
+    "display_name": "Living Room",
+    "width": 6.0,
+    "depth": 5.0,
+    "height": 2.8,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.8597412308112206,
+      0.8402016573836929,
+      0.8011225105286374
+    ],
+    "ceiling_color_rgb": [
+      0.9063924847739384,
+      0.8968515112500023,
+      0.8777695642021299
+    ],
+    "floor_color_rgb": [
+      0.6,
+      0.48,
+      0.3
+    ],
+    "floor_roughness": 0.5,
+    "window_wall": "north",
+    "window_pos_x": -0.5,
+    "window_pos_z": 1.5,
+    "window_width": 1.6,
+    "window_height": 1.2,
+    "window_emissive": [
+      5.5,
+      5.2,
+      4.8
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "lead_sandbag",
+    "display_name": "Lead-filled Sandbag (Adversarial)",
+    "category": "adversarial",
+    "morph": "box",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.18,
+      0.12,
+      0.25
+    ],
+    "phys_half_x": 0.0,
+    "phys_half_z": 0.0,
+    "density": 6800.0,
+    "friction": 0.7,
+    "restitution": 0.05,
+    "color_rgb": [
+      0.62,
+      0.54,
+      0.38
+    ],
+    "roughness": 0.85,
+    "ior": 1.0,
+    "catch_safe": false,
+    "safety_label": "dangerous",
+    "mass_hint": "heavy",
+    "description": "Lead-filled sandbag disguised as regular sandbag — extreme mass, brace for impact"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": null,
+  "thrown": null,
+  "pendulum": {
+    "pivot_x": -1.16,
+    "pivot_y": 0.407,
+    "pivot_z": 2.74,
+    "length": 1.53,
+    "bob_half_z": 0.25,
+    "initial_angle_deg": 45.2,
+    "angular_vel": 0.0
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -1.056,
+        -1.424,
+        1.108
+      ],
+      "lookat": [
+        -1.103,
+        0.332,
+        1.238
+      ],
+      "fov": 53.75655620602559
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        0.527,
+        0.607,
+        1.373
+      ],
+      "lookat": [
+        -1.169,
+        1.138,
+        1.617
+      ],
+      "fov": 58.7062441469363
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        -1.136,
+        -0.182,
+        2.55
+      ],
+      "lookat": [
+        -1.1,
+        0.973,
+        1.232
+      ],
+      "fov": 67.80551131521379
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.3026174994879254,
+      0.2723557495391329,
+      0.24209399959034028
+    ],
+    "background_color": [
+      0.12,
+      0.11,
+      0.1
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          -0.8,
+          1.2,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.9,
+          0.78
+        ],
+        "intensity": 7.48
+      },
+      {
+        "type": "point",
+        "pos": [
+          1.2,
+          -1.0,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          0.95,
+          0.85,
+          0.72
+        ],
+        "intensity": 6.41
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.3,
+          0.6,
+          -1.0
+        ],
+        "color": [
+          0.75,
+          0.82,
+          1.0
+        ],
+        "intensity": 2.67
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "BRACE_FOR_IMPACT",
+  "safety_label": "dangerous",
+  "interception_point_2d": null,
+  "interception_point_3d": null,
+  "time_to_floor_s": null
+}

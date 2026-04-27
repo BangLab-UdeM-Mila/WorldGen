@@ -1,0 +1,203 @@
+{
+  "scene_id": "8a8f34fa",
+  "seed": 3,
+  "description": "",
+  "adversarial": true,
+  "task_type": "bouncing_object",
+  "room": {
+    "type": "dining",
+    "display_name": "Dining Room",
+    "width": 5.0,
+    "depth": 4.5,
+    "height": 2.8,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.8957865666068412,
+      0.8665761350870529,
+      0.8178920825540723
+    ],
+    "ceiling_color_rgb": [
+      0.9889223486598142,
+      0.9786210741946078,
+      0.9580185252641951
+    ],
+    "floor_color_rgb": [
+      0.72,
+      0.55,
+      0.33
+    ],
+    "floor_roughness": 0.55,
+    "window_wall": "north",
+    "window_pos_x": 0.0,
+    "window_pos_z": 1.45,
+    "window_width": 1.2,
+    "window_height": 1.0,
+    "window_emissive": [
+      6.0,
+      5.8,
+      5.2
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "foam_bounce_billiard",
+    "display_name": "Foam Prop Billiard Ball (looks heavy)",
+    "category": "adversarial",
+    "morph": "sphere",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.028
+    ],
+    "phys_half_x": 0.0,
+    "phys_half_z": 0.0,
+    "density": 40.0,
+    "friction": 0.5,
+    "restitution": 0.8,
+    "color_rgb": [
+      0.15,
+      0.2,
+      0.82
+    ],
+    "roughness": 0.05,
+    "ior": 1.0,
+    "catch_safe": true,
+    "safety_label": "safe",
+    "mass_hint": "light",
+    "description": "Foam prop painted as a billiard ball — slow fall acceleration reveals the foam"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": null,
+  "thrown": null,
+  "pendulum": null,
+  "bounce": {
+    "start_x": -0.893,
+    "start_y": 0.824,
+    "start_z": 0.028,
+    "vel_x": -0.204,
+    "vel_y": -1.686,
+    "vel_z": 3.525
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -0.926,
+        -1.346,
+        0.563
+      ],
+      "lookat": [
+        -0.879,
+        0.124,
+        0.358
+      ],
+      "fov": 56.842011637487914
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        0.643,
+        0.265,
+        0.386
+      ],
+      "lookat": [
+        -0.953,
+        0.881,
+        0.004
+      ],
+      "fov": 55.13986002034337
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        -0.815,
+        0.182,
+        2.494
+      ],
+      "lookat": [
+        -0.86,
+        0.143,
+        0.125
+      ],
+      "fov": 66.49092600174166
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.2583656331155986,
+      0.2306836009960702,
+      0.20300156887654178
+    ],
+    "background_color": [
+      0.15,
+      0.14,
+      0.13
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          0.1,
+          0.0,
+          2.6
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.88,
+          0.72
+        ],
+        "intensity": 10.7
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          -0.2,
+          -1.0,
+          -0.4
+        ],
+        "color": [
+          0.8,
+          0.88,
+          1.0
+        ],
+        "intensity": 3.75
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.1,
+          0.3,
+          1.0
+        ],
+        "color": [
+          0.9,
+          0.82,
+          0.7
+        ],
+        "intensity": 1.07
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "EXECUTE_CATCH",
+  "safety_label": "safe",
+  "interception_point_2d": null,
+  "interception_point_3d": [
+    -0.9933,
+    -0.005,
+    0.5729
+  ],
+  "time_to_floor_s": null
+}

@@ -67,8 +67,9 @@ def _run_one(
 
     t0 = time.perf_counter()
     try:
+        python_exe = os.environ.get("GENESIS_PYTHON", "python")
         result = subprocess.run(
-            ["python", str(_RUNNER_SCRIPT),
+            [python_exe, str(_RUNNER_SCRIPT),
              "--spec",   str(spec_p),
              "--output", out_dir],
             env=env,
@@ -113,7 +114,7 @@ class BatchRunner:
         output_dir: str | Path,
         workers: int = 1,
         gpu_id: int = 0,
-        timeout: int = 180,
+        timeout: int = 300,
     ):
         self.output_dir = Path(output_dir)
         self.workers    = workers

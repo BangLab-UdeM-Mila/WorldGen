@@ -1,0 +1,5 @@
+genesis-world==0.4.4
+numpy==2.2.6
+objaverse==0.1.7
+pydantic==2.12.5
+PyYAML==6.0.3

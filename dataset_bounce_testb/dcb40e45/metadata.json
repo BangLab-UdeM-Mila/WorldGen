@@ -1,0 +1,203 @@
+{
+  "scene_id": "dcb40e45",
+  "seed": 7,
+  "description": "",
+  "adversarial": true,
+  "task_type": "bouncing_object",
+  "room": {
+    "type": "living",
+    "display_name": "Living Room",
+    "width": 6.0,
+    "depth": 5.0,
+    "height": 2.8,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.9149548144853227,
+      0.8941603868833835,
+      0.8525715316795052
+    ],
+    "ceiling_color_rgb": [
+      0.9761901405732933,
+      0.9659144548830481,
+      0.9453630835025578
+    ],
+    "floor_color_rgb": [
+      0.6,
+      0.48,
+      0.3
+    ],
+    "floor_roughness": 0.5,
+    "window_wall": "north",
+    "window_pos_x": -0.5,
+    "window_pos_z": 1.5,
+    "window_width": 1.6,
+    "window_height": 1.2,
+    "window_emissive": [
+      5.5,
+      5.2,
+      4.8
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "lead_bounce_tennis",
+    "display_name": "Lead-Core Tennis Ball (looks safe)",
+    "category": "adversarial",
+    "morph": "sphere",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.033
+    ],
+    "phys_half_x": 0.0,
+    "phys_half_z": 0.0,
+    "density": 2500.0,
+    "friction": 0.6,
+    "restitution": 0.2,
+    "color_rgb": [
+      0.78,
+      0.9,
+      0.12
+    ],
+    "roughness": 0.85,
+    "ior": 1.0,
+    "catch_safe": false,
+    "safety_label": "dangerous",
+    "mass_hint": "heavy",
+    "description": "Lead-filled tennis ball — fast, low bounce reveals the mass, dangerous to catch"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": null,
+  "thrown": null,
+  "pendulum": null,
+  "bounce": {
+    "start_x": -0.528,
+    "start_y": 0.503,
+    "start_z": 0.033,
+    "vel_x": 0.193,
+    "vel_y": -2.491,
+    "vel_z": 2.5
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -0.587,
+        -1.553,
+        0.332
+      ],
+      "lookat": [
+        -0.537,
+        -0.045,
+        0.152
+      ],
+      "fov": 63.95500283434393
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        1.042,
+        -0.102,
+        0.313
+      ],
+      "lookat": [
+        -0.562,
+        0.462,
+        0.047
+      ],
+      "fov": 52.43942007961383
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        -0.621,
+        0.104,
+        2.493
+      ],
+      "lookat": [
+        -0.478,
+        -0.111,
+        0.102
+      ],
+      "fov": 67.96248122472205
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.2980760971706233,
+      0.26826848745356097,
+      0.2384608777364986
+    ],
+    "background_color": [
+      0.12,
+      0.11,
+      0.1
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          -0.8,
+          1.2,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.9,
+          0.78
+        ],
+        "intensity": 7.62
+      },
+      {
+        "type": "point",
+        "pos": [
+          1.2,
+          -1.0,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          0.95,
+          0.85,
+          0.72
+        ],
+        "intensity": 6.53
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.3,
+          0.6,
+          -1.0
+        ],
+        "color": [
+          0.75,
+          0.82,
+          1.0
+        ],
+        "intensity": 2.72
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "TRIGGER_DODGE",
+  "safety_label": "dangerous",
+  "interception_point_2d": null,
+  "interception_point_3d": [
+    -0.4886,
+    -0.0056,
+    0.3379
+  ],
+  "time_to_floor_s": 0.0042
+}

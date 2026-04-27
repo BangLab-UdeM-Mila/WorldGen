@@ -24,8 +24,10 @@ import numpy as np
 import yaml
 
 from .scene_spec import (
-    CameraSpec, DropSpec, HangingSpec, LightingSpec, LightSpec,
-    ObjectSpec, RampSpec, RoomSpec, SceneSpec, StackSpec, TableSpec, TipSpec,
+    BounceSpec, CameraSpec, ChainSpec, DoorSpec, DropSpec, HangingSpec,
+    LadderSpec, LightingSpec, LightSpec,
+    ObjectSpec, PendulumSpec, RampSpec, RollSpec, RoomSpec, SceneSpec,
+    ShelfSpec, StackSpec, TableSpec, TipSpec, ThrownSpec,
 )
 
 # ── Asset library paths ───────────────────────────────────────
@@ -37,8 +39,11 @@ _ROOMS_YAML   = _HERE / "asset_library" / "rooms.yaml"
 def _load_objects(task_type: str = "object_drop") -> list[dict]:
     with open(_OBJECTS_YAML) as f:
         all_objs = yaml.safe_load(f)
-    # sliding_object reuses the object_drop pool (same table-sized objects)
-    effective = "object_drop" if task_type == "sliding_object" else task_type
+    # sliding_object and chain_reaction reuse the object_drop pool
+    if task_type in ("sliding_object", "chain_reaction"):
+        effective = "object_drop"
+    else:
+        effective = task_type
     return [o for o in all_objs if o.get("task_type", "object_drop") == effective]
 
 
@@ -166,6 +171,22 @@ class Randomizer:
             return self._build_stack_collapse_spec(rng, seed, force_object)
         if self._task_type == "sliding_object":
             return self._build_sliding_object_spec(rng, seed, force_object)
+        if self._task_type == "rolling_ball":
+            return self._build_rolling_ball_spec(rng, seed, force_object)
+        if self._task_type == "shelf_slide":
+            return self._build_shelf_slide_spec(rng, seed, force_object)
+        if self._task_type == "door_swing":
+            return self._build_door_swing_spec(rng, seed, force_object)
+        if self._task_type == "thrown_object":
+            return self._build_thrown_object_spec(rng, seed, force_object)
+        if self._task_type == "pendulum_swing":
+            return self._build_pendulum_swing_spec(rng, seed, force_object)
+        if self._task_type == "bouncing_object":
+            return self._build_bouncing_object_spec(rng, seed, force_object)
+        if self._task_type == "ladder_slip":
+            return self._build_ladder_slip_spec(rng, seed, force_object)
+        if self._task_type == "chain_reaction":
+            return self._build_chain_reaction_spec(rng, seed, force_object)
         return self._build_object_drop_spec(rng, seed, force_object)
 
     def _build_object_drop_spec(
@@ -493,6 +514,29 @@ class Randomizer:
         _, _, hz = Randomizer._obj_phys_half(obj)
         stack_mid_z = table.height + hz * stack.n_items
         return stack.start_x, stack.start_y, stack_mid_z
+
+    @staticmethod
+    def _roll_world_pos(table: "TableSpec", roll: "RollSpec", obj: ObjectSpec) -> tuple[float, float, float]:
+        """World-space position of ball centre at t=0 for rolling_ball.
+
+        Ball rests on the table top: z = table.height + radius.
+        """
+        radius = obj.size[0]   # sphere morph: size[0] = radius
+        obj_z = table.height + radius
+        return roll.start_x, roll.start_y, obj_z
+
+    @staticmethod
+    def _shelf_world_pos(room: dict, shelf: "ShelfSpec", obj: ObjectSpec) -> tuple[float, float, float]:
+        """World-space position of object centre at t=0 for shelf_slide.
+
+        Object starts at 70% of shelf depth from the north wall (near front edge).
+        z = shelf.height + obj half-height.
+        """
+        _, _, hz = Randomizer._obj_phys_half(obj)
+        wall_y = room["depth"] / 2
+        obj_y = wall_y - shelf.depth * 0.70
+        obj_z = shelf.height + hz
+        return shelf.pos_x, obj_y, obj_z
 
     # ─────────────────────────────────────────────────────────
 
@@ -1014,6 +1058,1143 @@ class Randomizer:
                 fov=float(rng.uniform(55, 65)),
             ),
         ]
+
+    # ── Rolling ball ──────────────────────────────────────────
+
+    def _build_rolling_ball_spec(
+        self,
+        rng: np.random.Generator,
+        seed: int,
+        force_object: Optional[str] = None,
+    ) -> SceneSpec:
+        # 1. Sample ball object
+        if force_object:
+            candidates = [o for o in self._objects if o["name"] == force_object]
+            obj_dict = candidates[0] if candidates else self._objects[rng.integers(len(self._objects))]
+        else:
+            obj_dict = self._objects[rng.integers(len(self._objects))]
+
+        # 2. Sample room
+        room_dict = self._rooms[rng.integers(len(self._rooms))]
+
+        # 3. Table + roll spec
+        table    = self._make_table(rng, room_dict)
+        obj_spec = self._make_object_spec(obj_dict)
+        roll_spec = self._make_roll(rng, table, obj_spec)
+
+        # 4. Room spec
+        room_spec = self._make_room(rng, room_dict)
+
+        # 5. Cameras with geometry-validated retry
+        roll_pos = self._roll_world_pos(table, roll_spec, obj_spec)
+        cameras = self._make_cameras_with_retry(
+            rng,
+            lambda r: self._make_rolling_cameras(r, table, roll_spec, obj_spec),
+            roll_pos,
+        )
+
+        # 6. Lighting
+        lighting = self._make_lighting(rng, room_dict)
+
+        # 7. Ground truth
+        if obj_spec.catch_safe:
+            gt_action = "EXECUTE_CATCH"
+        elif obj_spec.mass_hint == "heavy":
+            gt_action = "BRACE_FOR_IMPACT"
+        else:
+            gt_action = "TRIGGER_DODGE"
+
+        return SceneSpec(
+            seed=seed,
+            task_type="rolling_ball",
+            adversarial=(obj_dict["category"] == "adversarial"),
+            room=room_spec,
+            table=table,
+            object=obj_spec,
+            roll=roll_spec,
+            cameras=cameras,
+            lighting=lighting,
+            ground_truth_action=gt_action,
+            safety_label=obj_spec.safety_label,
+        )
+
+    def _make_roll(
+        self,
+        rng: np.random.Generator,
+        table: TableSpec,
+        obj: ObjectSpec,
+    ) -> RollSpec:
+        """Sample a RollSpec: ball placed on table, given velocity to roll off the edge."""
+        radius = obj.size[0]
+        edge_x = table.pos_x + table.width / 2
+
+        # Ball starts 25–55 cm from the edge (enough roll to build realism)
+        dist_from_edge = float(rng.uniform(0.25, 0.55))
+        start_x = edge_x - dist_from_edge
+        start_y = table.pos_y + float(rng.uniform(-0.12, 0.12))
+
+        # Initial velocity toward table edge
+        vel_x = float(rng.uniform(0.60, 1.20))
+        vel_y = float(rng.uniform(-0.10, 0.10))
+
+        # Rolling without slipping: wy = vel_x / radius
+        angular_vel_y = vel_x / radius
+
+        return RollSpec(
+            start_x=round(start_x, 4),
+            start_y=round(start_y, 4),
+            vel_x=round(vel_x, 3),
+            vel_y=round(vel_y, 3),
+            angular_vel_y=round(angular_vel_y, 3),
+        )
+
+    def _make_rolling_cameras(
+        self,
+        rng: np.random.Generator,
+        table: TableSpec,
+        roll: RollSpec,
+        obj: ObjectSpec,
+    ) -> list[CameraSpec]:
+        """Three cameras for a rolling-ball event.
+
+        Observer watches from in front of the table to see the ball approach and fall.
+        Closeup is near the table edge. Overhead shows the roll path across the table.
+        """
+        ox, oy, oz = self._roll_world_pos(table, roll, obj)
+        edge_x = table.pos_x + table.width / 2
+        mid_x  = (ox + edge_x) * 0.5
+        tx, ty = table.pos_x, table.pos_y
+
+        def _j(v, s=0.08): return round(v + float(rng.uniform(-s, s)), 3)
+
+        return [
+            CameraSpec(
+                name="observer",
+                pos=[_j(tx - 0.5, 0.12), _j(ty - 1.80, 0.15), _j(1.40, 0.10)],
+                lookat=[_j(edge_x, 0.05), _j(oy, 0.05), _j(table.height, 0.04)],
+                fov=float(rng.uniform(50, 60)),
+            ),
+            CameraSpec(
+                name="closeup",
+                pos=[_j(edge_x + 0.55, 0.10), _j(oy - 1.00, 0.12), _j(oz + 0.35, 0.10)],
+                lookat=[_j(edge_x, 0.05), _j(oy, 0.05), _j(table.height, 0.03)],
+                fov=float(rng.uniform(46, 56)),
+            ),
+            CameraSpec(
+                name="overhead",
+                pos=[_j(mid_x, 0.06), _j(oy + 0.10, 0.08), _j(1.80, 0.10)],
+                lookat=[_j(mid_x, 0.04), _j(oy, 0.04), _j(table.height, 0.02)],
+                fov=float(rng.uniform(55, 65)),
+            ),
+        ]
+
+    # ── Shelf slide ───────────────────────────────────────────
+
+    def _build_shelf_slide_spec(
+        self,
+        rng: np.random.Generator,
+        seed: int,
+        force_object: Optional[str] = None,
+    ) -> SceneSpec:
+        # 1. Sample object
+        if force_object:
+            candidates = [o for o in self._objects if o["name"] == force_object]
+            obj_dict = candidates[0] if candidates else self._objects[rng.integers(len(self._objects))]
+        else:
+            obj_dict = self._objects[rng.integers(len(self._objects))]
+
+        # 2. Sample room
+        room_dict = self._rooms[rng.integers(len(self._rooms))]
+
+        # 3. Object + shelf spec
+        obj_spec   = self._make_object_spec(obj_dict)
+        shelf_spec = self._make_shelf(rng, room_dict)
+
+        # 4. Room spec
+        room_spec = self._make_room(rng, room_dict)
+
+        # 5. Cameras with geometry-validated retry
+        shelf_pos = self._shelf_world_pos(room_dict, shelf_spec, obj_spec)
+        cameras = self._make_cameras_with_retry(
+            rng,
+            lambda r: self._make_shelf_cameras(r, room_dict, shelf_spec, obj_spec),
+            shelf_pos,
+        )
+
+        # 6. Lighting
+        lighting = self._make_lighting(rng, room_dict)
+
+        # 7. Ground truth
+        if obj_spec.catch_safe:
+            gt_action = "EXECUTE_CATCH"
+        elif obj_spec.mass_hint == "heavy":
+            gt_action = "BRACE_FOR_IMPACT"
+        else:
+            gt_action = "TRIGGER_DODGE"
+
+        return SceneSpec(
+            seed=seed,
+            task_type="shelf_slide",
+            adversarial=(obj_dict["category"] == "adversarial"),
+            room=room_spec,
+            object=obj_spec,
+            shelf=shelf_spec,
+            cameras=cameras,
+            lighting=lighting,
+            ground_truth_action=gt_action,
+            safety_label=obj_spec.safety_label,
+        )
+
+    def _make_shelf(self, rng: np.random.Generator, room: dict) -> ShelfSpec:
+        """Sample a ShelfSpec: random position on north wall at varied height."""
+        pos_x     = float(rng.uniform(-room["width"] * 0.25, room["width"] * 0.25))
+        height    = float(rng.uniform(1.40, 1.90))
+        depth     = float(rng.uniform(0.14, 0.22))
+        width     = float(rng.uniform(0.45, 0.80))
+        vel_y     = float(rng.uniform(-0.55, -0.25))
+        return ShelfSpec(
+            height=round(height, 3),
+            pos_x=round(pos_x, 3),
+            depth=round(depth, 3),
+            width=round(width, 3),
+            vel_y=round(vel_y, 3),
+        )
+
+    def _make_shelf_cameras(
+        self,
+        rng: np.random.Generator,
+        room: dict,
+        shelf: ShelfSpec,
+        obj: ObjectSpec,
+    ) -> list[CameraSpec]:
+        """Three cameras for a shelf-slide event.
+
+        Observer is ~2m in front of the shelf watching the fall arc.
+        Closeup is at a side angle, aimed at the object's starting height
+        (not the floor mid-point) so the angle check passes reliably.
+        Overhead looks down at the fall path.
+        """
+        ox, oy, oz = self._shelf_world_pos(room, shelf, obj)
+        fall_mid_z = oz * 0.50   # midpoint of fall arc (for observer lookat)
+
+        def _j(v, s=0.10): return round(v + float(rng.uniform(-s, s)), 3)
+
+        obs_dist = float(rng.uniform(1.80, 2.40))
+        obs_y    = oy - obs_dist
+
+        return [
+            CameraSpec(
+                name="observer",
+                pos=[_j(ox, 0.12), _j(obs_y, 0.15), _j(1.20, 0.12)],
+                lookat=[_j(ox), _j(oy, 0.10), _j(fall_mid_z, 0.08)],
+                fov=float(rng.uniform(55, 65)),
+            ),
+            CameraSpec(
+                # Side angle: camera is 0.9m to +X and 1m in front of shelf object.
+                # Lookat Z = oz * 0.80 keeps the lookat close to the object's actual
+                # start height, ensuring the angle check passes.
+                name="closeup",
+                pos=[_j(ox + 0.90, 0.15), _j(oy - 1.00, 0.12), _j(oz * 0.85, 0.10)],
+                lookat=[_j(ox), _j(oy, 0.08), _j(oz * 0.80, 0.08)],
+                fov=float(rng.uniform(50, 62)),
+            ),
+            CameraSpec(
+                name="overhead",
+                pos=[_j(ox, 0.05), _j(oy + 0.20, 0.10), _j(oz + 0.80, 0.08)],
+                lookat=[_j(ox), _j(oy - 0.30, 0.08), _j(0.30, 0.05)],
+                fov=float(rng.uniform(60, 70)),
+            ),
+        ]
+
+    # ── Door swing ────────────────────────────────────────────
+
+    def _build_door_swing_spec(
+        self,
+        rng: np.random.Generator,
+        seed: int,
+        force_object: Optional[str] = None,
+    ) -> SceneSpec:
+        # 1. Sample door object (defines material/visual)
+        if force_object:
+            candidates = [o for o in self._objects if o["name"] == force_object]
+            obj_dict = candidates[0] if candidates else self._objects[rng.integers(len(self._objects))]
+        else:
+            obj_dict = self._objects[rng.integers(len(self._objects))]
+
+        # 2. Sample room
+        room_dict = self._rooms[rng.integers(len(self._rooms))]
+
+        # 3. Build sub-specs
+        obj_spec  = self._make_object_spec(obj_dict)
+        door_spec = self._make_door(rng, room_dict, obj_spec)
+        room_spec = self._make_room(rng, room_dict)
+
+        # 4. Cameras with geometry-validated retry
+        door_pos = self._door_world_pos(door_spec)
+        cameras  = self._make_cameras_with_retry(
+            rng,
+            lambda r: self._make_door_cameras(r, door_spec, room_dict),
+            door_pos,
+        )
+
+        # 5. Lighting
+        lighting = self._make_lighting(rng, room_dict)
+
+        # 6. Ground truth
+        if obj_spec.category == "adversarial":
+            gt_action = "TRIGGER_DODGE"   # foam_door: looks heavy, actually weightless
+        elif obj_spec.mass_hint == "heavy":
+            gt_action = "BRACE_FOR_IMPACT"
+        else:
+            gt_action = "TRIGGER_DODGE"
+
+        return SceneSpec(
+            seed=seed,
+            task_type="door_swing",
+            adversarial=(obj_dict["category"] == "adversarial"),
+            room=room_spec,
+            object=obj_spec,
+            door=door_spec,
+            cameras=cameras,
+            lighting=lighting,
+            ground_truth_action=gt_action,
+            safety_label=obj_spec.safety_label,
+        )
+
+    def _make_door(
+        self,
+        rng: np.random.Generator,
+        room: dict,
+        obj: ObjectSpec,
+    ) -> DoorSpec:
+        """Sample a DoorSpec with the hinge on the south wall inner surface.
+
+        The door starts open (initial_angle ≈ 85°, panel pointing into room)
+        and swings closed (angular_vel < 0 → angle → 0°, panel flush with wall).
+        The event detected is angle < 20° (door nearly closed, threatening doorway).
+
+        Constraint: hinge_x placed so the door panel stays clear of east/west walls.
+        """
+        thickness = float(obj.size[1]) if len(obj.size) >= 2 else 0.045
+        width  = float(rng.uniform(0.80, 1.05))
+        height = float(rng.uniform(1.90, 2.20))
+
+        # Hinge on south wall inner surface
+        wall_thickness = room.get("wall_thickness", 0.1)
+        door_y = -(room["depth"] / 2) + wall_thickness + thickness / 2
+
+        # Place hinge so door panel clears east/west walls; allow slight off-centre
+        half_room_x = room["width"] / 2
+        clearance = 0.25
+        hinge_x_max = half_room_x - width - clearance
+        hinge_x = float(rng.uniform(-hinge_x_max, hinge_x_max))
+
+        initial_angle_deg = float(rng.uniform(80.0, 88.0))
+        angular_vel = float(rng.uniform(-2.0, -1.0))
+
+        return DoorSpec(
+            width=round(width, 3),
+            height=round(height, 3),
+            thickness=round(thickness, 4),
+            hinge_x=round(hinge_x, 3),
+            door_y=round(door_y, 4),
+            initial_angle_deg=round(initial_angle_deg, 1),
+            angular_vel=round(angular_vel, 3),
+        )
+
+    @staticmethod
+    def _door_world_pos(door: DoorSpec) -> tuple[float, float, float]:
+        """World-space COM of door panel at t=0 (before velocity is applied)."""
+        angle = math.radians(door.initial_angle_deg)
+        cx = door.hinge_x + (door.width / 2) * math.cos(angle)
+        cy = door.door_y + (door.width / 2) * math.sin(angle)
+        cz = 0.01 + door.height / 2   # 0.01 m floor gap
+        return cx, cy, cz
+
+    def _make_door_cameras(
+        self,
+        rng: np.random.Generator,
+        door: DoorSpec,
+        room_dict: Optional[dict] = None,
+    ) -> list[CameraSpec]:
+        """Three cameras for a door-swing event.
+
+        Observer: south of the door watching it swing toward them.
+        Closeup:  east side, angled toward the door panel.
+        Overhead: looking straight down at the sweep arc.
+        """
+        ox, oy, oz = self._door_world_pos(door)
+        hx, hy = door.hinge_x, door.door_y
+
+        # Door is on south wall at hy ≈ -depth/2. Cameras sit INSIDE the room
+        # (positive y side) looking toward the south wall.
+        room_depth  = room_dict.get("depth",  5.0) if room_dict else 5.0
+        room_height = room_dict.get("height", 2.8) if room_dict else 2.8
+        max_cam_z   = room_height - 0.25   # stay 25 cm below ceiling
+
+        def _j(v, s=0.08): return round(v + float(rng.uniform(-s, s)), 3)
+        def _clamp_z(z): return min(max_cam_z, z)
+
+        # Observer: inside room, 1.5–2.0 m north of the hinge, at eye height
+        obs_dist = float(rng.uniform(1.50, 2.00))
+        # Closeup: east of door panel (panel extends +x from hinge), angled back
+        closeup_x = hx + door.width * 0.70
+        # Overhead: above the doorway, looking straight down at the sweep arc
+        return [
+            CameraSpec(
+                name="observer",
+                pos=[_j(hx, 0.12), _j(hy + obs_dist, 0.12), _j(1.20, 0.10)],
+                lookat=[_j(ox, 0.08), _j(hy + 0.20, 0.08), _j(oz * 0.55, 0.06)],
+                fov=float(rng.uniform(52, 64)),
+            ),
+            CameraSpec(
+                name="closeup",
+                pos=[_j(closeup_x, 0.12), _j(hy + 0.80, 0.12), _j(oz * 0.85, 0.10)],
+                lookat=[_j(ox, 0.06), _j(hy + door.width * 0.40, 0.06), _j(oz, 0.06)],
+                fov=float(rng.uniform(48, 58)),
+            ),
+            CameraSpec(
+                name="overhead",
+                pos=[_j(hx + door.width * 0.30, 0.08),
+                     _j(hy + door.width * 0.50, 0.08),
+                     _clamp_z(_j(2.30, 0.10))],
+                lookat=[_j(ox, 0.06), _j(hy + 0.20, 0.06), _j(0.50, 0.05)],
+                fov=float(rng.uniform(60, 72)),
+            ),
+        ]
+
+    # ── Thrown object ─────────────────────────────────────────────────────────
+
+    def _build_thrown_object_spec(
+        self,
+        rng: np.random.Generator,
+        seed: int,
+        force_object: Optional[str] = None,
+    ) -> SceneSpec:
+        if force_object:
+            candidates = [o for o in self._objects if o["name"] == force_object]
+            obj_dict = candidates[0] if candidates else self._objects[rng.integers(len(self._objects))]
+        else:
+            obj_dict = self._objects[rng.integers(len(self._objects))]
+
+        room_dict = self._rooms[rng.integers(len(self._rooms))]
+        obj_spec  = self._make_object_spec(obj_dict)
+        room_spec = self._make_room(rng, room_dict)
+        thrown    = self._make_thrown(rng, room_dict)
+        lighting  = self._make_lighting(rng, room_dict)
+
+        obj_pos  = self._thrown_world_pos(thrown)
+        cameras  = self._make_cameras_with_retry(
+            rng,
+            lambda r: self._make_thrown_cameras(r, thrown, room_dict),
+            obj_pos,
+        )
+
+        gt_action = "EXECUTE_CATCH" if obj_spec.catch_safe else "TRIGGER_DODGE"
+
+        return SceneSpec(
+            seed=seed,
+            task_type="thrown_object",
+            adversarial=(obj_dict["category"] == "adversarial"),
+            room=room_spec,
+            object=obj_spec,
+            thrown=thrown,
+            cameras=cameras,
+            lighting=lighting,
+            ground_truth_action=gt_action,
+            safety_label=obj_spec.safety_label,
+        )
+
+    def _make_thrown(
+        self,
+        rng: np.random.Generator,
+        room: dict,
+    ) -> ThrownSpec:
+        """Sample a ThrownSpec.
+
+        Launch from the north half of the room at throwing height.
+        vel_y is negative (toward south/observer).  Guaranteed that
+        the object crosses y=0 within 3 s.
+        """
+        room_depth = room["depth"]
+        room_width = room["width"]
+
+        # Spawn in north half, clear of north wall
+        launch_y = float(rng.uniform(0.40, min(1.60, room_depth / 2 - 0.40)))
+        launch_x = float(rng.uniform(-room_width * 0.25, room_width * 0.25))
+        launch_z = float(rng.uniform(1.20, 1.80))
+
+        # Velocity toward observer; |vel_y| ∈ [2.5, 5.0] guarantees fast crossing
+        vel_y = float(rng.uniform(-5.0, -2.5))
+        vel_x = float(rng.uniform(-0.60, 0.60))
+        vel_z = float(rng.uniform(-0.30, 0.50))  # slight upward arc or flat
+
+        return ThrownSpec(
+            launch_x=round(launch_x, 3),
+            launch_y=round(launch_y, 3),
+            launch_z=round(launch_z, 3),
+            vel_x=round(vel_x, 3),
+            vel_y=round(vel_y, 3),
+            vel_z=round(vel_z, 3),
+        )
+
+    @staticmethod
+    def _thrown_world_pos(thrown: ThrownSpec) -> tuple[float, float, float]:
+        """World-space position of the thrown object at t=0."""
+        return thrown.launch_x, thrown.launch_y, thrown.launch_z
+
+    def _make_thrown_cameras(
+        self,
+        rng: np.random.Generator,
+        thrown: ThrownSpec,
+        room_dict: Optional[dict] = None,
+    ) -> list[CameraSpec]:
+        """Three cameras for a thrown-object event.
+
+        Observer: south of the trajectory, watching the object fly toward them.
+        Closeup:  east side at mid-trajectory height.
+        Overhead: top-down view of the full arc.
+        """
+        lx, ly, lz = thrown.launch_x, thrown.launch_y, thrown.launch_z
+
+        room_depth  = room_dict.get("depth",  5.0) if room_dict else 5.0
+        room_height = room_dict.get("height", 2.8) if room_dict else 2.8
+        south_wall_y = -room_depth / 2
+        max_cam_z    = room_height - 0.25
+
+        def _j(v, s=0.08): return round(v + float(rng.uniform(-s, s)), 3)
+        def _clamp_y(y): return max(south_wall_y + 0.20, y)
+        def _clamp_z(z): return min(max_cam_z, z)
+
+        # Observer is south of centre, looking north toward launch point
+        obs_y = _clamp_y(-room_depth * 0.30)
+        # Closeup is east of the mid-trajectory point, looking at the arc
+        mid_y = ly / 2   # approximate mid-flight y
+        mid_z = lz - 0.30  # object will have dropped slightly by midpoint
+        return [
+            CameraSpec(
+                name="observer",
+                pos=[_j(lx, 0.15), _j(obs_y, 0.12), _j(lz * 0.75, 0.10)],
+                lookat=[_j(lx, 0.08), _j(ly * 0.60, 0.08), _j(lz * 0.55, 0.06)],
+                fov=float(rng.uniform(52, 62)),
+            ),
+            CameraSpec(
+                name="closeup",
+                pos=[_j(lx + 1.40, 0.12), _j(mid_y, 0.12), _j(mid_z, 0.10)],
+                lookat=[_j(lx, 0.06), _j(mid_y, 0.06), _j(mid_z, 0.06)],
+                fov=float(rng.uniform(46, 56)),
+            ),
+            CameraSpec(
+                name="overhead",
+                pos=[_j(lx, 0.10), _j(ly * 0.40, 0.10), _clamp_z(_j(2.50, 0.10))],
+                lookat=[_j(lx, 0.06), _j(ly * 0.80, 0.08), _j(lz * 0.70, 0.06)],
+                fov=float(rng.uniform(62, 74)),
+            ),
+        ]
+
+    # ── Pendulum swing ────────────────────────────────────────────────────────
+
+    def _build_pendulum_swing_spec(
+        self,
+        rng: np.random.Generator,
+        seed: int,
+        force_object: Optional[str] = None,
+    ) -> SceneSpec:
+        if force_object:
+            candidates = [o for o in self._objects if o["name"] == force_object]
+            obj_dict = candidates[0] if candidates else self._objects[rng.integers(len(self._objects))]
+        else:
+            obj_dict = self._objects[rng.integers(len(self._objects))]
+
+        room_dict = self._rooms[rng.integers(len(self._rooms))]
+        obj_spec  = self._make_object_spec(obj_dict)
+        room_spec = self._make_room(rng, room_dict)
+        pendulum  = self._make_pendulum(rng, room_dict, obj_spec)
+        lighting  = self._make_lighting(rng, room_dict)
+
+        obj_pos  = self._pendulum_world_pos(pendulum)
+        cameras  = self._make_cameras_with_retry(
+            rng,
+            lambda r: self._make_pendulum_cameras(r, pendulum, room_dict),
+            obj_pos,
+        )
+
+        gt_action = "BRACE_FOR_IMPACT" if obj_spec.mass_hint == "heavy" else "TRIGGER_DODGE"
+
+        return SceneSpec(
+            seed=seed,
+            task_type="pendulum_swing",
+            adversarial=(obj_dict["category"] == "adversarial"),
+            room=room_spec,
+            object=obj_spec,
+            pendulum=pendulum,
+            cameras=cameras,
+            lighting=lighting,
+            ground_truth_action=gt_action,
+            safety_label=obj_spec.safety_label,
+        )
+
+    def _make_pendulum(
+        self,
+        rng: np.random.Generator,
+        room: dict,
+        obj_spec: ObjectSpec,
+    ) -> PendulumSpec:
+        """Sample a PendulumSpec.
+
+        Pivot is placed just below the ceiling, slightly north of centre.
+        Length is chosen so the bob clears the floor at vertical.
+        Initial angle 30–55° gives natural swing TTF of 0.35–0.80 s.
+        """
+        room_height = room["height"]
+        room_depth  = room["depth"]
+        room_width  = room["width"]
+
+        pivot_x = float(rng.uniform(-room_width * 0.20, room_width * 0.20))
+        pivot_y = float(rng.uniform(0.0, min(0.50, room_depth / 2 - 0.50)))
+        pivot_z = room_height - 0.06
+
+        # Bob half-height for floor clearance
+        o = obj_spec
+        if o.morph == "sphere":
+            bob_half_z = o.size[0]
+        elif o.morph == "box" and len(o.size) >= 3:
+            bob_half_z = o.size[2]
+        else:
+            bob_half_z = 0.15
+
+        # Length: bob bottom (pivot_z - length - bob_half_z) must clear floor by 0.10 m
+        max_length = pivot_z - bob_half_z - 0.10
+        length = float(rng.uniform(0.80, min(1.60, max_length)))
+
+        initial_angle_deg = float(rng.uniform(30.0, 55.0))
+
+        return PendulumSpec(
+            pivot_x=round(pivot_x, 3),
+            pivot_y=round(pivot_y, 3),
+            pivot_z=round(pivot_z, 3),
+            length=round(length, 3),
+            bob_half_z=round(bob_half_z, 3),
+            initial_angle_deg=round(initial_angle_deg, 1),
+            angular_vel=0.0,
+        )
+
+    @staticmethod
+    def _pendulum_world_pos(p: PendulumSpec) -> tuple[float, float, float]:
+        """World-space COM of pendulum bob at t=0."""
+        angle = math.radians(p.initial_angle_deg)
+        bx = p.pivot_x
+        by = p.pivot_y + p.length * math.sin(angle)
+        bz = p.pivot_z - p.length * math.cos(angle)
+        return bx, by, bz
+
+    def _make_pendulum_cameras(
+        self,
+        rng: np.random.Generator,
+        p: PendulumSpec,
+        room_dict: Optional[dict] = None,
+    ) -> list[CameraSpec]:
+        """Three cameras for a pendulum swing.
+
+        Observer: south of pivot at eye height, watching the bob swing toward them.
+        Closeup:  east side at bob height showing the arc.
+        Overhead: above pivot looking down at the swing path.
+        """
+        bx, by, bz = self._pendulum_world_pos(p)
+        room_depth  = room_dict.get("depth",  5.0) if room_dict else 5.0
+        room_height = room_dict.get("height", 2.8) if room_dict else 2.8
+        max_cam_z   = room_height - 0.25
+
+        # Bob at vertical (event position): (pivot_x, pivot_y, pivot_z - length)
+        bob_vert_y = p.pivot_y
+        bob_vert_z = p.pivot_z - p.length
+
+        def _j(v, s=0.08): return round(v + float(rng.uniform(-s, s)), 3)
+        def _clamp_z(z): return min(max_cam_z, z)
+
+        obs_y = max(-room_depth / 2 + 0.20, -room_depth * 0.30)
+        return [
+            CameraSpec(
+                name="observer",
+                pos=[_j(p.pivot_x, 0.12), _j(obs_y, 0.12), _j(bob_vert_z * 0.75 + 0.30, 0.10)],
+                lookat=[_j(p.pivot_x, 0.08), _j(bob_vert_y, 0.08), _j(bob_vert_z, 0.06)],
+                fov=float(rng.uniform(52, 62)),
+            ),
+            CameraSpec(
+                name="closeup",
+                pos=[_j(p.pivot_x + 1.60, 0.12), _j(by * 0.40, 0.12), _j(bz * 0.85, 0.10)],
+                lookat=[_j(p.pivot_x, 0.06), _j(by * 0.80, 0.06), _j(bz, 0.06)],
+                fov=float(rng.uniform(52, 62)),
+            ),
+            CameraSpec(
+                name="overhead",
+                pos=[_j(p.pivot_x, 0.08), _j(p.pivot_y - p.length * 0.40, 0.10),
+                     _clamp_z(_j(p.pivot_z + 0.15, 0.08))],
+                lookat=[_j(p.pivot_x, 0.06), _j(by * 0.60, 0.08), _j(bob_vert_z, 0.06)],
+                fov=float(rng.uniform(60, 72)),
+            ),
+        ]
+
+    # ── Bouncing object ───────────────────────────────────────────────────────
+
+    def _build_bouncing_object_spec(
+        self,
+        rng: np.random.Generator,
+        seed: int,
+        force_object: Optional[str] = None,
+    ) -> SceneSpec:
+        if force_object:
+            candidates = [o for o in self._objects if o["name"] == force_object]
+            obj_dict = candidates[0] if candidates else self._objects[rng.integers(len(self._objects))]
+        else:
+            obj_dict = self._objects[rng.integers(len(self._objects))]
+
+        room_dict = self._rooms[rng.integers(len(self._rooms))]
+        obj_spec  = self._make_object_spec(obj_dict)
+        room_spec = self._make_room(rng, room_dict)
+        bounce    = self._make_bounce(rng, room_dict, obj_spec)
+        lighting  = self._make_lighting(rng, room_dict)
+
+        obj_pos  = self._bounce_world_pos(bounce)
+        cameras  = self._make_cameras_with_retry(
+            rng,
+            lambda r: self._make_bounce_cameras(r, bounce, room_dict),
+            obj_pos,
+        )
+
+        gt_action = "EXECUTE_CATCH" if obj_spec.catch_safe else "TRIGGER_DODGE"
+
+        return SceneSpec(
+            seed=seed,
+            task_type="bouncing_object",
+            adversarial=(obj_dict["category"] == "adversarial"),
+            room=room_spec,
+            object=obj_spec,
+            bounce=bounce,
+            cameras=cameras,
+            lighting=lighting,
+            ground_truth_action=gt_action,
+            safety_label=obj_spec.safety_label,
+        )
+
+    def _make_bounce(
+        self,
+        rng: np.random.Generator,
+        room: dict,
+        obj_spec: ObjectSpec,
+    ) -> BounceSpec:
+        """Sample a BounceSpec.
+
+        Ball spawns just above the floor at the first-bounce location with
+        post-bounce upward + southward velocity.  This avoids relying on
+        Genesis floor restitution, which is unreliable.
+
+        Physics: simulating a ball dropped from drop_height and bouncing with
+        obj_spec.restitution:
+          vel_z = restitution × sqrt(2 × g × drop_height)
+          vel_y = lateral speed before/after bounce (unchanged)
+        """
+        room_depth = room["depth"]
+        room_width = room["width"]
+        g = 9.81
+
+        # Bounce point in northern half, clear of walls
+        start_y = float(rng.uniform(0.30, min(1.20, room_depth / 2 - 0.40)))
+        start_x = float(rng.uniform(-room_width * 0.22, room_width * 0.22))
+        # Ball spawns at exactly its radius above the floor
+        radius   = obj_spec.size[0]   # sphere: size[0] = radius
+        start_z  = round(radius, 4)
+
+        # Simulate drop from 0.60–1.50 m with the object's actual restitution.
+        # Clamp to 2.5 m/s: ensures the ball is still airborne when the early-exit
+        # fires (floor_hit_step+120 ≈ step 123, and arc lasts ~120 steps at 2.5 m/s),
+        # avoiding the expensive floor-rolling phase for low-restitution balls.
+        drop_h   = float(rng.uniform(0.60, 1.50))
+        vel_z    = max(2.5, float(obj_spec.restitution * math.sqrt(2 * g * drop_h)))
+
+        # Lateral speed: enough to cross y=0 within 3 s arc time
+        vel_y    = float(rng.uniform(-2.5, -0.8))
+        vel_x    = float(rng.uniform(-0.30, 0.30))
+
+        return BounceSpec(
+            start_x=round(start_x, 3),
+            start_y=round(start_y, 3),
+            start_z=start_z,
+            vel_x=round(vel_x, 3),
+            vel_y=round(vel_y, 3),
+            vel_z=round(vel_z, 3),
+        )
+
+    @staticmethod
+    def _bounce_world_pos(bounce: BounceSpec) -> tuple[float, float, float]:
+        """World-space position of the bouncing ball at t=0."""
+        return bounce.start_x, bounce.start_y, bounce.start_z
+
+    def _make_bounce_cameras(
+        self,
+        rng: np.random.Generator,
+        bounce: BounceSpec,
+        room_dict: Optional[dict] = None,
+    ) -> list[CameraSpec]:
+        """Three cameras for a bouncing-object event.
+
+        Observer: south of room at eye height, watching ball fall, bounce, and
+                  fly toward them.
+        Closeup:  east-side view showing the floor impact.
+        Overhead: top-down view of the full fall + bounce path.
+        """
+        bx, by, bz = bounce.start_x, bounce.start_y, bounce.start_z
+
+        room_depth  = room_dict.get("depth",  5.0) if room_dict else 5.0
+        room_height = room_dict.get("height", 2.8) if room_dict else 2.8
+        south_wall_y = -room_depth / 2
+        max_cam_z    = room_height - 0.25
+
+        def _j(v, s=0.08): return round(v + float(rng.uniform(-s, s)), 3)
+        def _clamp_y(y): return max(south_wall_y + 0.20, y)
+        def _clamp_z(z): return min(max_cam_z, z)
+
+        # Ball spawns at floor level (bz ≈ radius) and flies upward then south.
+        # Peak height: vel_z² / (2g), arc landing y: start_y + vel_y * (2*vel_z/g)
+        import math as _math
+        g          = 9.81
+        peak_z     = bounce.vel_z ** 2 / (2 * g)           # max height of arc
+        arc_time   = 2 * bounce.vel_z / g                  # time for full arc
+        land_y     = by + bounce.vel_y * arc_time           # approx landing y
+        mid_y      = (by + land_y) / 2                     # arc midpoint y
+        mid_z      = peak_z * 0.75                         # ~¾ peak for lookat height
+
+        obs_y      = _clamp_y(-room_depth * 0.30)
+
+        return [
+            CameraSpec(
+                name="observer",
+                # South of room, watching the ball's parabola arrive
+                pos=[_j(bx, 0.15), _j(obs_y, 0.12), _j(min(peak_z * 0.60 + 0.20, 1.50), 0.12)],
+                lookat=[_j(bx, 0.08), _j(mid_y * 0.35, 0.10), _j(mid_z * 0.60, 0.08)],
+                fov=float(rng.uniform(54, 64)),
+            ),
+            CameraSpec(
+                name="closeup",
+                # East side, watching the ball's arc cross the room
+                pos=[_j(bx + 1.50, 0.12), _j(mid_y, 0.12), _j(mid_z * 0.90, 0.10)],
+                lookat=[_j(bx, 0.06), _j(by, 0.06), _j(bz, 0.06)],
+                fov=float(rng.uniform(52, 62)),
+            ),
+            CameraSpec(
+                name="overhead",
+                pos=[_j(bx, 0.10), _j(by * 0.20, 0.10), _clamp_z(_j(2.50, 0.10))],
+                lookat=[_j(bx, 0.06), _j(mid_y, 0.08), _j(0.10, 0.06)],
+                fov=float(rng.uniform(62, 74)),
+            ),
+        ]
+
+    # ── Ladder slip ───────────────────────────────────────────────────────────
+
+    def _build_ladder_slip_spec(
+        self,
+        rng: np.random.Generator,
+        seed: int,
+        force_object: Optional[str] = None,
+    ) -> SceneSpec:
+        if force_object:
+            candidates = [o for o in self._objects if o["name"] == force_object]
+            obj_dict = candidates[0] if candidates else self._objects[rng.integers(len(self._objects))]
+        else:
+            obj_dict = self._objects[rng.integers(len(self._objects))]
+
+        room_dict = self._rooms[rng.integers(len(self._rooms))]
+        obj_spec  = self._make_object_spec(obj_dict)
+        room_spec = self._make_room(rng, room_dict)
+        ladder    = self._make_ladder(rng, room_dict, obj_spec)
+        lighting  = self._make_lighting(rng, room_dict)
+
+        obj_pos  = self._ladder_world_pos(room_dict, ladder, obj_spec)
+        cameras  = self._make_cameras_with_retry(
+            rng,
+            lambda r: self._make_ladder_cameras(r, room_dict, ladder, obj_spec),
+            obj_pos,
+        )
+
+        # GT: ladder always falls toward observer — no catching.
+        # Light ladder → dodge sideways; heavy → brace
+        if obj_spec.mass_hint == "heavy":
+            gt_action = "BRACE_FOR_IMPACT"
+        else:
+            gt_action = "TRIGGER_DODGE"
+
+        return SceneSpec(
+            seed=seed,
+            task_type="ladder_slip",
+            adversarial=(obj_dict["category"] == "adversarial"),
+            room=room_spec,
+            object=obj_spec,
+            ladder=ladder,
+            cameras=cameras,
+            lighting=lighting,
+            ground_truth_action=gt_action,
+            safety_label=obj_spec.safety_label,
+        )
+
+    def _make_ladder(
+        self,
+        rng: np.random.Generator,
+        room: dict,
+        obj_spec: ObjectSpec,
+    ) -> LadderSpec:
+        """Sample a LadderSpec.
+
+        Mid-slip convention (matches furniture_tip):
+          lean_deg = already-tilted angle from vertical toward observer (20–40°)
+          start_y  = world Y of COM, north half of room (clear of walls)
+          angular_vel = small positive push (wx > 0) → continues falling toward -Y
+        """
+        room_width = room["width"]
+        room_depth = room.get("depth", 5.0)
+
+        lean_deg    = float(rng.uniform(20.0, 40.0))
+        base_x      = float(rng.uniform(-room_width * 0.25, room_width * 0.25))
+        angular_vel = float(rng.uniform(0.30, 0.70))
+        euler_z     = float(rng.uniform(-8.0, 8.0))
+        start_y     = float(rng.uniform(0.20, min(0.80, room_depth * 0.25)))
+
+        return LadderSpec(
+            lean_deg=round(lean_deg, 1),
+            base_x=round(base_x, 3),
+            start_y=round(start_y, 3),
+            angular_vel=round(angular_vel, 3),
+            euler_z=round(euler_z, 1),
+        )
+
+    @staticmethod
+    def _ladder_world_pos(
+        room: dict,
+        ladder: LadderSpec,
+        obj: ObjectSpec,
+    ) -> tuple[float, float, float]:
+        """World-space COM of the ladder at t=0 (mid-slip convention)."""
+        hz = obj.size[2] if len(obj.size) >= 3 else obj.size[0]
+        return ladder.base_x, ladder.start_y, hz
+
+    def _make_ladder_cameras(
+        self,
+        rng: np.random.Generator,
+        room_dict: dict,
+        ladder: LadderSpec,
+        obj: ObjectSpec,
+    ) -> list[CameraSpec]:
+        """Three cameras for a ladder-slip event.
+
+        Observer: south of room at eye height, watching the ladder fall toward them.
+        Closeup:  east-side view showing the fall arc.
+        Overhead: top-down view of the fall path.
+        """
+        ox, oy, oz = self._ladder_world_pos(room_dict, ladder, obj)
+        room_depth  = room_dict.get("depth",  5.0)
+        room_height = room_dict.get("height", 2.8)
+        south_wall_y = -room_depth / 2
+        max_cam_z    = room_height - 0.25
+
+        def _j(v, s=0.10): return round(v + float(rng.uniform(-s, s)), 3)
+        def _clamp_y(y): return max(south_wall_y + 0.20, y)
+        def _clamp_z(z): return min(max_cam_z, z)
+
+        obs_y = _clamp_y(-room_depth * 0.35)
+
+        return [
+            CameraSpec(
+                name="observer",
+                pos=[_j(ox, 0.12), _j(obs_y, 0.12), _j(1.20, 0.10)],
+                lookat=[_j(ox, 0.08), _j(oy * 0.40, 0.10), _j(oz * 0.60, 0.08)],
+                fov=float(rng.uniform(52, 62)),
+            ),
+            CameraSpec(
+                name="closeup",
+                pos=[_j(ox + 1.40, 0.12), _j(oy * 0.50, 0.12), _j(oz * 0.80, 0.10)],
+                lookat=[_j(ox, 0.06), _j(oy * 0.60, 0.08), _j(oz * 0.70, 0.06)],
+                fov=float(rng.uniform(50, 60)),
+            ),
+            CameraSpec(
+                name="overhead",
+                pos=[_j(ox, 0.08), _j(oy * 0.20, 0.10), _clamp_z(_j(2.30, 0.10))],
+                lookat=[_j(ox, 0.06), _j(oy * 0.50, 0.08), _j(0.50, 0.05)],
+                fov=float(rng.uniform(60, 72)),
+            ),
+        ]
+
+    # ── Chain reaction ────────────────────────────────────────────────────────
+
+    def _build_chain_reaction_spec(
+        self,
+        rng: np.random.Generator,
+        seed: int,
+        force_object: Optional[str] = None,
+    ) -> SceneSpec:
+        # Target B — any object_drop object (the threatening one that hits the observer)
+        if force_object:
+            candidates = [o for o in self._objects if o["name"] == force_object]
+            obj_dict = candidates[0] if candidates else self._objects[rng.integers(len(self._objects))]
+        else:
+            obj_dict = self._objects[rng.integers(len(self._objects))]
+
+        room_dict = self._rooms[rng.integers(len(self._rooms))]
+        obj_spec  = self._make_object_spec(obj_dict)
+        table     = self._make_table(rng, room_dict)
+        room_spec = self._make_room(rng, room_dict)
+        chain     = self._make_chain(rng, room_dict, table, obj_spec)
+        lighting  = self._make_lighting(rng, room_dict)
+
+        obj_pos  = self._chain_world_pos(table, chain, obj_spec)
+        cameras  = self._make_cameras_with_retry(
+            rng,
+            lambda r: self._make_chain_cameras(r, room_dict, table, chain, obj_spec),
+            obj_pos,
+        )
+
+        # GT based on target B's properties (same logic as object_drop)
+        if obj_spec.catch_safe:
+            gt_action = "EXECUTE_CATCH"
+        elif obj_spec.mass_hint == "heavy":
+            gt_action = "BRACE_FOR_IMPACT"
+        else:
+            gt_action = "TRIGGER_DODGE"
+
+        return SceneSpec(
+            seed=seed,
+            task_type="chain_reaction",
+            adversarial=(obj_dict["category"] == "adversarial"),
+            room=room_spec,
+            table=table,
+            object=obj_spec,
+            chain=chain,
+            cameras=cameras,
+            lighting=lighting,
+            ground_truth_action=gt_action,
+            safety_label=obj_spec.safety_label,
+        )
+
+    def _make_chain(
+        self,
+        rng: np.random.Generator,
+        room: dict,
+        table: TableSpec,
+        obj_spec: ObjectSpec,
+    ) -> ChainSpec:
+        """Sample a ChainSpec.
+
+        Target B is placed near the south edge of the table.
+        Trigger A starts 20–35 cm north of B, given southward velocity.
+        """
+        _, _, hz_b = self._obj_phys_half(obj_spec)
+
+        # Target B: near south edge of the table, leaving enough room to slide
+        table_south_edge = table.pos_y - table.depth / 2
+        target_y = float(table_south_edge + hz_b * 2 + rng.uniform(0.02, 0.08))
+        target_x = float(table.pos_x + rng.uniform(-table.width * 0.20, table.width * 0.20))
+
+        # Trigger A: north of B by gap_y, same X
+        gap_y     = float(rng.uniform(0.18, 0.32))
+        trigger_y = target_y + gap_y
+        trigger_x = target_x   # aligned in X for a direct head-on collision
+
+        # Trigger velocity — enough to push B off the table after the collision
+        trigger_vel_y = float(rng.uniform(-2.0, -1.2))
+
+        # Random trigger look (book-like flat box)
+        trigger_size    = [
+            round(float(rng.uniform(0.06, 0.09)), 3),
+            round(float(rng.uniform(0.04, 0.07)), 3),
+            round(float(rng.uniform(0.010, 0.020)), 3),
+        ]
+        trigger_density = float(rng.uniform(500.0, 850.0))
+        hue = float(rng.uniform(0.0, 1.0))
+        trigger_color   = list(self._hsv_to_rgb(hue, 0.55, 0.60))
+        euler_z         = float(rng.uniform(-15.0, 15.0))
+
+        return ChainSpec(
+            target_x=round(target_x, 3),
+            target_y=round(target_y, 3),
+            euler_z=round(euler_z, 1),
+            trigger_x=round(trigger_x, 3),
+            trigger_y=round(trigger_y, 3),
+            trigger_vel_y=round(trigger_vel_y, 3),
+            trigger_size=trigger_size,
+            trigger_density=round(trigger_density, 1),
+            trigger_color=trigger_color,
+        )
+
+    @staticmethod
+    def _hsv_to_rgb(h: float, s: float, v: float) -> list[float]:
+        """Convert HSV (all in 0–1) to [R, G, B] in 0–1."""
+        import colorsys
+        r, g, b = colorsys.hsv_to_rgb(h, s, v)
+        return [round(r, 3), round(g, 3), round(b, 3)]
+
+    @staticmethod
+    def _chain_world_pos(
+        table: TableSpec,
+        chain: ChainSpec,
+        obj: ObjectSpec,
+    ) -> tuple[float, float, float]:
+        """World-space COM of target B at t=0."""
+        _, _, hz = Randomizer._obj_phys_half(obj)
+        if obj.morph == "mesh":
+            obj_z = table.height - obj.bottom_z_offset + hz
+        else:
+            obj_z = table.height + hz
+        return chain.target_x, chain.target_y, obj_z
+
+    def _make_chain_cameras(
+        self,
+        rng: np.random.Generator,
+        room_dict: dict,
+        table: TableSpec,
+        chain: ChainSpec,
+        obj: ObjectSpec,
+    ) -> list[CameraSpec]:
+        """Three cameras for a chain-reaction event.
+
+        Observer: south of table at eye height, watching B fly toward them.
+        Closeup:  east-side view showing A→B collision and B's fall.
+        Overhead: top-down view of the full chain path.
+        """
+        ox, oy, oz = self._chain_world_pos(table, chain, obj)
+        room_depth  = room_dict.get("depth",  5.0)
+        room_height = room_dict.get("height", 2.8)
+        south_wall_y = -room_depth / 2
+        max_cam_z    = room_height - 0.25
+
+        def _j(v, s=0.08): return round(v + float(rng.uniform(-s, s)), 3)
+        def _clamp_y(y): return max(south_wall_y + 0.20, y)
+        def _clamp_z(z): return min(max_cam_z, z)
+
+        obs_y = _clamp_y(-room_depth * 0.30)
+        # Midpoint between trigger start and table south edge
+        trigger_y = chain.trigger_y
+        chain_mid_y = (trigger_y + oy) / 2
+
+        return [
+            CameraSpec(
+                name="observer",
+                pos=[_j(ox, 0.15), _j(obs_y, 0.12), _j(1.15, 0.10)],
+                lookat=[_j(ox, 0.08), _j(chain_mid_y * 0.20, 0.10), _j(oz * 0.70, 0.08)],
+                fov=float(rng.uniform(52, 62)),
+            ),
+            CameraSpec(
+                name="closeup",
+                pos=[_j(ox + 1.20, 0.12), _j(chain_mid_y, 0.12), _j(table.height + 0.45, 0.10)],
+                lookat=[_j(ox, 0.06), _j(oy, 0.06), _j(oz, 0.06)],
+                fov=float(rng.uniform(48, 58)),
+            ),
+            CameraSpec(
+                name="overhead",
+                pos=[_j(ox, 0.10), _j(chain_mid_y * 0.30, 0.10), _clamp_z(_j(2.20, 0.10))],
+                lookat=[_j(ox, 0.06), _j(oy, 0.08), _j(oz * 0.30, 0.05)],
+                fov=float(rng.uniform(60, 72)),
+            ),
+        ]
+
+    # ── Lighting ──────────────────────────────────────────────────────────────
 
     def _make_lighting(self, rng: np.random.Generator, room: dict) -> LightingSpec:
         preset_name = room.get("lighting_preset", "warm_pendant")

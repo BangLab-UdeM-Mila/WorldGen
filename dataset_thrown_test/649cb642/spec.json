@@ -1,0 +1,197 @@
+{
+  "scene_id": "649cb642",
+  "seed": 1,
+  "description": "",
+  "adversarial": false,
+  "task_type": "thrown_object",
+  "room": {
+    "type": "living",
+    "display_name": "Living Room",
+    "width": 6.0,
+    "depth": 5.0,
+    "height": 2.8,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.9196408052766823,
+      0.8987398778840304,
+      0.8569380230987267
+    ],
+    "ceiling_color_rgb": [
+      0.9161951632083651,
+      0.9065510035956456,
+      0.8872626843702064
+    ],
+    "floor_color_rgb": [
+      0.6,
+      0.48,
+      0.3
+    ],
+    "floor_roughness": 0.5,
+    "window_wall": "north",
+    "window_pos_x": -0.5,
+    "window_pos_z": 1.5,
+    "window_width": 1.6,
+    "window_height": 1.2,
+    "window_emissive": [
+      5.5,
+      5.2,
+      4.8
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "cricket_ball",
+    "display_name": "Cricket Ball",
+    "category": "dangerous",
+    "morph": "sphere",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.036
+    ],
+    "phys_half_x": 0.0,
+    "phys_half_z": 0.0,
+    "density": 1120.0,
+    "friction": 0.65,
+    "restitution": 0.3,
+    "color_rgb": [
+      0.6,
+      0.07,
+      0.05
+    ],
+    "roughness": 0.75,
+    "ior": 1.0,
+    "catch_safe": false,
+    "safety_label": "dangerous",
+    "mass_hint": "heavy",
+    "description": "Dense leather cricket ball — high momentum, dodge it"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": null,
+  "thrown": {
+    "launch_x": -0.565,
+    "launch_y": 1.538,
+    "launch_z": 1.454,
+    "vel_x": -0.109,
+    "vel_y": -2.931,
+    "vel_z": 0.14
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -0.554,
+        -1.541,
+        1.148
+      ],
+      "lookat": [
+        -0.596,
+        0.915,
+        0.756
+      ],
+      "fov": 56.031129864471296
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        0.764,
+        0.712,
+        1.204
+      ],
+      "lookat": [
+        -0.591,
+        0.767,
+        1.212
+      ],
+      "fov": 55.61657193663787
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        -0.52,
+        0.623,
+        2.455
+      ],
+      "lookat": [
+        -0.606,
+        1.306,
+        1.02
+      ],
+      "fov": 63.390387349649245
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.3152107865204884,
+      0.28368970786843956,
+      0.2521686292163907
+    ],
+    "background_color": [
+      0.12,
+      0.11,
+      0.1
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          -0.8,
+          1.2,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.9,
+          0.78
+        ],
+        "intensity": 6.01
+      },
+      {
+        "type": "point",
+        "pos": [
+          1.2,
+          -1.0,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          0.95,
+          0.85,
+          0.72
+        ],
+        "intensity": 5.15
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.3,
+          0.6,
+          -1.0
+        ],
+        "color": [
+          0.75,
+          0.82,
+          1.0
+        ],
+        "intensity": 2.15
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "TRIGGER_DODGE",
+  "safety_label": "dangerous",
+  "interception_point_2d": null,
+  "interception_point_3d": null,
+  "time_to_floor_s": null
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "scene_id": "6906d90b",
+    "seed": 0,
+    "object": "lead_tennis",
+    "room": "living",
+    "success": true,
+    "elapsed": 106.3,
+    "stdout": "[scene_runner] scene_id=6906d90b  object=lead_tennis  room=living  seed=0\n\u001b[38;5;226m[Genesis] [07:33:48] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n\u001b[38;5;226m[Genesis] [07:33:51] [WARNING] Non-zero `coup_restitution` could lead to instability. Use with caution.\u001b[0m\n  t=1.00s  obj=(1.174,-2.463,0.053)  [wall 11.5s]\n  t=2.00s  obj=(1.314,-2.401,0.033)  [wall 22.6s]\n  t=3.00s  obj=(1.455,-2.365,0.033)  [wall 33.5s]\n[scene_runner] Done. ttf=0.1167s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "649cb642",
+    "seed": 1,
+    "object": "cricket_ball",
+    "room": "living",
+    "success": true,
+    "elapsed": 79.7,
+    "stdout": "[scene_runner] scene_id=649cb642  object=cricket_ball  room=living  seed=1\n\u001b[38;5;226m[Genesis] [07:35:34] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n\u001b[38;5;226m[Genesis] [07:35:37] [WARNING] Non-zero `coup_restitution` could lead to instability. Use with caution.\u001b[0m\n  t=1.00s  obj=(-0.658,-0.954,0.036)  [wall 11.9s]\n  t=2.00s  obj=(-0.727,-2.431,0.036)  [wall 23.6s]\n  t=3.00s  obj=(-0.784,-2.372,0.036)  [wall 35.5s]\n[scene_runner] Done. ttf=0.5208s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  },
+  {
+    "scene_id": "2ca3657d",
+    "seed": 2,
+    "object": "lead_tennis",
+    "room": "kitchen",
+    "success": true,
+    "elapsed": 77.1,
+    "stdout": "[scene_runner] scene_id=2ca3657d  object=lead_tennis  room=kitchen  seed=2\n\u001b[38;5;226m[Genesis] [07:36:53] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n\u001b[38;5;226m[Genesis] [07:36:56] [WARNING] Non-zero `coup_restitution` could lead to instability. Use with caution.\u001b[0m\n  t=1.00s  obj=(-0.185,-1.025,0.033)  [wall 11.8s]\n  t=2.00s  obj=(-0.404,0.624,0.033)  [wall 23.0s]\n  t=3.00s  obj=(-0.575,1.691,0.033)  [wall 33.6s]\n[scene_runner] Done. ttf=0.1042s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  }
+]
