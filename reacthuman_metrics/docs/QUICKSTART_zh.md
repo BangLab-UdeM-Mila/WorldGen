@@ -1,6 +1,6 @@
-# Quickstart(中文)
+# Quickstart
 
-这份文档是给 Mengyang 自己用的快速上手指南。完整的方法学文档见
+这份文档是快速上手指南和对接方案。
 `docs/DESIGN.md`,完整说明见 `README.md`。
 
 ## 这个模块在干什么
@@ -78,13 +78,13 @@ reacthuman \
 }
 ```
 
-## 跟 Yizhan 对接的两件事
+## 需要跟 Yizhan 对接的两件事
 
 1. **确认 `spec.json` 的字段格式跟 `reacthuman/io.py` 里写的一致**。
-   如果字段名不一样(比如他用 `gt_action` 而不是 `correct_action`),
+   如果字段名不一样(比如yizhan用 `gt_action` 而不是 `correct_action`),
    只需要改 `io.py::load_scene_spec`,其他代码都不用动。
 
-2. **请他在 `spec.json` 里加四个字段**(如果还没有):
+2. **请yizhan在 `spec.json` 里加四个字段**(如果还没有):
    - `difficulty.initial_state`
    - `difficulty.action`
    - `difficulty.physics`
