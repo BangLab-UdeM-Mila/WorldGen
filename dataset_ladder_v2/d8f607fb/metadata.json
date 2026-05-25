@@ -1,0 +1,206 @@
+{
+  "scene_id": "d8f607fb",
+  "seed": 114,
+  "description": "",
+  "adversarial": false,
+  "task_type": "ladder_slip",
+  "room": {
+    "type": "living",
+    "display_name": "Living Room",
+    "width": 6.0,
+    "depth": 5.0,
+    "height": 2.8,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.848510002307284,
+      0.8292256840730275,
+      0.7906570476045146
+    ],
+    "ceiling_color_rgb": [
+      0.9436715014434046,
+      0.9337381172176845,
+      0.9138713487662445
+    ],
+    "floor_color_rgb": [
+      0.6,
+      0.48,
+      0.3
+    ],
+    "floor_roughness": 0.5,
+    "window_wall": "north",
+    "window_pos_x": -0.5,
+    "window_pos_z": 1.5,
+    "window_width": 1.6,
+    "window_height": 1.2,
+    "window_emissive": [
+      5.5,
+      5.2,
+      4.8
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "heavy_timber_ladder",
+    "display_name": "Heavy Timber Ladder",
+    "category": "dangerous",
+    "morph": "box",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.2,
+      0.06,
+      1.05
+    ],
+    "phys_half_x": 0.0,
+    "phys_half_z": 0.0,
+    "density": 620.0,
+    "friction": 0.28,
+    "restitution": 0.1,
+    "color_rgb": [
+      0.52,
+      0.38,
+      0.22
+    ],
+    "roughness": 0.8,
+    "ior": 1.0,
+    "catch_safe": false,
+    "safety_label": "dangerous",
+    "mass_hint": "heavy",
+    "description": "Heavy solid-timber ladder — massive impact on fall, brace for impact"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": null,
+  "thrown": null,
+  "pendulum": null,
+  "bounce": null,
+  "ladder": {
+    "lean_deg": 39.1,
+    "base_x": 0.325,
+    "start_y": 1.176,
+    "angular_vel": 0.197,
+    "euler_z": -1.0
+  },
+  "chain": null,
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        0.231,
+        -1.832,
+        1.102
+      ],
+      "lookat": [
+        0.334,
+        0.669,
+        0.46
+      ],
+      "fov": 61.9662121832698
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        1.804,
+        0.819,
+        0.741
+      ],
+      "lookat": [
+        0.313,
+        1.103,
+        0.612
+      ],
+      "fov": 54.332437573957534
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        0.267,
+        0.312,
+        2.256
+      ],
+      "lookat": [
+        0.327,
+        0.841,
+        0.458
+      ],
+      "fov": 69.56651658446782
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.32355366717122863,
+      0.2911983004541058,
+      0.25884293373698286
+    ],
+    "background_color": [
+      0.12,
+      0.11,
+      0.1
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          -0.8,
+          1.2,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.9,
+          0.78
+        ],
+        "intensity": 7.03
+      },
+      {
+        "type": "point",
+        "pos": [
+          1.2,
+          -1.0,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          0.95,
+          0.85,
+          0.72
+        ],
+        "intensity": 6.02
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.3,
+          0.6,
+          -1.0
+        ],
+        "color": [
+          0.75,
+          0.82,
+          1.0
+        ],
+        "intensity": 2.51
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "BRACE_FOR_IMPACT",
+  "safety_label": "dangerous",
+  "interception_point_2d": null,
+  "interception_point_3d": [
+    0.3275,
+    1.981,
+    0.3171
+  ],
+  "time_to_floor_s": 0.4083
+}

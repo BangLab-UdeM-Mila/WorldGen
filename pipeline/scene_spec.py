@@ -40,6 +40,12 @@ class ObjectSpec(BaseModel):
     # Required for mesh morphs; 0.0 means fall back to size[0]/size[2].
     phys_half_x: float = 0.0
     phys_half_z: float = 0.0
+    # mesh_base_y / mesh_top_y: local-space y-centroid of the mesh at its base (z≈0)
+    # and its top (z≈2*phys_half_z).  Used by ladder_slip to correct for pre-leaned
+    # meshes so that the physical base lands on the floor and the top touches the wall.
+    # 0.0 means the mesh is axis-aligned (no pre-lean correction needed).
+    mesh_base_y: float = 0.0
+    mesh_top_y: float = 0.0
     density: float                  # kg/m³
     friction: float
     restitution: float
@@ -75,7 +81,7 @@ class TableSpec(BaseModel):
 
 class RoomSpec(BaseModel):
     """Room geometry and materials."""
-    type: Literal["dining", "kitchen", "living", "office"]
+    type: Literal["dining", "kitchen", "living", "office", "stair_landing"]
     display_name: str
     width: float
     depth: float
@@ -259,22 +265,21 @@ class BounceSpec(BaseModel):
 class LadderSpec(BaseModel):
     """Starting condition for a ladder-slip event.
 
-    The ladder (a tall box) is placed in mid-slip: already tilted past vertical
-    toward the observer (-Y direction), as if its base has just slipped out on
-    the smooth floor.  This avoids wall-contact issues and produces clean physics.
+    The ladder leans against the north wall (top touching wall, base on floor).
+    Its base is on a smooth floor with low friction so it slides south toward
+    the observer as gravity takes over.
 
-    Convention matches furniture_tip: lean_deg is the tilt angle from vertical
-    toward -Y (observer side).  COM is placed at (base_x, start_y, hz) on the
-    floor, with euler_x = +lean_deg.
+    Wall-contact geometry (euler_x = -lean_deg, top toward +Y / north wall):
+      Box:  pos = (base_x, start_y + hz*sin(lean_deg), hz*cos(lean_deg))
+      Mesh: pos = (base_x, start_y, 0)   # mesh origin = base of ladder
 
-    Geometry:
-      pos = (base_x, start_y, hz)          # hz = object.size[2], half-height
-      euler = (lean_deg, 0, euler_z)        # tilt toward -Y (observer)
+    start_y = world Y of the ladder BASE on the floor (NOT the COM).
+    Randomizer computes: start_y = room_depth/2 - full_height * sin(lean_deg)
     """
-    lean_deg: float = 30.0         # tilt from vertical toward observer (degrees, 20–45 typical)
-    base_x: float = 0.0            # world X of the ladder COM
-    start_y: float = 0.60          # world Y of the ladder COM (north half of room)
-    angular_vel: float = 0.6       # initial wx (rad/s) to accelerate the fall toward -Y
+    lean_deg: float = 30.0         # tilt from vertical (degrees, 25–45 typical)
+    base_x: float = 0.0            # world X of the ladder base
+    start_y: float = 0.60          # world Y of the ladder BASE on the floor
+    angular_vel: float = 0.15      # initial wx (rad/s) gentle push toward observer (-Y)
     euler_z: float = 0.0           # in-plane Z rotation for visual variety (degrees)
 
 
@@ -301,6 +306,51 @@ class ChainSpec(BaseModel):
     trigger_size: list[float] = Field(default_factory=lambda: [0.075, 0.055, 0.015])
     trigger_density: float = 650.0  # kg/m³ (book-like)
     trigger_color: list[float] = Field(default_factory=lambda: [0.20, 0.40, 0.72])
+
+
+class CeilingDropSpec(BaseModel):
+    """Starting condition for a ceiling-drop event.
+
+    An object is spawned just below the ceiling and falls straight down under
+    gravity.  Unlike hanging_fall (which simulates a mounted fixture with tilt
+    and angular velocity), ceiling_drop is a pure vertical free-fall — any
+    object that gets knocked off an overhead surface or high ledge.
+
+    spawn_z is NOT stored here; the builder computes it as:
+        room.height − obj_half_height − 0.05 m
+    """
+    spawn_x: float = 0.0    # world X of object spawn centre
+    spawn_y: float = 0.0    # world Y of object spawn centre
+    euler_z: float = 0.0    # random in-plane rotation for visual variety (degrees)
+
+
+class StairTumbleSpec(BaseModel):
+    """Starting condition for a stair-tumble event.
+
+    The staircase runs along the north wall (+Y direction), with the bottom
+    step at stair_start_y and the top step at stair_start_y + n_steps*step_run
+    (flush with the north wall).  Positive Y is north; the observer is south (-Y).
+
+    The object spawns on step `start_step` (0 = bottom, n_steps-1 = top) at the
+    centre of that tread and is given a small southward nudge to start tumbling.
+
+    Step k tread top surface:  z = (k + 1) * step_rise
+    Step k tread Y range:      [stair_start_y + k*step_run,
+                                 stair_start_y + (k+1)*step_run]
+    Object spawn:
+        y = stair_start_y + start_step * step_run + step_run / 2
+        z = (start_step + 1) * step_rise + obj_half_z
+    """
+    n_steps: int = 7               # total steps in the staircase
+    step_rise: float = 0.18        # height of each step (metres)
+    step_run: float = 0.28         # tread depth of each step (metres)
+    stair_width: float = 1.20      # staircase width in X (metres)
+    stair_x: float = 0.0           # X centre of staircase (world)
+    stair_start_y: float = 0.54   # Y of the front face of the bottom step (world)
+    start_step: int = 5            # step index object spawns on (0=bottom)
+    start_x: float = 0.0          # object X within stair (world, ≈ stair_x)
+    nudge_vel_y: float = -0.4     # initial velocity toward observer (m/s, negative)
+    euler_z: float = 0.0          # in-plane Z rotation for visual variety (degrees)
 
 
 class DoorSpec(BaseModel):
@@ -367,7 +417,7 @@ class SceneSpec(BaseModel):
     # "object_drop" | "sliding_object" | "stack_collapse" |
     # "hanging_fall" | "furniture_tip" | "rolling_ball" | "shelf_slide" |
     # "door_swing"  | "thrown_object" | "pendulum_swing" | "bouncing_object" |
-    # "ladder_slip" | "chain_reaction"
+    # "ladder_slip" | "chain_reaction" | "ceiling_drop" | "stair_tumble"
     task_type: str = "object_drop"
 
     # Scene components (required fields vary by task_type)
@@ -384,6 +434,8 @@ class SceneSpec(BaseModel):
     # bouncing_object  : bounce
     # ladder_slip      : ladder
     # chain_reaction   : table + chain
+    # ceiling_drop     : ceiling_drop
+    # stair_tumble     : stair
     room: RoomSpec
     table: Optional[TableSpec] = None
     object: ObjectSpec
@@ -400,6 +452,8 @@ class SceneSpec(BaseModel):
     bounce: Optional[BounceSpec] = None
     ladder: Optional[LadderSpec] = None
     chain: Optional[ChainSpec] = None
+    ceiling_drop: Optional[CeilingDropSpec] = None
+    stair: Optional[StairTumbleSpec] = None
     cameras: list[CameraSpec]
     lighting: LightingSpec
 
@@ -511,11 +565,22 @@ class SceneSpec(BaseModel):
             return self.bounce.start_x, self.bounce.start_y, self.bounce.start_z
 
         elif self.task_type == "ladder_slip":
+            import math as _math
             assert self.ladder
             o = self.object
-            hz = o.size[2] if len(o.size) >= 3 else o.size[0]
-            # Same convention as furniture_tip: COM on floor at hz height
-            return self.ladder.base_x, self.ladder.start_y, hz
+            if o.morph == "mesh" and o.phys_half_z > 0:
+                hz = o.phys_half_z
+            elif len(o.size) >= 3:
+                hz = o.size[2]
+            else:
+                hz = o.size[0]
+            sin_d = _math.sin(_math.radians(self.ladder.lean_deg))
+            cos_d = _math.cos(_math.radians(self.ladder.lean_deg))
+            # For pre-leaned mesh: pos_z = mesh_base_y * sin_d so base lands on floor.
+            pos_z = o.mesh_base_y * sin_d if o.mesh_base_y != 0.0 else 0.0
+            y_com = self.ladder.start_y + hz * sin_d
+            z_com = pos_z + hz * cos_d
+            return self.ladder.base_x, y_com, z_com
 
         elif self.task_type == "chain_reaction":
             assert self.chain and self.table
@@ -526,6 +591,20 @@ class SceneSpec(BaseModel):
             else:
                 obj_z = self.table.height + hz
             return self.chain.target_x, self.chain.target_y, obj_z
+
+        elif self.task_type == "ceiling_drop":
+            assert self.ceiling_drop
+            hz = o.phys_half_z if o.phys_half_z > 0 else (o.size[2] if len(o.size) >= 3 else o.size[0])
+            spawn_z = self.room.height - hz - 0.05
+            return self.ceiling_drop.spawn_x, self.ceiling_drop.spawn_y, spawn_z
+
+        elif self.task_type == "stair_tumble":
+            assert self.stair
+            st = self.stair
+            hz = o.phys_half_z if o.phys_half_z > 0 else (o.size[2] if len(o.size) >= 3 else o.size[0])
+            obj_y = st.stair_start_y + st.start_step * st.step_run + st.step_run / 2
+            obj_z = (st.start_step + 1) * st.step_rise + hz
+            return st.start_x, obj_y, obj_z
 
         raise ValueError(f"Unknown task_type: {self.task_type}")
 
@@ -544,7 +623,8 @@ class SceneSpec(BaseModel):
         ox, oy, oz = self.object_world_pos()
 
         # 1. Object inside room (horizontal)
-        # Objects near the north wall (hanging or shelf) legitimately sit at y ≈ depth/2
+        # Objects near the north wall (hanging, shelf, or stair top steps) are exempt
+        # from the Y-bounds check — they legitimately sit at y ≈ depth/2.
         is_wall_mounted = (
             self.task_type == "hanging_fall"
             and self.hanging is not None
@@ -553,6 +633,8 @@ class SceneSpec(BaseModel):
             self.task_type == "shelf_slide"
         ) or (
             self.task_type == "pendulum_swing"  # bob position handled by custom check below
+        ) or (
+            self.task_type == "stair_tumble"    # object starts on upper step near north wall
         )
         margin = 0.05
         if abs(ox) > r.width / 2 - margin:
@@ -581,16 +663,25 @@ class SceneSpec(BaseModel):
                     f"Pendulum pivot X={p.pivot_x:.3f} outside room width {r.width}"
                 )
 
-        # ladder_slip: ladder COM must be in north half and base_x inside room
+        # ladder_slip: base must be inside room; base_x inside room width
         if self.task_type == "ladder_slip" and self.ladder is not None:
+            import math as _vmath
             lad = self.ladder
-            if lad.start_y < 0:
+            o   = self.object
+            # For pre-leaned mesh, start_y is mesh origin (may be south of centre);
+            # compute the actual world y of the base instead.
+            if o.mesh_base_y != 0.0:
+                _cos_d = _vmath.cos(_vmath.radians(lad.lean_deg))
+                base_y = lad.start_y + o.mesh_base_y * _cos_d
+            else:
+                base_y = lad.start_y
+            if base_y < -r.depth / 2 + margin:
                 warnings.append(
-                    f"Ladder start_y={lad.start_y:.3f} should be positive (north half)"
+                    f"Ladder base y={base_y:.3f} outside room south wall"
                 )
-            if lad.start_y > r.depth / 2 - margin:
+            if base_y > r.depth / 2 - margin:
                 warnings.append(
-                    f"Ladder start_y={lad.start_y:.3f} too close to north wall"
+                    f"Ladder base y={base_y:.3f} too close to north wall"
                 )
             if abs(lad.base_x) > r.width / 2 - margin:
                 warnings.append(
@@ -614,6 +705,19 @@ class SceneSpec(BaseModel):
             if ch.trigger_y > t.pos_y + half_d - margin:
                 warnings.append(
                     f"Chain trigger y={ch.trigger_y:.3f} outside table north edge"
+                )
+
+        # stair_tumble: object X must be within stair width; start_step must be valid
+        if self.task_type == "stair_tumble" and self.stair is not None:
+            st = self.stair
+            half_sw = st.stair_width / 2
+            if abs(st.start_x - st.stair_x) > half_sw - margin:
+                warnings.append(
+                    f"Stair object x={st.start_x:.3f} outside stair width at x={st.stair_x:.3f}"
+                )
+            if not (0 <= st.start_step < st.n_steps):
+                warnings.append(
+                    f"Stair start_step={st.start_step} out of range [0, {st.n_steps - 1}]"
                 )
 
         # door_swing: door panel must not protrude through east/west walls when open

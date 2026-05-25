@@ -1,0 +1,203 @@
+{
+  "scene_id": "0e0b4d18",
+  "seed": 0,
+  "description": "A ripe banana rolls off the edge of the kitchen table and falls to the floor.",
+  "adversarial": false,
+  "task_type": "object_drop",
+  "room": {
+    "type": "kitchen",
+    "display_name": "Kitchen",
+    "width": 4.0,
+    "depth": 3.5,
+    "height": 2.6,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.9441007491977497,
+      0.9340571242062844,
+      0.9039262492318881
+    ],
+    "ceiling_color_rgb": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "floor_color_rgb": [
+      0.8,
+      0.78,
+      0.75
+    ],
+    "floor_roughness": 0.4,
+    "window_wall": "north",
+    "window_pos_x": 0.3,
+    "window_pos_z": 1.3,
+    "window_width": 0.9,
+    "window_height": 0.8,
+    "window_emissive": [
+      7.0,
+      6.5,
+      5.8
+    ]
+  },
+  "table": {
+    "width": 1.2,
+    "depth": 0.8,
+    "height": 0.77,
+    "thickness": 0.04,
+    "leg_size": 0.06,
+    "pos_x": -0.159,
+    "pos_y": 0.054,
+    "color_rgb": [
+      0.30180222001330037,
+      0.18970425257978885,
+      0.08622920571808584
+    ],
+    "roughness": 0.55,
+    "friction": 0.6
+  },
+  "object": {
+    "name": "red_apple",
+    "display_name": "Red Apple",
+    "category": "safe",
+    "morph": "mesh",
+    "mesh_path": "red_apple.obj",
+    "bottom_z_offset": 0.0,
+    "size": [
+      1.0
+    ],
+    "phys_half_x": 0.037,
+    "phys_half_z": 0.037,
+    "mesh_base_y": 0.0,
+    "mesh_top_y": 0.0,
+    "density": 850.0,
+    "friction": 0.45,
+    "restitution": 0.3,
+    "color_rgb": [
+      0.82,
+      0.12,
+      0.08
+    ],
+    "roughness": 0.35,
+    "ior": 1.0,
+    "catch_safe": true,
+    "safety_label": "safe",
+    "mass_hint": "light",
+    "description": "A ripe red apple, soft and completely safe to catch"
+  },
+  "drop": {
+    "start_x": 0.4227,
+    "start_y": 0.0796,
+    "euler_z": 13.8,
+    "vel_x": 0.852,
+    "vel_y": 0.0,
+    "vel_z": 0.0
+  },
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": null,
+  "thrown": null,
+  "pendulum": null,
+  "bounce": null,
+  "ladder": null,
+  "chain": null,
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -0.708,
+        -1.895,
+        1.571
+      ],
+      "lookat": [
+        0.057,
+        0.116,
+        0.29
+      ],
+      "fov": 56.90543137879909
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        1.079,
+        -1.068,
+        0.63
+      ],
+      "lookat": [
+        0.347,
+        0.019,
+        0.824
+      ],
+      "fov": 54.4718951157425
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        0.384,
+        0.256,
+        2.13
+      ],
+      "lookat": [
+        0.452,
+        0.198,
+        0.776
+      ],
+      "fov": 56.8844673057094
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.32445675535156876,
+      0.32445675535156876,
+      0.30591636933147914
+    ],
+    "background_color": [
+      0.18,
+      0.18,
+      0.16
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          0.0,
+          0.0,
+          2.5
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.98,
+          0.92
+        ],
+        "intensity": 13.53
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          -0.5,
+          -0.8,
+          -0.6
+        ],
+        "color": [
+          0.85,
+          0.9,
+          1.0
+        ],
+        "intensity": 3.87
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "EXECUTE_CATCH",
+  "safety_label": "safe",
+  "interception_point_2d": null,
+  "interception_point_3d": null,
+  "time_to_floor_s": null
+}

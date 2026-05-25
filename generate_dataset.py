@@ -55,7 +55,8 @@ def parse_args() -> argparse.Namespace:
                             "stack_collapse", "sliding_object",
                             "rolling_ball", "shelf_slide", "door_swing",
                             "thrown_object", "pendulum_swing",
-                            "bouncing_object", "ladder_slip", "chain_reaction"],
+                            "bouncing_object", "ladder_slip", "chain_reaction",
+                            "ceiling_drop"],
                    default="object_drop",
                    help="Physics task type to generate.")
 

@@ -51,11 +51,21 @@ _MESHES_DIR = _HERE / "assets" / "meshes"            # genesis_scene_generation/
 _RAW_DIR    = _HERE / "assets" / "raw_glb"          # temp GLB cache
 
 _TASK_TYPES = [
-    "object_drop",      # small object falls off a table / counter
-    "furniture_tip",    # tall furniture topples toward a person
-    "hanging_fall",     # wall/ceiling-mounted object falls when mount breaks
-    "stack_collapse",   # stacked items collapse toward the observer
-    "sliding_object",   # object slides down a ramp and flies off toward the observer
+    "object_drop",       # small object falls off a table / counter
+    "furniture_tip",     # tall furniture topples toward a person
+    "hanging_fall",      # wall/ceiling-mounted object falls when mount breaks
+    "stack_collapse",    # stacked items collapse toward the observer
+    "sliding_object",    # object slides down a ramp and flies off toward the observer
+    "rolling_ball",      # ball rolls off a table toward the observer
+    "shelf_slide",       # object slides off a high wall shelf toward the observer
+    "door_swing",        # door swings uncontrolled toward the observer
+    "thrown_object",     # object deliberately thrown toward the observer
+    "pendulum_swing",    # heavy object swings on a cable/rope toward the observer
+    "bouncing_object",   # ball falls, bounces off floor, flies toward the observer
+    "ladder_slip",       # ladder slides/tips on slippery floor toward the observer
+    "chain_reaction",    # one object falls and triggers a cascade toward the observer
+    "ceiling_drop",      # object spawned at ceiling height falls straight down to floor
+    "stair_tumble",      # object tumbles down a staircase toward the observer
 ]
 
 
@@ -65,41 +75,90 @@ _SYSTEM_PROMPT = """\
 You are a scene-specification planner for the ReactHuman physics benchmark.
 
 ## Task Types
-- "object_drop"    : A small or medium object falls off a table or counter surface.
+- "object_drop"     : A small or medium object falls off a table or counter surface.
   Use for: objects sliding, rolling, tipping, or being knocked off surfaces.
-- "furniture_tip"  : A tall piece of furniture topples toward a nearby person.
-  Use for: bookshelves, cabinets, ladders, floor lamps, large vases tipping over.
-- "hanging_fall"   : A wall- or ceiling-mounted object falls when its mount suddenly breaks.
+- "furniture_tip"   : A tall piece of furniture topples toward a nearby person.
+  Use for: bookshelves, cabinets, floor lamps, large vases tipping over.
+- "hanging_fall"    : A wall- or ceiling-mounted object falls when its mount suddenly breaks.
   Use for: framed paintings, clocks, shelves, hanging lamps, potted plants on brackets.
-- "stack_collapse" : A stack of identical objects collapses toward the observer.
+- "stack_collapse"  : A stack of identical objects collapses toward the observer.
   Use for: stacked cans, books, crates, boxes — any repeated item piled vertically.
-- "sliding_object" : An object slides down a ramp and flies off toward the observer.
+- "sliding_object"  : An object slides down a ramp and flies off toward the observer.
   Use for: any table-top-sized object given an initial push down an inclined surface.
   Objects from the Object Drop Catalogue are used for this task type.
+- "rolling_ball"    : A ball rolls off a table edge toward the observer.
+  Use for: balls of any type rolling off surfaces.
+- "shelf_slide"     : An object slides off a high wall shelf and falls toward the observer.
+  Use for: items on high shelves that slide off — plants, bottles, vases, toolboxes.
+- "door_swing"      : A door swings rapidly/uncontrolled toward a person.
+  Use for: any type of door swinging open violently toward the observer.
+- "thrown_object"   : An object is deliberately thrown toward the observer.
+  Use for: balls, knives, or any object hurled at the camera.
+- "pendulum_swing"  : A heavy object suspended on a cable or rope swings toward the observer.
+  Use for: chandeliers, wrecking-ball-style weights, sandbags on ropes swinging.
+- "bouncing_object" : A ball falls from above, bounces off the floor, and flies toward the observer.
+  Use for: any bouncing ball scenario where the ball rebounds toward the camera.
+- "ladder_slip"     : A leaning ladder slides on a slippery floor and tips toward the observer.
+  Use for: ladders of any type leaning against a wall that slip and fall.
+- "chain_reaction"  : One object falls and triggers a cascade of objects toward the observer.
+  Use for: domino-style scenarios where the initial object triggers additional hazards.
+  Objects from the Object Drop Catalogue are used for this task type.
+- "ceiling_drop"    : An object falls straight down from ceiling height to the floor.
+  Use for: objects knocked off a very high shelf or overhead surface, ceiling debris.
+  Objects from the Object Drop Catalogue are used for this task type.
+- "stair_tumble"    : An object tumbles down a staircase toward the observer.
+  Use for: any object rolling, sliding, or bouncing down a set of stairs.
+
+## Hints
+
+In addition to selecting the task type, object, and room, you may emit a `hints` block
+to bias the physics sampler when the description contains clear speed or height cues.
+Include `hints` only when the description explicitly implies a non-default value;
+omit it entirely when the description is neutral.
+
+  speed values: "slow" | "normal" | "fast" | "very_fast"
+    slow      → 40 % of normal velocity ranges
+    normal    → default ranges (omit hints block)
+    fast      → 180 % of normal velocity ranges
+    very_fast → 300 % of normal velocity ranges
+
+  height values: "low" | "normal" | "high"
+    low    → object spawns at / attaches at the lower end of its range
+    normal → default height ranges (omit hints block)
+    high   → object spawns at / attaches at the upper end of its range
+
+Hint triggers:
+  speed=slow       : "slowly", "gently", "lightly", "soft toss"
+  speed=fast       : "quickly", "rapidly", "hard throw", "high speed"
+  speed=very_fast  : "hurled", "slammed", "extremely fast", "full force"
+  height=low       : "low shelf", "bottom step", "near the floor"
+  height=high      : "top shelf", "upper landing", "near the ceiling"
 
 ## Output format
 
-Case A — object already in catalogue (preferred, faster):
+Case A — the description's object exactly matches a catalogue entry (same object, same name):
 {
-  "task_type":   "<one of the five task types above>",
+  "task_type":   "<one of the fifteen task types above>",
   "object_name": "<exact name from the matching catalogue>",
-  "room_type":   "<exact type from Rooms Catalogue>"
+  "room_type":   "<exact type from Rooms Catalogue>",
+  "hints":       {"speed": "fast"}   // omit entirely if neutral
 }
 
-Case B — object NOT in any catalogue (use sparingly):
+Case B — the description names a specific object NOT in any catalogue:
 {
-  "task_type":   "<one of the five task types above>",
+  "task_type":   "<one of the fifteen task types above>",
   "object_name": "<new_snake_case_identifier>",
   "room_type":   "<exact type from Rooms Catalogue>",
+  "hints":       {"speed": "slow", "height": "high"},   // omit entirely if neutral
   "new_object": {
     "display_name":  "Human Readable Name",
-    "lvis_label":    "<real LVIS 1.0 category, snake_case, e.g. scissors, ceramic_bowl>",
+    "lvis_label":    "<real LVIS 1.0 category, snake_case, e.g. banana, scissors, ceramic_bowl>",
     "target_size_m": 0.XX,
     "category":      "safe" | "dangerous" | "adversarial",
     "density":       <integer kg/m³>,
     "friction":      <float 0.0-1.0>,
     "restitution":   <float 0.0-1.0>,
-    "color_rgb":     [R, G, B],
+    "color_rgb":     [R, G, B],   (floats in 0.0–1.0 range, NOT 0–255)
     "roughness":     <float 0.0-1.0>,
     "ior":           1.0,
     "catch_safe":    true | false,
@@ -110,20 +169,47 @@ Case B — object NOT in any catalogue (use sparingly):
 }
 
 ## Rules
-1. Prefer catalogue objects whenever they fit the description.
-2. Match task_type to the matching catalogue: object_drop/sliding_object → Object Drop,
-   furniture_tip → Furniture Tip, hanging_fall → Hanging Objects,
-   stack_collapse → Stack Collapse.
-3. "object_drop" and "sliding_object" objects must be table-top sized — never furniture.
+1. OBJECT MATCHING: Always prefer an existing catalogue entry.
+   - Match by physical type, size, and behaviour — not by exact name.
+   - Examples: "football" / "soccer ball" → nearest sphere in the matching catalogue;
+     "dining chair" → nearest chair-like object; "wine bottle" → nearest bottle object.
+   - Use Case A whenever a catalogue object is a reasonable physical stand-in for the
+     described object (same morph, similar size, similar mass category).
+   - Use Case B (new_object + Objaverse download) ONLY when no existing catalogue object
+     is remotely similar in shape or physical behaviour.
+2. Match task_type to the matching catalogue:
+   object_drop/sliding_object/chain_reaction/ceiling_drop → Object Drop Catalogue,
+   furniture_tip → Furniture Tip Catalogue,
+   hanging_fall → Hanging Objects Catalogue,
+   stack_collapse → Stack Collapse Catalogue,
+   rolling_ball → Rolling Ball Catalogue,
+   shelf_slide → Shelf Slide Catalogue,
+   door_swing → Door Swing Catalogue,
+   thrown_object → Thrown Object Catalogue,
+   pendulum_swing → Pendulum Swing Catalogue,
+   bouncing_object → Bouncing Object Catalogue,
+   ladder_slip → Ladder Slip Catalogue,
+   stair_tumble → Stair Tumble Catalogue.
+3. "object_drop", "sliding_object", "chain_reaction", and "ceiling_drop" objects must be table-top sized — never furniture.
 4. "furniture_tip" objects must be tall, stand-alone furniture pieces.
 5. "hanging_fall" objects must be wall- or ceiling-mounted items.
 6. "stack_collapse" objects must be stackable (roughly uniform shape).
-7. lvis_label must be a real LVIS 1.0 snake_case category name.
-8. Output ONLY the JSON object — no markdown fences, no explanation.
+7. "rolling_ball" and "bouncing_object" objects must be spherical.
+8. "ladder_slip" objects must be ladders.
+9. "door_swing" objects must be doors.
+10. lvis_label must be a real LVIS 1.0 snake_case category name.
+11. Output ONLY the JSON object — no markdown fences, no explanation.
+12. Omit the "hints" key entirely when the description gives no speed or height cue.
 
 ## Reference densities (kg/m³)
 foam/sponge 30-100 | wood 400-700 | plastic 200-1200
 ceramic 2000-2800 | glass 2500 | aluminium 2700 | steel/iron 7000-8000
+
+## Common LVIS label corrections (use these exact strings)
+"football" → "soccer_ball" or "football_(American)"
+"knife" → "kitchen_knife"  |  "cup" → "mug"  |  "pot" → "cooking_pot"
+"ball" → "ball" (generic)  |  "bottle" → "bottle"  |  "box" → "cardboard_box"
+"lamp" → "table_lamp" or "floor_lamp"  |  "vase" → "vase"
 """
 
 
@@ -133,13 +219,29 @@ def _build_user_message(
     tip_obj_names: list[str],
     hanging_obj_names: list[str],
     stack_obj_names: list[str],
+    roll_obj_names: list[str],
+    shelf_obj_names: list[str],
+    door_obj_names: list[str],
+    thrown_obj_names: list[str],
+    pendulum_obj_names: list[str],
+    bounce_obj_names: list[str],
+    ladder_obj_names: list[str],
+    stair_obj_names: list[str],
     room_types: list[str],
 ) -> str:
     return (
-        f"Object Drop Catalogue   (task_type=object_drop OR sliding_object): {drop_obj_names}\n"
-        f"Furniture Tip Catalogue (task_type=furniture_tip):                  {tip_obj_names}\n"
-        f"Hanging Objects Catalogue (task_type=hanging_fall):                 {hanging_obj_names}\n"
-        f"Stack Collapse Catalogue  (task_type=stack_collapse):               {stack_obj_names}\n"
+        f"Object Drop Catalogue     (task_type=object_drop OR sliding_object OR chain_reaction OR ceiling_drop): {drop_obj_names}\n"
+        f"Furniture Tip Catalogue   (task_type=furniture_tip):    {tip_obj_names}\n"
+        f"Hanging Objects Catalogue (task_type=hanging_fall):     {hanging_obj_names}\n"
+        f"Stack Collapse Catalogue  (task_type=stack_collapse):   {stack_obj_names}\n"
+        f"Rolling Ball Catalogue    (task_type=rolling_ball):     {roll_obj_names}\n"
+        f"Shelf Slide Catalogue     (task_type=shelf_slide):      {shelf_obj_names}\n"
+        f"Door Swing Catalogue      (task_type=door_swing):       {door_obj_names}\n"
+        f"Thrown Object Catalogue   (task_type=thrown_object):    {thrown_obj_names}\n"
+        f"Pendulum Swing Catalogue  (task_type=pendulum_swing):   {pendulum_obj_names}\n"
+        f"Bouncing Object Catalogue (task_type=bouncing_object):  {bounce_obj_names}\n"
+        f"Ladder Slip Catalogue     (task_type=ladder_slip):      {ladder_obj_names}\n"
+        f"Stair Tumble Catalogue    (task_type=stair_tumble):     {stair_obj_names}\n"
         f"Rooms Catalogue: {room_types}\n\n"
         f"Description: {description}\n\n"
         "Return the JSON selection:"
@@ -208,11 +310,12 @@ class LLMPlanner:
 
     def plan(self, description: str, seed: int = 0) -> SceneSpec:
         """Convert one natural-language description to a single SceneSpec."""
-        task_type, obj_name, room_type = self._llm_select(description)
+        task_type, obj_name, room_type, hints = self._llm_select(description)
         spec = self._get_randomizer(task_type).sample_with_constraints(
             seed=seed,
             force_object=obj_name,
             force_room=room_type,
+            hints=hints,
         )
         spec.description = description
         return spec
@@ -226,8 +329,9 @@ class LLMPlanner:
         """
         Produce N physics variants of one description.
         The Claude API is called exactly once per description.
+        Hints from the LLM response are applied to every variant.
         """
-        task_type, obj_name, room_type = self._llm_select(description)
+        task_type, obj_name, room_type, hints = self._llm_select(description)
         rand = self._get_randomizer(task_type)
         specs = []
         for i in range(n):
@@ -235,6 +339,7 @@ class LLMPlanner:
                 seed=seed_start + i,
                 force_object=obj_name,
                 force_room=room_type,
+                hints=hints,
             )
             spec.description = description
             specs.append(spec)
@@ -264,8 +369,42 @@ class LLMPlanner:
             o["name"] for o in obj_list
             if o.get("task_type") == "stack_collapse"
         ]
-        # sliding_object reuses the object_drop pool
+        self._roll_obj_names      = [
+            o["name"] for o in obj_list
+            if o.get("task_type") == "rolling_ball"
+        ]
+        self._shelf_obj_names     = [
+            o["name"] for o in obj_list
+            if o.get("task_type") == "shelf_slide"
+        ]
+        self._door_obj_names      = [
+            o["name"] for o in obj_list
+            if o.get("task_type") == "door_swing"
+        ]
+        self._thrown_obj_names    = [
+            o["name"] for o in obj_list
+            if o.get("task_type") == "thrown_object"
+        ]
+        self._pendulum_obj_names  = [
+            o["name"] for o in obj_list
+            if o.get("task_type") == "pendulum_swing"
+        ]
+        self._bounce_obj_names    = [
+            o["name"] for o in obj_list
+            if o.get("task_type") == "bouncing_object"
+        ]
+        self._ladder_obj_names    = [
+            o["name"] for o in obj_list
+            if o.get("task_type") == "ladder_slip"
+        ]
+        self._stair_obj_names     = [
+            o["name"] for o in obj_list
+            if o.get("task_type") == "stair_tumble"
+        ]
+        # sliding_object, chain_reaction, and ceiling_drop reuse the object_drop pool
         self._sliding_obj_names   = self._drop_obj_names
+        self._chain_obj_names     = self._drop_obj_names
+        self._ceiling_drop_obj_names = self._drop_obj_names
 
         # Map task_type → catalogue (for validation in _llm_select)
         self._task_catalogue: dict[str, list[str]] = {
@@ -274,6 +413,16 @@ class LLMPlanner:
             "hanging_fall":   self._hanging_obj_names,
             "stack_collapse": self._stack_obj_names,
             "sliding_object": self._sliding_obj_names,
+            "rolling_ball":   self._roll_obj_names,
+            "shelf_slide":    self._shelf_obj_names,
+            "door_swing":     self._door_obj_names,
+            "thrown_object":  self._thrown_obj_names,
+            "pendulum_swing": self._pendulum_obj_names,
+            "bouncing_object": self._bounce_obj_names,
+            "ladder_slip":    self._ladder_obj_names,
+            "chain_reaction": self._chain_obj_names,
+            "ceiling_drop":   self._ceiling_drop_obj_names,
+            "stair_tumble":   self._stair_obj_names,
         }
 
         with open(_ROOM_YAML) as f:
@@ -291,9 +440,9 @@ class LLMPlanner:
 
     # ── LLM interaction ───────────────────────────────────────
 
-    def _llm_select(self, description: str) -> tuple[str, str, str]:
+    def _llm_select(self, description: str) -> tuple[str, str, str, dict]:
         """
-        Call Claude and return (task_type, object_name, room_type).
+        Call Claude and return (task_type, object_name, room_type, hints).
         If the LLM proposes a new object, download and register it first.
         """
         user_msg = _build_user_message(
@@ -302,6 +451,14 @@ class LLMPlanner:
             self._tip_obj_names,
             self._hanging_obj_names,
             self._stack_obj_names,
+            self._roll_obj_names,
+            self._shelf_obj_names,
+            self._door_obj_names,
+            self._thrown_obj_names,
+            self._pendulum_obj_names,
+            self._bounce_obj_names,
+            self._ladder_obj_names,
+            self._stair_obj_names,
             self._room_types,
         )
         response = self._client.messages.create(
@@ -322,6 +479,7 @@ class LLMPlanner:
         task_type = data["task_type"]
         obj_name  = data["object_name"]
         room_type = data["room_type"]
+        hints     = data.get("hints") or {}
         new_obj   = data.get("new_object")
 
         # Validate task_type
@@ -355,7 +513,7 @@ class LLMPlanner:
                 f"task_type='{task_type}'. Valid: {valid_for_task}"
             )
 
-        return task_type, obj_name, room_type
+        return task_type, obj_name, room_type, hints
 
     # ── Objaverse integration ─────────────────────────────────
 
@@ -372,7 +530,8 @@ class LLMPlanner:
         Parameters
         ----------
         obj_name  : snake_case identifier for the new object
-        task_type : "object_drop" | "furniture_tip"
+        task_type : one of the thirteen task types (sliding_object/chain_reaction
+                    are treated as object_drop for registration purposes)
         spec      : the "new_object" dict from the LLM response
         """
         try:
@@ -418,11 +577,10 @@ class LLMPlanner:
         # ── 3b. Simplify if over face-count limit ───────────────
         _MAX_FACES = 8_000
         if len(mesh.faces) > _MAX_FACES:
-            import trimesh
             print(
                 f"    Simplifying {len(mesh.faces):,} → {_MAX_FACES:,} faces …"
             )
-            mesh = trimesh.simplify_quadric_decimation(mesh, face_count=_MAX_FACES)
+            mesh = mesh.simplify_quadric_decimation(face_count=_MAX_FACES)
             # Re-normalise after decimation (bounds may shift slightly)
             mesh = _normalize_mesh(mesh, target_size)
 
@@ -457,7 +615,8 @@ class LLMPlanner:
             "density":         int(spec["density"]),
             "friction":        round(float(spec["friction"]), 3),
             "restitution":     round(float(spec["restitution"]), 3),
-            "color_rgb":       [round(float(c), 3) for c in spec["color_rgb"]],
+            "color_rgb":       [round(float(c) / 255.0, 3) if float(c) > 1.0 else round(float(c), 3)
+                               for c in spec["color_rgb"]],
             "roughness":       round(float(spec["roughness"]), 3),
             "ior":             round(float(spec.get("ior", 1.0)), 3),
             "catch_safe":      bool(spec["catch_safe"]),
@@ -465,9 +624,13 @@ class LLMPlanner:
             "mass_hint":       spec["mass_hint"],
             "description":     spec["description"],
         }
+        # sliding_object, chain_reaction, and ceiling_drop share the object_drop pool
+        # in objects.yaml, so new objects for those task types must be registered as object_drop.
+        _POOL_ALIASES = {"sliding_object", "chain_reaction", "ceiling_drop"}
+        effective_task_type = "object_drop" if task_type in _POOL_ALIASES else task_type
         # object_drop is the default (no field needed); all others must be explicit
-        if task_type != "object_drop":
-            entry["task_type"] = task_type
+        if effective_task_type != "object_drop":
+            entry["task_type"] = effective_task_type
 
         # ── 6. Append to objects.yaml ───────────────────────────
         # Read → append → write (safe: preserves existing content)

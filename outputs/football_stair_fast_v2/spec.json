@@ -1,0 +1,209 @@
+{
+  "scene_id": "081bafaf",
+  "seed": 0,
+  "description": "let a football rolling down the stair fast.",
+  "adversarial": false,
+  "task_type": "stair_tumble",
+  "room": {
+    "type": "stair_landing",
+    "display_name": "Stair Landing",
+    "width": 5.0,
+    "depth": 5.0,
+    "height": 2.8,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.892052628484288,
+      0.8717787051096452,
+      0.8312308583603593
+    ],
+    "ceiling_color_rgb": [
+      0.9281297378075677,
+      0.9183599510938038,
+      0.8988203776662761
+    ],
+    "floor_color_rgb": [
+      0.65,
+      0.55,
+      0.4
+    ],
+    "floor_roughness": 0.6,
+    "window_wall": "north",
+    "window_pos_x": 0.0,
+    "window_pos_z": 2.1,
+    "window_width": 1.0,
+    "window_height": 0.55,
+    "window_emissive": [
+      6.5,
+      6.2,
+      5.8
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "football_st",
+    "display_name": "Football",
+    "category": "safe",
+    "morph": "mesh",
+    "mesh_path": "football_st.obj",
+    "bottom_z_offset": 0.0,
+    "size": [
+      1.0
+    ],
+    "phys_half_x": 0.11,
+    "phys_half_z": 0.1054,
+    "mesh_base_y": 0.0,
+    "mesh_top_y": 0.0,
+    "density": 80.0,
+    "friction": 0.55,
+    "restitution": 0.72,
+    "color_rgb": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "roughness": 0.6,
+    "ior": 1.0,
+    "catch_safe": true,
+    "safety_label": "safe",
+    "mass_hint": "light",
+    "description": "Standard size-5 football (soccer ball) bouncing down stairs"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": null,
+  "thrown": null,
+  "pendulum": null,
+  "bounce": null,
+  "ladder": null,
+  "chain": null,
+  "ceiling_drop": null,
+  "stair": {
+    "n_steps": 7,
+    "step_rise": 0.18,
+    "step_run": 0.28,
+    "stair_width": 1.2,
+    "stair_x": 0.0,
+    "stair_start_y": 0.54,
+    "start_step": 4,
+    "start_x": -0.29,
+    "nudge_vel_y": -0.624,
+    "euler_z": 16.5
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -0.277,
+        -1.869,
+        1.376
+      ],
+      "lookat": [
+        -0.37,
+        0.891,
+        0.304
+      ],
+      "fov": 64.48552080358927
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        1.132,
+        1.167,
+        0.863
+      ],
+      "lookat": [
+        -0.314,
+        1.248,
+        0.547
+      ],
+      "fov": 51.24283276499564
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        -0.256,
+        0.363,
+        2.423
+      ],
+      "lookat": [
+        -0.304,
+        0.919,
+        0.238
+      ],
+      "fov": 73.91204579824903
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.3137697936590399,
+      0.28239281429313595,
+      0.2510158349272319
+    ],
+    "background_color": [
+      0.12,
+      0.11,
+      0.1
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          -0.8,
+          1.2,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.9,
+          0.78
+        ],
+        "intensity": 7.22
+      },
+      {
+        "type": "point",
+        "pos": [
+          1.2,
+          -1.0,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          0.95,
+          0.85,
+          0.72
+        ],
+        "intensity": 6.19
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.3,
+          0.6,
+          -1.0
+        ],
+        "color": [
+          0.75,
+          0.82,
+          1.0
+        ],
+        "intensity": 2.58
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "TRIGGER_DODGE",
+  "safety_label": "safe",
+  "interception_point_2d": null,
+  "interception_point_3d": null,
+  "time_to_floor_s": null
+}

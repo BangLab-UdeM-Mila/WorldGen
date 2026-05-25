@@ -1,0 +1,204 @@
+{
+  "scene_id": "80293124",
+  "seed": 115,
+  "description": "",
+  "adversarial": false,
+  "task_type": "ladder_slip",
+  "room": {
+    "type": "living",
+    "display_name": "Living Room",
+    "width": 6.0,
+    "depth": 5.0,
+    "height": 2.8,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.8891263982889508,
+      0.8689189801460201,
+      0.8285041438601587
+    ],
+    "ceiling_color_rgb": [
+      0.9541960607900437,
+      0.944151891729096,
+      0.9240635536072004
+    ],
+    "floor_color_rgb": [
+      0.6,
+      0.48,
+      0.3
+    ],
+    "floor_roughness": 0.5,
+    "window_wall": "north",
+    "window_pos_x": -0.5,
+    "window_pos_z": 1.5,
+    "window_width": 1.6,
+    "window_height": 1.2,
+    "window_emissive": [
+      5.5,
+      5.2,
+      4.8
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "wooden_step_ladder",
+    "display_name": "Wooden Step Ladder",
+    "category": "dangerous",
+    "morph": "mesh",
+    "mesh_path": "wooden_ladder.obj",
+    "bottom_z_offset": -0.003,
+    "size": [
+      1.0
+    ],
+    "phys_half_x": 0.194,
+    "phys_half_z": 1.25,
+    "density": 480.0,
+    "friction": 0.2,
+    "restitution": 0.1,
+    "color_rgb": [
+      0.55,
+      0.42,
+      0.24
+    ],
+    "roughness": 0.8,
+    "ior": 1.0,
+    "catch_safe": false,
+    "safety_label": "dangerous",
+    "mass_hint": "medium",
+    "description": "Wooden step ladder leaning against north wall — base slides on smooth floor, dodge sideways"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": null,
+  "thrown": null,
+  "pendulum": null,
+  "bounce": null,
+  "ladder": {
+    "lean_deg": 41.4,
+    "base_x": -1.498,
+    "start_y": 0.846,
+    "angular_vel": 0.118,
+    "euler_z": 2.0
+  },
+  "chain": null,
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -1.514,
+        -1.834,
+        1.136
+      ],
+      "lookat": [
+        -1.505,
+        0.595,
+        0.551
+      ],
+      "fov": 58.72712900643001
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        -0.068,
+        0.921,
+        0.827
+      ],
+      "lookat": [
+        -1.479,
+        0.959,
+        0.645
+      ],
+      "fov": 58.96969037008498
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        -1.534,
+        0.41,
+        2.202
+      ],
+      "lookat": [
+        -1.558,
+        0.851,
+        0.453
+      ],
+      "fov": 70.78592867345225
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.28303819187490165,
+      0.2547343726874115,
+      0.2264305534999213
+    ],
+    "background_color": [
+      0.12,
+      0.11,
+      0.1
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          -0.8,
+          1.2,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.9,
+          0.78
+        ],
+        "intensity": 6.81
+      },
+      {
+        "type": "point",
+        "pos": [
+          1.2,
+          -1.0,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          0.95,
+          0.85,
+          0.72
+        ],
+        "intensity": 5.84
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.3,
+          0.6,
+          -1.0
+        ],
+        "color": [
+          0.75,
+          0.82,
+          1.0
+        ],
+        "intensity": 2.43
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "TRIGGER_DODGE",
+  "safety_label": "dangerous",
+  "interception_point_2d": null,
+  "interception_point_3d": [
+    -1.5965,
+    0.5913,
+    0.9052
+  ],
+  "time_to_floor_s": 0.2
+}

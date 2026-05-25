@@ -1,0 +1,200 @@
+{
+  "scene_id": "4df51047",
+  "seed": 136,
+  "description": "",
+  "adversarial": true,
+  "task_type": "ladder_slip",
+  "room": {
+    "type": "dining",
+    "display_name": "Dining Room",
+    "width": 5.0,
+    "depth": 4.5,
+    "height": 2.8,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.8804606487464607,
+      0.8517499754177718,
+      0.8038988532032901
+    ],
+    "ceiling_color_rgb": [
+      0.92318216380796,
+      0.9135656829349604,
+      0.8943327211889613
+    ],
+    "floor_color_rgb": [
+      0.72,
+      0.55,
+      0.33
+    ],
+    "floor_roughness": 0.55,
+    "window_wall": "north",
+    "window_pos_x": 0.0,
+    "window_pos_z": 1.45,
+    "window_width": 1.2,
+    "window_height": 1.0,
+    "window_emissive": [
+      6.0,
+      5.8,
+      5.2
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "foam_prop_step_ladder",
+    "display_name": "Foam Prop Step Ladder (looks like wood)",
+    "category": "adversarial",
+    "morph": "mesh",
+    "mesh_path": "wooden_ladder.obj",
+    "bottom_z_offset": -0.003,
+    "size": [
+      1.0
+    ],
+    "phys_half_x": 0.194,
+    "phys_half_z": 1.25,
+    "density": 22.0,
+    "friction": 0.2,
+    "restitution": 0.28,
+    "color_rgb": [
+      0.55,
+      0.42,
+      0.24
+    ],
+    "roughness": 0.8,
+    "ior": 1.0,
+    "catch_safe": false,
+    "safety_label": "safe",
+    "mass_hint": "light",
+    "description": "Stage-prop ladder painted wood grain — falls slowly, safe to step aside easily"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": null,
+  "thrown": null,
+  "pendulum": null,
+  "bounce": null,
+  "ladder": {
+    "lean_deg": 32.4,
+    "base_x": 0.84,
+    "start_y": 0.909,
+    "angular_vel": 0.176,
+    "euler_z": 7.1
+  },
+  "chain": null,
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        0.914,
+        -1.57,
+        1.131
+      ],
+      "lookat": [
+        0.782,
+        0.631,
+        0.648
+      ],
+      "fov": 58.25579092181267
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        2.292,
+        0.736,
+        0.875
+      ],
+      "lookat": [
+        0.801,
+        1.021,
+        0.793
+      ],
+      "fov": 51.15763723982532
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        0.878,
+        0.335,
+        2.25
+      ],
+      "lookat": [
+        0.871,
+        0.755,
+        0.501
+      ],
+      "fov": 68.92687455378501
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.26180889355348586,
+      0.23375794067275518,
+      0.20570698779202456
+    ],
+    "background_color": [
+      0.15,
+      0.14,
+      0.13
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          0.1,
+          0.0,
+          2.6
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.88,
+          0.72
+        ],
+        "intensity": 9.14
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          -0.2,
+          -1.0,
+          -0.4
+        ],
+        "color": [
+          0.8,
+          0.88,
+          1.0
+        ],
+        "intensity": 3.2
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.1,
+          0.3,
+          1.0
+        ],
+        "color": [
+          0.9,
+          0.82,
+          0.7
+        ],
+        "intensity": 0.91
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "TRIGGER_DODGE",
+  "safety_label": "safe",
+  "interception_point_2d": null,
+  "interception_point_3d": null,
+  "time_to_floor_s": null
+}

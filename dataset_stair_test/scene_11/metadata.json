@@ -1,0 +1,213 @@
+{
+  "scene_id": "05e9548f",
+  "seed": 11,
+  "description": "",
+  "adversarial": false,
+  "task_type": "stair_tumble",
+  "room": {
+    "type": "stair_landing",
+    "display_name": "Stair Landing",
+    "width": 5.0,
+    "depth": 5.0,
+    "height": 2.8,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.8799364518947301,
+      0.8599378961698498,
+      0.8199407847200894
+    ],
+    "ceiling_color_rgb": [
+      0.9596423439742189,
+      0.9495408456165956,
+      0.929337848901349
+    ],
+    "floor_color_rgb": [
+      0.65,
+      0.55,
+      0.4
+    ],
+    "floor_roughness": 0.6,
+    "window_wall": "north",
+    "window_pos_x": 0.0,
+    "window_pos_z": 2.1,
+    "window_width": 1.0,
+    "window_height": 0.55,
+    "window_emissive": [
+      6.5,
+      6.2,
+      5.8
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "rubber_ball_st",
+    "display_name": "Rubber Ball",
+    "category": "safe",
+    "morph": "sphere",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.08
+    ],
+    "phys_half_x": 0.0,
+    "phys_half_z": 0.0,
+    "mesh_base_y": 0.0,
+    "mesh_top_y": 0.0,
+    "density": 400.0,
+    "friction": 0.8,
+    "restitution": 0.65,
+    "color_rgb": [
+      0.9,
+      0.25,
+      0.15
+    ],
+    "roughness": 0.55,
+    "ior": 1.0,
+    "catch_safe": true,
+    "safety_label": "safe",
+    "mass_hint": "light",
+    "description": "Soft rubber ball — bounces unpredictably on stairs but safe to stop"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": null,
+  "thrown": null,
+  "pendulum": null,
+  "bounce": null,
+  "ladder": null,
+  "chain": null,
+  "ceiling_drop": null,
+  "stair": {
+    "n_steps": 7,
+    "step_rise": 0.18,
+    "step_run": 0.28,
+    "stair_width": 1.2,
+    "stair_x": 0.0,
+    "stair_start_y": 0.54,
+    "start_step": 3,
+    "start_x": -0.283,
+    "nudge_vel_y": -0.513,
+    "euler_z": 17.1
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -0.149,
+        -1.963,
+        1.269
+      ],
+      "lookat": [
+        -0.281,
+        0.853,
+        0.333
+      ],
+      "fov": 56.79358494727042
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        1.286,
+        0.953,
+        0.682
+      ],
+      "lookat": [
+        -0.245,
+        1.072,
+        0.538
+      ],
+      "fov": 52.04509461330045
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        -0.272,
+        0.324,
+        2.371
+      ],
+      "lookat": [
+        -0.272,
+        0.767,
+        0.216
+      ],
+      "fov": 76.27533617395139
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.2777864369639579,
+      0.2500077932675621,
+      0.2222291495711663
+    ],
+    "background_color": [
+      0.12,
+      0.11,
+      0.1
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          -0.8,
+          1.2,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.9,
+          0.78
+        ],
+        "intensity": 6.1
+      },
+      {
+        "type": "point",
+        "pos": [
+          1.2,
+          -1.0,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          0.95,
+          0.85,
+          0.72
+        ],
+        "intensity": 5.23
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.3,
+          0.6,
+          -1.0
+        ],
+        "color": [
+          0.75,
+          0.82,
+          1.0
+        ],
+        "intensity": 2.18
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "TRIGGER_DODGE",
+  "safety_label": "safe",
+  "interception_point_2d": null,
+  "interception_point_3d": [
+    -0.2841,
+    0.4304,
+    0.1577
+  ],
+  "time_to_floor_s": 2.0042
+}

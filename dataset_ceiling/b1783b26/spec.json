@@ -1,0 +1,201 @@
+{
+  "scene_id": "b1783b26",
+  "seed": 1,
+  "description": "",
+  "adversarial": false,
+  "task_type": "ceiling_drop",
+  "room": {
+    "type": "living",
+    "display_name": "Living Room",
+    "width": 6.0,
+    "depth": 5.0,
+    "height": 2.8,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.8634411677769227,
+      0.8438175048729017,
+      0.8045701790648597
+    ],
+    "ceiling_color_rgb": [
+      0.9427160126523947,
+      0.932792686203422,
+      0.912946033305477
+    ],
+    "floor_color_rgb": [
+      0.6,
+      0.48,
+      0.3
+    ],
+    "floor_roughness": 0.5,
+    "window_wall": "north",
+    "window_pos_x": -0.5,
+    "window_pos_z": 1.5,
+    "window_width": 1.6,
+    "window_height": 1.2,
+    "window_emissive": [
+      5.5,
+      5.2,
+      4.8
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "chef_knife",
+    "display_name": "Chef's Knife",
+    "category": "dangerous",
+    "morph": "mesh",
+    "mesh_path": "knife.obj",
+    "bottom_z_offset": 0.0,
+    "size": [
+      1.0
+    ],
+    "phys_half_x": 0.117,
+    "phys_half_z": 0.119,
+    "mesh_base_y": 0.0,
+    "mesh_top_y": 0.0,
+    "density": 7800.0,
+    "friction": 0.2,
+    "restitution": 0.08,
+    "color_rgb": [
+      0.82,
+      0.83,
+      0.85
+    ],
+    "roughness": 0.12,
+    "ior": 1.0,
+    "catch_safe": false,
+    "safety_label": "dangerous",
+    "mass_hint": "medium",
+    "description": "A sharp chef's knife — blade-first drop, must be dodged"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": null,
+  "thrown": null,
+  "pendulum": null,
+  "bounce": null,
+  "ladder": null,
+  "chain": null,
+  "ceiling_drop": {
+    "spawn_x": 1.351,
+    "spawn_y": -0.89,
+    "euler_z": 26.9
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        1.532,
+        -3.141,
+        1.289
+      ],
+      "lookat": [
+        1.368,
+        -0.822,
+        1.229
+      ],
+      "fov": 55.65007263508559
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        2.536,
+        -1.722,
+        1.764
+      ],
+      "lookat": [
+        1.292,
+        -0.933,
+        1.286
+      ],
+      "fov": 48.130478588199374
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        1.359,
+        -0.546,
+        2.564
+      ],
+      "lookat": [
+        1.409,
+        -0.838,
+        1.199
+      ],
+      "fov": 71.01230708605095
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.30002138584421223,
+      0.27001924725979104,
+      0.2400171086753698
+    ],
+    "background_color": [
+      0.12,
+      0.11,
+      0.1
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          -0.8,
+          1.2,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.9,
+          0.78
+        ],
+        "intensity": 7.4
+      },
+      {
+        "type": "point",
+        "pos": [
+          1.2,
+          -1.0,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          0.95,
+          0.85,
+          0.72
+        ],
+        "intensity": 6.34
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.3,
+          0.6,
+          -1.0
+        ],
+        "color": [
+          0.75,
+          0.82,
+          1.0
+        ],
+        "intensity": 2.64
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "TRIGGER_DODGE",
+  "safety_label": "dangerous",
+  "interception_point_2d": null,
+  "interception_point_3d": null,
+  "time_to_floor_s": null
+}

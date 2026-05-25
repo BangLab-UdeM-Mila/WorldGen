@@ -1,0 +1,12 @@
+[
+  {
+    "scene_id": "5f0ff6b4",
+    "seed": 204,
+    "object": "wooden_step_ladder",
+    "room": "living",
+    "success": true,
+    "elapsed": 145.8,
+    "stdout": "[scene_runner] scene_id=5f0ff6b4  object=wooden_step_ladder  room=living  seed=204\n\u001b[38;5;226m[Genesis] [06:35:09] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n\u001b[38;5;226m[Genesis] [06:35:15] [WARNING] Non-zero `coup_restitution` could lead to instability. Use with caution.\u001b[0m\n  t=1.00s  obj=(-1.400,-0.196,0.077)  [wall 23.8s]\n  t=2.00s  obj=(-1.400,-0.196,0.077)  [wall 46.5s]\n  t=3.00s  obj=(-1.400,-0.196,0.077)  [wall 69.2s]\n[scene_runner] Done. ttf=0.3s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  }
+]

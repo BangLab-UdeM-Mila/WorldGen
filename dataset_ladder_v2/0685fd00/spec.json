@@ -1,0 +1,187 @@
+{
+  "scene_id": "0685fd00",
+  "seed": 125,
+  "description": "",
+  "adversarial": true,
+  "task_type": "ladder_slip",
+  "room": {
+    "type": "office",
+    "display_name": "Home Office",
+    "width": 4.0,
+    "depth": 3.5,
+    "height": 2.7,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.8494602478712077,
+      0.8694475478211184,
+      0.8994284977459845
+    ],
+    "ceiling_color_rgb": [
+      0.9395653687258304,
+      0.9395653687258304,
+      0.9494555305018918
+    ],
+    "floor_color_rgb": [
+      0.55,
+      0.48,
+      0.38
+    ],
+    "floor_roughness": 0.45,
+    "window_wall": "north",
+    "window_pos_x": 0.0,
+    "window_pos_z": 1.4,
+    "window_width": 1.0,
+    "window_height": 0.9,
+    "window_emissive": [
+      6.5,
+      6.2,
+      5.5
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "hollow_plastic_ladder",
+    "display_name": "Hollow Plastic Prop Ladder (looks like aluminum)",
+    "category": "adversarial",
+    "morph": "box",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.22,
+      0.05,
+      0.95
+    ],
+    "phys_half_x": 0.0,
+    "phys_half_z": 0.0,
+    "density": 30.0,
+    "friction": 0.22,
+    "restitution": 0.28,
+    "color_rgb": [
+      0.72,
+      0.74,
+      0.78
+    ],
+    "roughness": 0.42,
+    "ior": 1.0,
+    "catch_safe": false,
+    "safety_label": "safe",
+    "mass_hint": "light",
+    "description": "Hollow plastic prop painted as aluminum — slow fall betrays low mass, step aside easily"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": null,
+  "thrown": null,
+  "pendulum": null,
+  "bounce": null,
+  "ladder": {
+    "lean_deg": 28.6,
+    "base_x": -0.799,
+    "start_y": 0.841,
+    "angular_vel": 0.217,
+    "euler_z": 4.6
+  },
+  "chain": null,
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -0.89,
+        -1.199,
+        1.247
+      ],
+      "lookat": [
+        -0.844,
+        0.576,
+        0.465
+      ],
+      "fov": 52.54436365057794
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        0.546,
+        0.528,
+        0.699
+      ],
+      "lookat": [
+        -0.768,
+        0.738,
+        0.534
+      ],
+      "fov": 50.255262806827275
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        -0.808,
+        0.243,
+        2.206
+      ],
+      "lookat": [
+        -0.764,
+        0.643,
+        0.536
+      ],
+      "fov": 67.04745464358263
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.3664832178798278,
+      0.3664832178798278,
+      0.3857718082945556
+    ],
+    "background_color": [
+      0.16,
+      0.16,
+      0.18
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "color": [
+          0.95,
+          0.97,
+          1.0
+        ],
+        "intensity": 13.34
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          -0.3,
+          -0.5,
+          -0.8
+        ],
+        "color": [
+          0.8,
+          0.85,
+          1.0
+        ],
+        "intensity": 3.33
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "TRIGGER_DODGE",
+  "safety_label": "safe",
+  "interception_point_2d": null,
+  "interception_point_3d": null,
+  "time_to_floor_s": null
+}

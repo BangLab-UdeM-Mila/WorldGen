@@ -185,16 +185,43 @@ class SceneBuilder:
                     if self._bounce_risen and pos[2] < radius + 0.04:
                         self._floor_hit_step = step
                 elif self.spec.task_type == "ladder_slip":
-                    # Event: ladder COM falls below its narrow half-extent (nearly horizontal)
+                    # Event: ladder has fallen significantly.
+                    # Box/cylinder: COM z drops below narrow half-extent (nearly horizontal).
+                    # Mesh: origin is at base (z≈0); detect south-ward displacement of base.
                     o = self.spec.object
-                    half_x = o.size[0]   # narrow/width dimension of the box
-                    if pos[2] < half_x + 0.12:
-                        self._floor_hit_step = step
+                    if o.morph == "mesh":
+                        # pos is mesh origin. Detect southward slide > 0.25 m.
+                        if pos[1] < self.spec.ladder.start_y - 0.25:
+                            self._floor_hit_step = step
+                    else:
+                        half_x = o.phys_half_x if o.phys_half_x > 0 else o.size[0]
+                        if pos[2] < half_x + 0.12:
+                            self._floor_hit_step = step
                 elif self.spec.task_type == "chain_reaction":
                     # Event: target object B falls below the table surface (off the table)
                     o = self.spec.object
                     half_h = o.phys_half_z if o.phys_half_z > 0 else (o.size[2] if len(o.size) >= 3 else o.size[0])
                     if pos[2] < half_h + 0.05:
+                        self._floor_hit_step = step
+                elif self.spec.task_type == "ceiling_drop":
+                    o = self.spec.object
+                    if o.phys_half_z > 0:
+                        half_h = o.phys_half_z
+                    elif len(o.size) >= 3:
+                        half_h = o.size[2]
+                    else:
+                        half_h = o.size[0]
+                    if pos[2] < half_h + 0.05:
+                        self._floor_hit_step = step
+                elif self.spec.task_type == "stair_tumble":
+                    # Event: object has cleared all steps and reached the floor.
+                    # The bottom step tread is at z = step_rise; floor clearance
+                    # is when z drops below one step_rise, meaning object has left
+                    # the staircase entirely.
+                    o  = self.spec.object
+                    st = self.spec.stair
+                    half_h = o.phys_half_z if o.phys_half_z > 0 else (o.size[2] if len(o.size) >= 3 else o.size[0])
+                    if pos[2] < half_h + 0.08:
                         self._floor_hit_step = step
                 else:
                     if pos[2] < 0.05:
@@ -283,6 +310,11 @@ class SceneBuilder:
         elif s.task_type == "chain_reaction":
             self._add_table()
             self._add_chain_reaction_objects()
+        elif s.task_type == "ceiling_drop":
+            self._add_ceiling_drop_object()
+        elif s.task_type == "stair_tumble":
+            self._add_stair_geometry()
+            self._add_stair_tumble_object()
         else:
             self._add_table()
             self._add_object()
@@ -778,8 +810,10 @@ class SceneBuilder:
             self._apply_ladder_velocity()
         elif self.spec.task_type == "chain_reaction":
             self._apply_chain_velocity()
-        elif self.spec.task_type == "sliding_object":
-            pass   # gravity on the ramp is sufficient; no extra velocity needed
+        elif self.spec.task_type in ("sliding_object", "ceiling_drop"):
+            pass   # gravity alone is sufficient; no extra velocity needed
+        elif self.spec.task_type == "stair_tumble":
+            self._apply_stair_velocity()
         else:
             self._apply_drop_velocity()
 
@@ -1107,14 +1141,19 @@ class SceneBuilder:
     # ── Ladder slip (ladder_slip task) ────────────────────────
 
     def _add_ladder_leaning(self) -> None:
-        """Place a tall ladder (box) already mid-slip toward the observer.
+        """Place a ladder leaning against the north wall, ready to slip.
 
-        Convention matches furniture_tip:
-          pos   = (base_x, start_y, hz)      hz = object.size[2]
-          euler = (+lean_deg, 0, euler_z)    positive euler_x tilts toward -Y
-        The ladder is placed in free space (not touching the north wall),
-        so angular_vel immediately tips it further toward -Y.
+        Wall-contact geometry:
+          euler = (-lean_deg, 0, euler_z)   negative euler_x → top tilts toward +Y (north wall)
+          start_y = y-base of ladder on floor (Randomizer computes this from lean_deg + room)
+
+        Box morph: pos = (base_x, start_y + hz*sin_d, hz*cos_d)  — COM placed correctly
+        Mesh morph: pos = (base_x, start_y, 0)                   — mesh origin at base on floor
+
+        The north wall is a fixed rigid body in the scene, so the top of the ladder
+        will be in contact with it at t=0 and slides down as the base slides south.
         """
+        import math
         o      = self.spec.object
         ladder = self.spec.ladder
         surf   = _solid(o.color_rgb, roughness=o.roughness, ior=o.ior)
@@ -1124,15 +1163,33 @@ class SceneBuilder:
             coup_restitution=o.restitution,
         )
 
-        hz    = o.size[2]   # half-height of the ladder box
-        pos   = (ladder.base_x, ladder.start_y, hz)
-        euler = (ladder.lean_deg, 0.0, ladder.euler_z)   # +euler_x → tilt toward -Y
+        sin_d = math.sin(math.radians(ladder.lean_deg))
+        cos_d = math.cos(math.radians(ladder.lean_deg))
+        # Negative euler_x: local +Z (ladder top) tilts toward +Y (north wall)
+        euler = (-ladder.lean_deg, 0.0, ladder.euler_z)
 
         if o.morph == "box":
+            hz  = o.size[2]   # half-height
+            pos = (ladder.base_x, ladder.start_y + hz * sin_d, hz * cos_d)
             morph = gs.morphs.Box(pos=pos, size=tuple(o.size), euler=euler)
+        elif o.morph == "mesh":
+            # If the mesh has a built-in lean (mesh_base_y != 0), the mesh local
+            # origin is NOT at the floor centroid.  Compute pos_z to shift the
+            # origin so that the actual mesh base (at local y=mesh_base_y, z=0)
+            # lands exactly on the floor after rotation Rx(-lean_deg):
+            #   z_world(base) = pos_z - mesh_base_y * sin_d  → set = 0
+            #   ⟹ pos_z = mesh_base_y * sin_d  (negative for pre-leaned meshes)
+            pos_z = o.mesh_base_y * sin_d if o.mesh_base_y != 0.0 else 0.0
+            pos = (ladder.base_x, ladder.start_y, pos_z)
+            mesh_scale = o.size[0] if len(o.size) == 1 else 1.0
+            mesh_path  = (MESHES_DIR / o.mesh_path).resolve()
+            morph = gs.morphs.Mesh(file=str(mesh_path), pos=pos, euler=euler,
+                                   scale=mesh_scale)
         elif o.morph == "cylinder":
+            hz  = o.size[2]
+            pos = (ladder.base_x, ladder.start_y + hz * sin_d, hz * cos_d)
             morph = gs.morphs.Cylinder(pos=pos, radius=o.size[0],
-                                       height=o.size[2] * 2, euler=euler)
+                                       height=hz * 2, euler=euler)
         else:
             raise ValueError(f"Unsupported morph for ladder_slip: {o.morph}")
 
@@ -1227,6 +1284,149 @@ class SceneBuilder:
             self._chain_trigger.set_dofs_velocity(vel)
         except Exception as e:
             print(f"[scene_builder] chain trigger velocity not applied: {e}", file=sys.stderr)
+
+    # ── Ceiling drop (ceiling_drop task) ─────────────────────
+
+    def _add_ceiling_drop_object(self) -> None:
+        """Spawn the object just below the ceiling and release it under gravity.
+
+        spawn_z = room.height − obj_half_height − 0.05 m clearance.
+        No initial velocity; pure free-fall to the floor.
+        """
+        o  = self.spec.object
+        cd = self.spec.ceiling_drop
+        r  = self.spec.room
+        surf = _solid(o.color_rgb, roughness=o.roughness, ior=o.ior)
+        mat  = gs.materials.Rigid(
+            rho=o.density,
+            friction=o.friction,
+            coup_restitution=o.restitution,
+        )
+
+        if o.morph == "mesh":
+            hz = o.phys_half_z if o.phys_half_z > 0 else 0.05
+        elif o.morph in ("box", "cylinder"):
+            hz = o.size[2]
+        elif o.morph == "sphere":
+            hz = o.size[0]
+        else:
+            hz = 0.05
+
+        spawn_z = r.height - hz - 0.05
+        pos     = (cd.spawn_x, cd.spawn_y, spawn_z)
+        euler   = (0.0, 0.0, cd.euler_z) if cd.euler_z != 0 else None
+
+        if o.morph == "mesh":
+            mesh_path  = (MESHES_DIR / o.mesh_path).resolve()
+            mesh_scale = o.size[0] if len(o.size) == 1 else 1.0
+            morph = gs.morphs.Mesh(file=str(mesh_path), pos=pos, euler=euler,
+                                   scale=mesh_scale)
+        elif o.morph == "sphere":
+            morph = gs.morphs.Sphere(pos=pos, radius=o.size[0])
+        elif o.morph == "cylinder":
+            morph = gs.morphs.Cylinder(pos=pos, radius=o.size[0],
+                                       height=o.size[2] * 2, euler=euler)
+        elif o.morph == "box":
+            morph = gs.morphs.Box(pos=pos, size=tuple(o.size), euler=euler)
+        else:
+            raise ValueError(f"Unknown morph for ceiling_drop: {o.morph}")
+
+        self.obj = self.scene.add_entity(morph, surface=surf, material=mat)
+
+    # ── Stair tumble (stair_tumble task) ─────────────────────
+
+    def _add_stair_geometry(self) -> None:
+        """Add N fixed step-blocks forming a staircase against the north wall.
+
+        Each step block is a solid box that extends from the floor (z=0) up to the
+        top surface of that step — the classic "staircase cut from a solid" approach.
+        This is physically correct for collision and visually clean.
+
+        Step k (0-indexed from bottom):
+            size  = (stair_width, step_run, (k+1)*step_rise)
+            pos   = (stair_x,
+                     stair_start_y + k*step_run + step_run/2,
+                     (k+1)*step_rise / 2)
+        """
+        st   = self.spec.stair
+        surf = _solid([0.72, 0.60, 0.42], roughness=0.65)   # warm wood tone
+        mat  = gs.materials.Rigid(friction=0.55)
+
+        for k in range(st.n_steps):
+            block_h   = (k + 1) * st.step_rise
+            centre_y  = st.stair_start_y + k * st.step_run + st.step_run / 2
+            centre_z  = block_h / 2
+            self.scene.add_entity(
+                gs.morphs.Box(
+                    pos=(st.stair_x, centre_y, centre_z),
+                    size=(st.stair_width, st.step_run, block_h),
+                    fixed=True,
+                ),
+                surface=surf,
+                material=mat,
+            )
+
+    def _add_stair_tumble_object(self) -> None:
+        """Spawn the object on its designated step tread.
+
+        spawn position:
+            x = stair.start_x
+            y = stair_start_y + start_step * step_run + step_run / 2
+            z = (start_step + 1) * step_rise + obj_half_z
+        """
+        o    = self.spec.object
+        st   = self.spec.stair
+        surf = _solid(o.color_rgb, roughness=o.roughness, ior=o.ior)
+        mat  = gs.materials.Rigid(
+            rho=o.density,
+            friction=o.friction,
+            coup_restitution=o.restitution,
+        )
+
+        if o.morph == "sphere":
+            hz = o.size[0]
+        elif o.morph == "cylinder":
+            hz = o.size[2]
+        elif o.morph in ("box", "mesh"):
+            hz = o.phys_half_z if o.phys_half_z > 0 else (o.size[2] if len(o.size) >= 3 else o.size[0])
+        else:
+            hz = 0.05
+
+        tread_z = (st.start_step + 1) * st.step_rise
+        obj_y   = st.stair_start_y + st.start_step * st.step_run + st.step_run / 2
+        pos     = (st.start_x, obj_y, tread_z + hz)
+        euler   = (0.0, 0.0, st.euler_z) if st.euler_z != 0 else None
+
+        if o.morph == "sphere":
+            morph = gs.morphs.Sphere(pos=pos, radius=o.size[0])
+        elif o.morph == "cylinder":
+            morph = gs.morphs.Cylinder(pos=pos, radius=o.size[0],
+                                       height=o.size[2] * 2, euler=euler)
+        elif o.morph == "box":
+            morph = gs.morphs.Box(pos=pos, size=tuple(o.size), euler=euler)
+        elif o.morph == "mesh":
+            mesh_path  = (MESHES_DIR / o.mesh_path).resolve()
+            mesh_scale = o.size[0] if len(o.size) == 1 else 1.0
+            morph = gs.morphs.Mesh(file=str(mesh_path), pos=pos, euler=euler,
+                                   scale=mesh_scale)
+        else:
+            raise ValueError(f"Unknown morph for stair_tumble: {o.morph}")
+
+        self.obj = self.scene.add_entity(morph, surface=surf, material=mat)
+
+    def _apply_stair_velocity(self) -> None:
+        """Apply initial southward nudge to start the tumble down the stairs."""
+        st = self.spec.stair
+        if st.nudge_vel_y == 0:
+            return
+        try:
+            import torch
+            n   = self.obj.n_dofs
+            vel = torch.zeros(1, n, dtype=torch.float32)
+            vel[0, 1] = st.nudge_vel_y   # vy < 0 → toward observer (-Y)
+            self.obj.set_dofs_velocity(vel)
+        except Exception as e:
+            print(f"[scene_builder] stair nudge velocity not applied: {e}", file=sys.stderr)
 
     # ── Bouncing object (bouncing_object task) ────────────────
 
@@ -1396,7 +1596,7 @@ class SceneBuilder:
                if self._floor_hit_step is not None else None)
 
         if self.spec.task_type in ("furniture_tip", "hanging_fall", "stack_collapse", "sliding_object",
-                                   "ladder_slip"):
+                                   "ladder_slip", "ceiling_drop", "stair_tumble"):
             # interception = position when object reaches the floor
             ipt3d = self._gt_positions[self._floor_hit_step] if self._floor_hit_step is not None else None
         elif self.spec.task_type == "rolling_ball":

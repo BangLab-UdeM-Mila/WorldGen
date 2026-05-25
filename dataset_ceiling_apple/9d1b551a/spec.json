@@ -1,0 +1,201 @@
+{
+  "scene_id": "9d1b551a",
+  "seed": 0,
+  "description": "",
+  "adversarial": false,
+  "task_type": "ceiling_drop",
+  "room": {
+    "type": "living",
+    "display_name": "Living Room",
+    "width": 6.0,
+    "depth": 5.0,
+    "height": 2.8,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.9075677810496239,
+      0.8869412405712234,
+      0.8456881596144222
+    ],
+    "ceiling_color_rgb": [
+      0.9892117798413835,
+      0.9787990242641058,
+      0.9579735131095504
+    ],
+    "floor_color_rgb": [
+      0.6,
+      0.48,
+      0.3
+    ],
+    "floor_roughness": 0.5,
+    "window_wall": "north",
+    "window_pos_x": -0.5,
+    "window_pos_z": 1.5,
+    "window_width": 1.6,
+    "window_height": 1.2,
+    "window_emissive": [
+      5.5,
+      5.2,
+      4.8
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "ripe_banana",
+    "display_name": "Ripe Banana",
+    "category": "safe",
+    "morph": "mesh",
+    "mesh_path": "ripe_banana.obj",
+    "bottom_z_offset": 0.0,
+    "size": [
+      1.0
+    ],
+    "phys_half_x": 0.1,
+    "phys_half_z": 0.0184,
+    "mesh_base_y": 0.0,
+    "mesh_top_y": 0.0,
+    "density": 950.0,
+    "friction": 0.4,
+    "restitution": 0.2,
+    "color_rgb": [
+      0.98,
+      0.85,
+      0.1
+    ],
+    "roughness": 0.6,
+    "ior": 1.0,
+    "catch_safe": true,
+    "safety_label": "safe",
+    "mass_hint": "light",
+    "description": "A ripe yellow banana, slightly soft with a curved elongated shape"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": null,
+  "thrown": null,
+  "pendulum": null,
+  "bounce": null,
+  "ladder": null,
+  "chain": null,
+  "ceiling_drop": {
+    "spawn_x": -0.691,
+    "spawn_y": -1.148,
+    "euler_z": -29.0
+  },
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -0.645,
+        -2.141,
+        1.531
+      ],
+      "lookat": [
+        -0.628,
+        -1.247,
+        2.803
+      ],
+      "fov": 55.335855753054645
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        0.555,
+        -1.726,
+        1.985
+      ],
+      "lookat": [
+        -0.683,
+        -1.188,
+        2.719
+      ],
+      "fov": 48.28319671145463
+    },
+    {
+      "name": "wide",
+      "pos": [
+        -0.966,
+        -2.116,
+        1.235
+      ],
+      "lookat": [
+        -0.668,
+        -1.171,
+        1.602
+      ],
+      "fov": 71.8083533877623
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.309027556576069,
+      0.27812480091846215,
+      0.2472220452608552
+    ],
+    "background_color": [
+      0.12,
+      0.11,
+      0.1
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          -0.8,
+          1.2,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.9,
+          0.78
+        ],
+        "intensity": 7.39
+      },
+      {
+        "type": "point",
+        "pos": [
+          1.2,
+          -1.0,
+          2.4
+        ],
+        "dir": null,
+        "color": [
+          0.95,
+          0.85,
+          0.72
+        ],
+        "intensity": 6.33
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.3,
+          0.6,
+          -1.0
+        ],
+        "color": [
+          0.75,
+          0.82,
+          1.0
+        ],
+        "intensity": 2.64
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "EXECUTE_CATCH",
+  "safety_label": "safe",
+  "interception_point_2d": null,
+  "interception_point_3d": null,
+  "time_to_floor_s": null
+}

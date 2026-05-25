@@ -1,0 +1,187 @@
+{
+  "scene_id": "63b1c97f",
+  "seed": 108,
+  "description": "",
+  "adversarial": false,
+  "task_type": "ladder_slip",
+  "room": {
+    "type": "office",
+    "display_name": "Home Office",
+    "width": 4.0,
+    "depth": 3.5,
+    "height": 2.7,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.861243388197913,
+      0.8815079385084522,
+      0.9119047639742609
+    ],
+    "ceiling_color_rgb": [
+      0.9137010279111658,
+      0.9137010279111658,
+      0.9233189334681254
+    ],
+    "floor_color_rgb": [
+      0.55,
+      0.48,
+      0.38
+    ],
+    "floor_roughness": 0.45,
+    "window_wall": "north",
+    "window_pos_x": 0.0,
+    "window_pos_z": 1.4,
+    "window_width": 1.0,
+    "window_height": 0.9,
+    "window_emissive": [
+      6.5,
+      6.2,
+      5.5
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "aluminum_ladder",
+    "display_name": "Aluminum Step Ladder",
+    "category": "dangerous",
+    "morph": "box",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.22,
+      0.05,
+      0.95
+    ],
+    "phys_half_x": 0.0,
+    "phys_half_z": 0.0,
+    "density": 360.0,
+    "friction": 0.22,
+    "restitution": 0.14,
+    "color_rgb": [
+      0.72,
+      0.74,
+      0.78
+    ],
+    "roughness": 0.42,
+    "ior": 1.0,
+    "catch_safe": false,
+    "safety_label": "caution",
+    "mass_hint": "light",
+    "description": "Aluminum step ladder — slides fast on smooth floor, sharp edges, dodge sideways"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": null,
+  "thrown": null,
+  "pendulum": null,
+  "bounce": null,
+  "ladder": {
+    "lean_deg": 32.0,
+    "base_x": -0.52,
+    "start_y": 0.743,
+    "angular_vel": 0.111,
+    "euler_z": -0.4
+  },
+  "chain": null,
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        -0.492,
+        -1.217,
+        1.211
+      ],
+      "lookat": [
+        -0.534,
+        0.423,
+        0.563
+      ],
+      "fov": 53.873862815463774
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        0.843,
+        0.557,
+        0.686
+      ],
+      "lookat": [
+        -0.478,
+        0.679,
+        0.576
+      ],
+      "fov": 51.03268180347946
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        -0.456,
+        0.223,
+        2.351
+      ],
+      "lookat": [
+        -0.503,
+        0.685,
+        0.503
+      ],
+      "fov": 63.55695295781105
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.37553602061860225,
+      0.37553602061860225,
+      0.3953010743353708
+    ],
+    "background_color": [
+      0.16,
+      0.16,
+      0.18
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "color": [
+          0.95,
+          0.97,
+          1.0
+        ],
+        "intensity": 13.42
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          -0.3,
+          -0.5,
+          -0.8
+        ],
+        "color": [
+          0.8,
+          0.85,
+          1.0
+        ],
+        "intensity": 3.35
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "TRIGGER_DODGE",
+  "safety_label": "caution",
+  "interception_point_2d": null,
+  "interception_point_3d": null,
+  "time_to_floor_s": null
+}

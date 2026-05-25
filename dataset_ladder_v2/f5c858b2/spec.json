@@ -1,0 +1,187 @@
+{
+  "scene_id": "f5c858b2",
+  "seed": 118,
+  "description": "",
+  "adversarial": false,
+  "task_type": "ladder_slip",
+  "room": {
+    "type": "office",
+    "display_name": "Home Office",
+    "width": 4.0,
+    "depth": 3.5,
+    "height": 2.7,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.8871927629281642,
+      0.9080678867617681,
+      0.9393805725121739
+    ],
+    "ceiling_color_rgb": [
+      0.9288676517553934,
+      0.9288676517553934,
+      0.9386452059843976
+    ],
+    "floor_color_rgb": [
+      0.55,
+      0.48,
+      0.38
+    ],
+    "floor_roughness": 0.45,
+    "window_wall": "north",
+    "window_pos_x": 0.0,
+    "window_pos_z": 1.4,
+    "window_width": 1.0,
+    "window_height": 0.9,
+    "window_emissive": [
+      6.5,
+      6.2,
+      5.5
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "steel_industrial_ladder",
+    "display_name": "Steel Industrial Ladder",
+    "category": "dangerous",
+    "morph": "box",
+    "mesh_path": null,
+    "bottom_z_offset": 0.0,
+    "size": [
+      0.25,
+      0.06,
+      1.1
+    ],
+    "phys_half_x": 0.0,
+    "phys_half_z": 0.0,
+    "density": 1100.0,
+    "friction": 0.2,
+    "restitution": 0.08,
+    "color_rgb": [
+      0.5,
+      0.52,
+      0.55
+    ],
+    "roughness": 0.3,
+    "ior": 1.0,
+    "catch_safe": false,
+    "safety_label": "dangerous",
+    "mass_hint": "heavy",
+    "description": "Heavy steel industrial ladder — extreme momentum, brace for impact"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": null,
+  "thrown": null,
+  "pendulum": null,
+  "bounce": null,
+  "ladder": {
+    "lean_deg": 29.3,
+    "base_x": 0.061,
+    "start_y": 0.673,
+    "angular_vel": 0.106,
+    "euler_z": 2.8
+  },
+  "chain": null,
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        0.151,
+        -1.327,
+        1.261
+      ],
+      "lookat": [
+        0.09,
+        0.47,
+        0.572
+      ],
+      "fov": 58.09400791109332
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        1.462,
+        0.63,
+        0.833
+      ],
+      "lookat": [
+        0.079,
+        0.806,
+        0.715
+      ],
+      "fov": 55.46442943808334
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        0.002,
+        0.266,
+        2.252
+      ],
+      "lookat": [
+        0.065,
+        0.633,
+        0.465
+      ],
+      "fov": 67.61722840673194
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.37526710857222056,
+      0.37526710857222056,
+      0.3950180090233901
+    ],
+    "background_color": [
+      0.16,
+      0.16,
+      0.18
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "color": [
+          0.95,
+          0.97,
+          1.0
+        ],
+        "intensity": 13.54
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          -0.3,
+          -0.5,
+          -0.8
+        ],
+        "color": [
+          0.8,
+          0.85,
+          1.0
+        ],
+        "intensity": 3.39
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "BRACE_FOR_IMPACT",
+  "safety_label": "dangerous",
+  "interception_point_2d": null,
+  "interception_point_3d": null,
+  "time_to_floor_s": null
+}

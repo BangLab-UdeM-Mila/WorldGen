@@ -1,0 +1,200 @@
+{
+  "scene_id": "531e3d0b",
+  "seed": 132,
+  "description": "",
+  "adversarial": false,
+  "task_type": "ladder_slip",
+  "room": {
+    "type": "dining",
+    "display_name": "Dining Room",
+    "width": 5.0,
+    "depth": 4.5,
+    "height": 2.8,
+    "wall_thickness": 0.12,
+    "wall_color_rgb": [
+      0.94802925730467,
+      0.9171152597838655,
+      0.8655919305825248
+    ],
+    "ceiling_color_rgb": [
+      0.9835376681720419,
+      0.9732924841285832,
+      0.9528021160416656
+    ],
+    "floor_color_rgb": [
+      0.72,
+      0.55,
+      0.33
+    ],
+    "floor_roughness": 0.55,
+    "window_wall": "north",
+    "window_pos_x": 0.0,
+    "window_pos_z": 1.45,
+    "window_width": 1.2,
+    "window_height": 1.0,
+    "window_emissive": [
+      6.0,
+      5.8,
+      5.2
+    ]
+  },
+  "table": null,
+  "object": {
+    "name": "heavy_oak_ladder",
+    "display_name": "Heavy Oak Step Ladder",
+    "category": "dangerous",
+    "morph": "mesh",
+    "mesh_path": "wooden_ladder.obj",
+    "bottom_z_offset": -0.003,
+    "size": [
+      1.0
+    ],
+    "phys_half_x": 0.194,
+    "phys_half_z": 1.25,
+    "density": 750.0,
+    "friction": 0.22,
+    "restitution": 0.08,
+    "color_rgb": [
+      0.4,
+      0.27,
+      0.14
+    ],
+    "roughness": 0.85,
+    "ior": 1.0,
+    "catch_safe": false,
+    "safety_label": "dangerous",
+    "mass_hint": "heavy",
+    "description": "Heavy oak step ladder — high momentum on fall, brace for impact"
+  },
+  "drop": null,
+  "tip": null,
+  "hanging": null,
+  "stack": null,
+  "ramp": null,
+  "roll": null,
+  "shelf": null,
+  "door": null,
+  "thrown": null,
+  "pendulum": null,
+  "bounce": null,
+  "ladder": {
+    "lean_deg": 42.6,
+    "base_x": 0.84,
+    "start_y": 0.556,
+    "angular_vel": 0.191,
+    "euler_z": 0.6
+  },
+  "chain": null,
+  "cameras": [
+    {
+      "name": "observer",
+      "pos": [
+        0.79,
+        -1.458,
+        1.293
+      ],
+      "lookat": [
+        0.793,
+        0.658,
+        0.567
+      ],
+      "fov": 54.04441079848389
+    },
+    {
+      "name": "closeup",
+      "pos": [
+        2.302,
+        0.63,
+        0.826
+      ],
+      "lookat": [
+        0.781,
+        0.883,
+        0.658
+      ],
+      "fov": 52.27188727869018
+    },
+    {
+      "name": "overhead",
+      "pos": [
+        0.888,
+        0.338,
+        2.281
+      ],
+      "lookat": [
+        0.841,
+        0.665,
+        0.471
+      ],
+      "fov": 62.040125252192574
+    }
+  ],
+  "lighting": {
+    "ambient_light": [
+      0.30632990835613066,
+      0.2735088467465452,
+      0.24068778513695976
+    ],
+    "background_color": [
+      0.15,
+      0.14,
+      0.13
+    ],
+    "shadow": true,
+    "lights": [
+      {
+        "type": "point",
+        "pos": [
+          0.1,
+          0.0,
+          2.6
+        ],
+        "dir": null,
+        "color": [
+          1.0,
+          0.88,
+          0.72
+        ],
+        "intensity": 11.32
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          -0.2,
+          -1.0,
+          -0.4
+        ],
+        "color": [
+          0.8,
+          0.88,
+          1.0
+        ],
+        "intensity": 3.96
+      },
+      {
+        "type": "directional",
+        "pos": null,
+        "dir": [
+          0.1,
+          0.3,
+          1.0
+        ],
+        "color": [
+          0.9,
+          0.82,
+          0.7
+        ],
+        "intensity": 1.13
+      }
+    ]
+  },
+  "dt": 0.004166666666666667,
+  "substeps": 4,
+  "duration_s": 3.0,
+  "ground_truth_action": "BRACE_FOR_IMPACT",
+  "safety_label": "dangerous",
+  "interception_point_2d": null,
+  "interception_point_3d": null,
+  "time_to_floor_s": null
+}

@@ -60,6 +60,26 @@ rooms:
     window: {wall: north, pos_x: 0.0, pos_z: 1.40, width: 1.00, height: 0.90, emissive: [6.5, 6.2, 5.5]}
     lighting_preset: cool_fluorescent
 
+  - type: stair_landing
+    display_name: Stair Landing
+    width: 5.0
+    depth: 5.0
+    height: 2.80
+    wall_thickness: 0.12
+    wall_color_rgb: [0.88, 0.86, 0.82]
+    ceiling_color_rgb: [0.95, 0.94, 0.92]
+    floor_color_rgb: [0.65, 0.55, 0.40]
+    floor_roughness: 0.60
+    table_pos: [0.0, -1.0]
+    # Window above the staircase on the north wall (above stair top height ~1.26 m)
+    window: {wall: north, pos_x: 0.0, pos_z: 2.10, width: 1.00, height: 0.55, emissive: [6.5, 6.2, 5.8]}
+    lighting_preset: soft_ambient
+    # Staircase geometry — read by Randomizer._make_stair()
+    stair_n_steps: 7
+    stair_rise: 0.18        # each step height (metres)
+    stair_run: 0.28         # each step tread depth (metres)
+    stair_width: 1.20       # staircase width in X (metres)
+
 # ── Lighting presets ─────────────────────────────────────────
 
 lighting_presets:

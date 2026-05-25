@@ -1,0 +1,12 @@
+[
+  {
+    "scene_id": "e82c1ea2",
+    "seed": 1,
+    "object": "chef_knife",
+    "room": "living",
+    "success": true,
+    "elapsed": 69.2,
+    "stdout": "[scene_runner] scene_id=e82c1ea2  object=chef_knife  room=living  seed=1\n\u001b[38;5;226m[Genesis] [07:53:13] [WARNING] 'torch<2.8.0' is not supported. Please upgrade pytorch manually: https://pytorch.org/get-started/locally/\u001b[0m\n\u001b[38;5;226m[Genesis] [07:53:16] [WARNING] Non-zero `coup_restitution` could lead to instability. Use with caution.\u001b[0m\n  t=1.00s  obj=(1.628,-1.253,0.028)  [wall 10.0s]\n  t=2.00s  obj=(1.622,-1.269,0.016)  [wall 18.7s]\n  t=3.00s  obj=(1.622,-1.269,0.016)  [wall 27.3s]\n[scene_runner] Done. ttf=0.6458s  videos=['observer', 'closeup', 'wide']\n",
+    "stderr": ""
+  }
+]

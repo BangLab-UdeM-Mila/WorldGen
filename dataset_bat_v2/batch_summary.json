@@ -1,0 +1,12 @@
+[
+  {
+    "scene_id": "d8474aa2",
+    "seed": 0,
+    "object": "baseball_bat",
+    "room": "kitchen",
+    "success": true,
+    "elapsed": 72.6,
+    "stdout": "esolution   30\n[2026-05-14 05:56:50.361] [CoACD] [info] pca                     false\n[2026-05-14 05:56:50.361] [CoACD] [info] mcts max depth          3\n[2026-05-14 05:56:50.361] [CoACD] [info] mcts nodes              20\n[2026-05-14 05:56:50.361] [CoACD] [info] mcts iterations         100\n[2026-05-14 05:56:50.361] [CoACD] [info] merge                   true\n[2026-05-14 05:56:50.361] [CoACD] [info] decimate                false\n[2026-05-14 05:56:50.361] [CoACD] [info] max_ch_vertex           256\n[2026-05-14 05:56:50.361] [CoACD] [info] extrude                 false\n[2026-05-14 05:56:50.361] [CoACD] [info] extrude margin          0.1\n[2026-05-14 05:56:50.361] [CoACD] [info] approximate mode        ch\n[2026-05-14 05:56:50.361] [CoACD] [info] seed                    0\n[2026-05-14 05:56:50.361] [CoACD] [info]  - Manifold Check\n[2026-05-14 05:56:50.361] [CoACD] [info] [1/3] Edge check finish\n[2026-05-14 05:56:50.362] [CoACD] [info] [2/3] Self-intersection check finish\n[2026-05-14 05:56:50.362] [CoACD] [info] [3/3] Triangle orientation check finish. Reversed: false\n[2026-05-14 05:56:50.362] [CoACD] [info] Manifold Check Time: 0.000415s\n[2026-05-14 05:56:50.362] [CoACD] [info] Mesh Manifoldness: true\n[2026-05-14 05:56:50.362] [CoACD] [info] # Points: 98\n[2026-05-14 05:56:50.362] [CoACD] [info] # Triangles: 192\n[2026-05-14 05:56:50.362] [CoACD] [info]  - Decomposition (MCTS)\n[2026-05-14 05:56:50.362] [CoACD] [info] iter 0 ---- waiting pool: 1\n[2026-05-14 05:56:50.363] [CoACD] [info] Processing [0.0%]\n[2026-05-14 05:56:50.370] [CoACD] [info] Processing [100.0%]\n[2026-05-14 05:56:50.370] [CoACD] [info]  - Merge Convex Hulls\n[2026-05-14 05:56:50.370] [CoACD] [info] Compute Time: 0.00793617199997243s\n[2026-05-14 05:56:50.370] [CoACD] [info] # Convex Hulls: 1\n  t=1.00s  obj=(0.877,0.182,0.035)  [wall 10.8s]\n  t=2.00s  obj=(0.877,0.182,0.035)  [wall 21.0s]\n  t=3.00s  obj=(0.877,0.182,0.035)  [wall 31.2s]\n[scene_runner] Done. ttf=0.5375s  videos=['observer', 'closeup', 'overhead']\n",
+    "stderr": ""
+  }
+]
